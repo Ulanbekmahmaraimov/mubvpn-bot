@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 # ─── ЖӨНДӨӨЛӨР ───
 BOT_TOKEN    = "8400265569:AAHQ21_zNVS3XPDlMoE9I8TW0JwaIaUuA1s"
-LAVA_API     = "O4xJ2dC5ZxrtZPREDAm1vcUxYKke2RF8QSspy4vZPk4VKx1pbZt9KLfWfvRgHTWm"
+LAVA_API     = "cUPUZBNvxATjd5ou8oodPIozLGb7dqzZx5eDYdYbkctCV9eRJBaDWpJKAkp8Bp8m"
 SUPPORT_URL  = "https://t.me/kl_mub"
 
 # Азырынча баарына бирдей шилтеме. Lava.top'тон өзүнчө товарларды ачып, ушул жердеги шилтемелерди алмаштырасыз.
@@ -237,7 +237,6 @@ STRINGS = {
         "welcome": "🛡 <b>mubVPN Premium</b>\n\nPlease choose an option:",
         "btn_pay": "💳 Buy",
         "btn_how": "📖 How to pay?",
-        "btn_support": "👨‍💻 Support",
         "btn_share": "🤝 Share with friends",
         "btn_1m": "1 Month",
         "btn_3m": "3 Months (Save)",
