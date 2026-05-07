@@ -465,6 +465,9 @@ def main():
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b"Bot is running!")
+        def do_HEAD(self):
+            self.send_response(200)
+            self.end_headers()
 
     def run_dummy_server():
         port = int(os.environ.get('PORT', 8080))
@@ -472,6 +475,20 @@ def main():
         server.serve_forever()
 
     threading.Thread(target=run_dummy_server, daemon=True).start()
+
+    # Self-ping to keep Render awake
+    def keep_awake():
+        import time
+        import requests
+        url = "https://mubvpn-bot.onrender.com"
+        while True:
+            try:
+                requests.get(url)
+            except:
+                pass
+            time.sleep(600) # Ping every 10 minutes
+
+    threading.Thread(target=keep_awake, daemon=True).start()
 
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
