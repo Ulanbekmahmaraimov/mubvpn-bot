@@ -365,8 +365,8 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         L = STRINGS[lang]
         uid = context.user_data.get('uid', str(query.from_user.id))
         
-        # UID жана Планды бириктирип жөнөтөбүз: uid|plan_id (Бул Lava.top'тон текшерүү үчүн керек)
-        additional_info = f"{uid}|{plan_id}"
+        # UIDди гана жөнөтөбүз (Lava.top'тон текшерүү үчүн)
+        additional_info = uid
         link = f"{LAVA_URLS[plan_id]}?additional_info={additional_info}"
         
         keyboard = [
