@@ -15,11 +15,18 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-# --- ЖӨНДӨӨЛӨР ---
+# ─── ЖӨНДӨӨЛӨР ───
 BOT_TOKEN    = "8400265569:AAHQ21_zNVS3XPDlMoE9I8TW0JwaIaUuA1s"
-LAVA_URL     = "https://app.lava.top/products/db3d18c8-01e5-40f2-bf0a-e01842697312/8a98aa1a-78d0-4291-bf1e-6c143668cf15"
 LAVA_API     = "O4xJ2dC5ZxrtZPREDAm1vcUxYKke2RF8QSspy4vZPk4VKx1pbZt9KLfWfvRgHTWm"
 SUPPORT_URL  = "https://t.me/kl_mub"
+
+# Азырынча баарына бирдей шилтеме. Lava.top'тон өзүнчө товарларды ачып, ушул жердеги шилтемелерди алмаштырасыз.
+LAVA_URLS = {
+    "1m": "https://app.lava.top/products/db3d18c8-01e5-40f2-bf0a-e01842697312/8a98aa1a-78d0-4291-bf1e-6c143668cf15",
+    "3m": "https://app.lava.top/products/db3d18c8-01e5-40f2-bf0a-e01842697312/8a98aa1a-78d0-4291-bf1e-6c143668cf15",
+    "6m": "https://app.lava.top/products/db3d18c8-01e5-40f2-bf0a-e01842697312/8a98aa1a-78d0-4291-bf1e-6c143668cf15",
+    "1y": "https://app.lava.top/products/db3d18c8-01e5-40f2-bf0a-e01842697312/8a98aa1a-78d0-4291-bf1e-6c143668cf15",
+}
 
 # Пландар
 PLANS = {
@@ -123,16 +130,36 @@ def lava_check_payment(uid: str) -> dict | None:
     try:
         resp = requests.get(
             'https://gate.lava.top/api/v2/invoices',
-            headers={'Authorization': f'Bearer {LAVA_API}', 'Accept': 'application/json'},
+            headers={'X-Api-Key': LAVA_API, 'Accept': 'application/json'},
             timeout=10
         )
         if resp.status_code == 200:
-            for inv in resp.json().get('data', []):
+            for inv in resp.json().get('items', []):  # X-Api-Key менен 'items' келет
                 info = inv.get('additionalFields', inv.get('additional_info', ''))
-                inv_uid = info.get('uid', '') if isinstance(info, dict) else str(info)
+                info_str = str(info)
+                
+                # Биз additional_info'го "uid|plan_id" деп жөнөтөбүз (мисалы: "123456789|3m")
+                if "|" in info_str:
+                    inv_uid, inv_plan = info_str.split("|", 1)
+                else:
+                    inv_uid = info_str
+                    inv_plan = "1m"
+                    
                 if inv_uid == uid and inv.get('status') in ('success', 'paid'):
-                    plan_id = info.get('plan', '1m') if isinstance(info, dict) else "1m"
-                    return {"invoice": inv, "plan": plan_id}
+                    # API аркылуу сумманы окуп, ошого жараша планды тактоо:
+                    amount = float(inv.get('amount', 0))
+                    
+                    if amount >= 1000: 
+                        inv_plan = "1y"
+                    elif amount >= 600: 
+                        inv_plan = "6m"
+                    elif amount >= 350: 
+                        inv_plan = "3m"
+                    elif amount >= 150: 
+                        inv_plan = "1m"
+                    # Эгер amount 0 болсо (же окулбай калса), эски inv_plan кала берет.
+
+                    return {"invoice": inv, "plan": inv_plan}
     except Exception as e:
         log.error(f'Lava текшерүү катасы: {e}')
     return None
@@ -152,6 +179,10 @@ STRINGS = {
         "btn_how": "📖 Төлөөнү үйрөнүү",
         "btn_support": "👨‍💻 Колдоо",
         "btn_share": "🤝 Достор менен бөлүшүү",
+        "btn_1m": "1 Ай",
+        "btn_3m": "3 Ай (Үнөмдөө)",
+        "btn_6m": "6 Ай (Пайдалуу)",
+        "btn_1y": "1 Жыл (-44% Супер баа)",
         "pay_text": "💳 <b>Төлөөгө өтүү</b>\n\nТөлөм Telegram ичинде коопсуз өтөт:",
         "pay_btn_link": "💳 Оплатить через Lava.top",
         "back": "⬅️ Артка",
@@ -178,6 +209,10 @@ STRINGS = {
         "btn_how": "📖 Как оплатить?",
         "btn_support": "👨‍💻 Поддержка",
         "btn_share": "🤝 Поделиться с друзьями",
+        "btn_1m": "1 Месяц",
+        "btn_3m": "3 Месяца (Экономия)",
+        "btn_6m": "6 Месяцев (Выгодно)",
+        "btn_1y": "1 Год (-44% Супер цена)",
         "pay_text": "💳 <b>Переход к оплате</b>\n\nОплата проходит внутри Telegram:",
         "pay_btn_link": "💳 Оплатить через Lava.top",
         "back": "⬅️ Назад",
@@ -204,6 +239,10 @@ STRINGS = {
         "btn_how": "📖 How to pay?",
         "btn_support": "👨‍💻 Support",
         "btn_share": "🤝 Share with friends",
+        "btn_1m": "1 Month",
+        "btn_3m": "3 Months (Save)",
+        "btn_6m": "6 Months (Best Value)",
+        "btn_1y": "1 Year (-44% Super Deal)",
         "pay_text": "💳 <b>Proceed to Payment</b>\n\nThe payment is secure within Telegram:",
         "pay_btn_link": "💳 Оплатить через Lava.top",
         "back": "⬅️ Back",
@@ -311,13 +350,29 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data == 'pay_menu':
         L = STRINGS[lang]
-        # UID: тиркемеден келсе Firebase UID, болбосо Telegram ID
+        keyboard = [
+            [InlineKeyboardButton(L["btn_1m"], callback_data='pay_plan_1m')],
+            [InlineKeyboardButton(L["btn_3m"], callback_data='pay_plan_3m')],
+            [InlineKeyboardButton(L["btn_6m"], callback_data='pay_plan_6m')],
+            [InlineKeyboardButton(L["btn_1y"], callback_data='pay_plan_1y')],
+            [InlineKeyboardButton(L["back"], callback_data='main_menu')]
+        ]
+        title = "Канча убакытка аласыз? / Выберите период / Choose a plan:"
+        await query.message.edit_text(title, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.HTML)
+
+    elif data.startswith('pay_plan_'):
+        plan_id = data.split('_')[2]  # '1m', '3m', '6m', '1y'
+        L = STRINGS[lang]
         uid = context.user_data.get('uid', str(query.from_user.id))
-        link = f"{LAVA_URL}?additional_info={uid}"
+        
+        # UID жана Планды бириктирип жөнөтөбүз: uid|plan_id (Бул Lava.top'тон текшерүү үчүн керек)
+        additional_info = f"{uid}|{plan_id}"
+        link = f"{LAVA_URLS[plan_id]}?additional_info={additional_info}"
+        
         keyboard = [
             [InlineKeyboardButton(L["pay_btn_link"], web_app=WebAppInfo(url=link))],
             [InlineKeyboardButton("✅ Төлөдүм / Я оплатил", callback_data=f'check_pay')],
-            [InlineKeyboardButton(L["back"], callback_data='main_menu')]
+            [InlineKeyboardButton(L["back"], callback_data='pay_menu')]
         ]
         await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.HTML)
 
@@ -401,6 +456,23 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=query.message.chat_id, text=L["menu_back"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
 
 def main():
+    import threading
+    from http.server import HTTPServer, BaseHTTPRequestHandler
+    import os
+
+    class DummyHandler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"Bot is running!")
+
+    def run_dummy_server():
+        port = int(os.environ.get('PORT', 8080))
+        server = HTTPServer(('0.0.0.0', port), DummyHandler)
+        server.serve_forever()
+
+    threading.Thread(target=run_dummy_server, daemon=True).start()
+
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(handle_callback))
