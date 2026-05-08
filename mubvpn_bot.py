@@ -30,13 +30,13 @@ PLANS = {
 FIREBASE_DB_URL    = "https://mubvpn-8b892-default-rtdb.firebaseio.com"
 FIREBASE_DB_SECRET = "NgRNzmtQYdgUcFWXiDRPAHAsSURVni2WaIKTw9Re"
 
-# ─── ИНСТРУКЦИЯ СҮРӨТТӨРҮ (bot_images папкасында болушу керек) ───
-PHOTO_1 = "bot_images/step1.jpg"
-PHOTO_2 = "bot_images/step2.jpg"
-PHOTO_3 = "bot_images/step3.jpg"
-PHOTO_4 = "bot_images/step4.jpg"
-PHOTO_5 = "bot_images/step5.jpg"
-PHOTO_6 = "bot_images/step6.jpg"
+# ─── ИНСТРУКЦИЯ СҮРӨТТӨРҮ (Негизги папкада болушу керек) ───
+PHOTO_1 = "step1.jpg"
+PHOTO_2 = "step2.jpg"
+PHOTO_3 = "step3.jpg"
+PHOTO_4 = "step4.jpg"
+PHOTO_5 = "step5.jpg"
+PHOTO_6 = "step6.jpg"
 
 def firebase_set_premium(uid: str, months: int) -> bool:
     """Firebase базасына Premium статусун жазат."""
