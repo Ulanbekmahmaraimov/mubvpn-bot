@@ -3,12 +3,13 @@ import os
 import json
 import requests
 import threading
-from http.server import HTTPServer, BaseHTTPRequestHandler
-from datetime import datetime, timedelta
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo, InputMediaPhoto
-from telegram.constants import ParseMode
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+import time
 import html
+from datetime import datetime, timedelta
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo, InputMediaPhoto
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+from telegram.constants import ParseMode
 
 # --- ЖӨНДӨӨЛӨР ---
 BOT_TOKEN    = "8400265569:AAHQ21_zNVS3XPDlMoE9I8TW0JwaIaUuA1s"
@@ -16,18 +17,8 @@ LAVA_API     = "cUPUZBNvxATjd5ou8oodPIozLGb7dqzZx5eDYdYbkctCV9eRJBaDWpJKAkp8Bp8m
 SUPPORT_URL  = "https://t.me/kl_mub"
 LAVA_MAIN_URL = "https://app.lava.top/products/db3d18c8-01e5-40f2-bf0a-e01842697312/8a98aa1a-78d0-4291-bf1e-6c143668cf15"
 
-# Webhook үчүн жашыруун ачкыч (Lava'га да ушуну жазасыз)
-WEBHOOK_SECRET_KEY = "mubvpn_secure_key_123"
-
 FIREBASE_DB_URL    = "https://mubvpn-8b892-default-rtdb.firebaseio.com"
 FIREBASE_DB_SECRET = "NgRNzmtQYdgUcFWXiDRPAHAsSURVni2WaIKTw9Re"
-
-# Сүрөттөр
-PHOTO_1 = "https://i.postimg.cc/8P89LdG2/image.png"
-PHOTO_2 = "https://i.postimg.cc/xTfXyZzW/image.png"
-PHOTO_3 = "https://i.postimg.cc/85zK09pG/image.png"
-PHOTO_4 = "https://i.postimg.cc/8C5YxXq0/image.png"
-PHOTO_5 = "https://i.postimg.cc/mD83Wfnd/image.png"
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -37,107 +28,185 @@ def firebase_set_premium(uid: str, months: int) -> bool:
     try:
         expiry = (datetime.now() + timedelta(days=months * 30)).isoformat()
         url = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
-        resp = requests.patch(url, json={"premium_expiry": expiry, "is_paid": True}, timeout=10)
+        resp = requests.patch(url, json={"premium_expiry": expiry, "is_paid": True})
         return resp.status_code == 200
     except Exception as e:
         log.error(f"Firebase error: {e}")
         return False
 
-# --- WEBHOOK КУТКОН СЕРВЕР ---
-class WebhookHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(b"MubVPN Bot is running!")
-
-    def do_POST(self):
-        if self.path == '/lava-webhook':
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length)
-            try:
-                data = json.loads(post_data)
-                log.info(f"📥 Webhook алынды: {data}")
-                status = data.get('status')
-                uid = data.get('additional_info') or data.get('comment')
-                amount = float(data.get('amount', 0))
-                if status in ('success', 'paid') and uid:
-                    months = 12 if amount >= 1000 else (6 if amount >= 600 else (3 if amount >= 300 else 1))
-                    if firebase_set_premium(str(uid), months):
-                        log.info(f"✅ Webhook аркылуу Premium иштетилди: {uid}")
-                self.send_response(200); self.end_headers()
-            except Exception as e:
-                log.error(f"Webhook error: {e}"); self.send_response(400); self.end_headers()
-        else: self.send_response(404); self.end_headers()
-
-def run_server():
-    port = int(os.environ.get("PORT", 8080))
-    server = HTTPServer(('0.0.0.0', port), WebhookHandler)
-    log.info(f"🌐 Webhook server started on port {port}")
-    server.serve_forever()
-
 # --- БОТТУН ТЕКСТТЕРИ ---
 STRINGS = {
     "ky": {
-        "welcome": "🛡 <b>mubVPN Premium</b>\n\nТандаңыз:",
-        "btn_pay": "💳 Сатып алуу", "btn_how": "📖 Төлөө", "btn_support": "👨‍💻 Колдоо", "btn_share": "🤝 Бөлүшүү",
-        "pay_text": "💳 <b>Төлөө барагына өтүү:</b>", "pay_btn_link": "💳 Telegram", "back": "⬅️ Артка", "next": "Кийинки ➡️",
-        "menu_back": "Башкы меню:", "share_msg": "🛡 mubVPN - Эң тез VPN!",
-        "how_1": "🚀 1: Планды тандаңыз.", "how_2": "📧 2: Почтаны жазыңыз.", "how_3": "💵 3: Валюта тандаңыз.", "how_4": "📱 4: Карта маалыматы.", "how_5": "💳 5: Төлөңүз."
+        "welcome": "🛡 <b>mubVPN Premium</b>\n\nТөлөм жүргүзүү үчүн төмөнкү баскычтарды колдонуңуз:",
+        "btn_pay": "💳 Сатып алуу", "btn_how": "📖 Төлөөнү үйрөнүү",
+        "btn_support": "👨‍💻 Колдоо", "btn_share": "🤝 Бөлүшүү",
+        "pay_text": "💳 <b>Төлөөгө өтүү</b>\n\nТөлөм Telegram ичинде коопсуз өтөт:",
+        "pay_btn_link": "💳 Telegram", "back": "⬅️ Артка", "next": "Кийинки ➡️",
+        "check_btn": "✅ Төлөдүм (Текшерүү)",
+        "checking": "⏳ Төлөм текшерилүүдө...",
+        "success": "🎉 <b>Premium активдешти!</b>\n\nТиркемени ачып, VPN'ди колдоно бериңиз!",
+        "not_found": "⚠️ Төлөм табылган жок. Төлөп бүтсөңүз, 1-2 мүнөт күтүп кайра басыңыз.",
+        "how_step_1": "🚀 <b>1-КАДАМ: План тандоо</b>\n\n'Сатып алуу' баскычын басып, өзүңүзгө жаккан мөөнөттү тандаңыз (1 ай, 3 ай ж.б.). 1 жылдык план эң пайдалуу! ✅",
+        "how_step_2": "📧 <b>2-КАДАМ: Почтаны жазуу</b>\n\nТөлөм барагында электрондук почтаңызды (Email) жазыңыз. Бул сизге чек алуу жана Premium активдештирүү үчүн керек. 📩",
+        "how_step_3": "💵 <b>3-КАДАМ: Валюта тандоо</b>\n\nЭгер сиз МИР картасы (Элкарт) менен төлөсөңүз, валютаны <b>RUB</b> же <b>KGS</b> кылып тандаңыз. Бул комиссияны азайтат. 💰",
+        "how_step_4": "📱 <b>4-КАДАМ: Карта маалыматы</b>\n\nКартаңыздын номерин, мөөнөтүн жана CVC-кодун жазыңыз. Эгер маалыматтар жаныңызда жок болсо, банк тиркемесинен көчүрүп алсаңыз болот. 💳",
+        "how_step_5": "✅ <b>5-КАДАМ: Төлөмдү бүтүрүү</b>\n\n'Оплатить' баскычын басып, банктан келген SMS кодду киргизиңиз. Төлөм бүткөндө система автоматтык түрдө Premium иштетет! 🎉",
+        "how_step_6": "🛠 <b>6-КАДАМ: Текшерүү</b>\n\nТөлөп бүткөндөн кийин тиркемеге кириңиз. Эгер Premium иштебесе, боттогу 'Текшерүү' баскычын басыңыз. @kl_mub дайыма жардамга даяр! 👨‍💻",
+        "menu_back": "Башкы меню:", "share_msg": "🛡 mubVPN - Эң тез жана коопсуз VPN!"
     },
     "ru": {
-        "welcome": "🛡 <b>mubVPN Premium</b>\n\nВыберите:",
-        "btn_pay": "💳 Купить", "btn_how": "📖 Инструкция", "btn_support": "👨‍💻 Поддержка", "btn_share": "🤝 Поделиться",
-        "pay_text": "💳 <b>Переход к оплате:</b>", "pay_btn_link": "💳 Telegram", "back": "⬅️ Назад", "next": "Далее ➡️",
-        "menu_back": "Главное меню:", "share_msg": "🛡 mubVPN - Самый быстрый VPN!",
-        "how_1": "🚀 1: Выберите план.", "how_2": "📧 2: Введите почту.", "how_3": "💵 3: Выберите валюту.", "how_4": "📱 4: Данные карты.", "how_5": "💳 5: Оплатите."
+        "welcome": "🛡 <b>mubVPN Premium</b>\n\nВыберите действие:",
+        "btn_pay": "💳 Купить", "btn_how": "📖 Как оплатить?",
+        "btn_support": "👨‍💻 Поддержка", "btn_share": "🤝 Поделиться",
+        "pay_text": "💳 <b>Переход к оплате</b>\n\nОплата проходит внутри Telegram:",
+        "pay_btn_link": "💳 Telegram", "back": "⬅️ Назад", "next": "Далее ➡️",
+        "check_btn": "✅ Я оплатил (Проверить)",
+        "checking": "⏳ Проверка платежа...",
+        "success": "🎉 <b>Premium активирован!</b>\n\nОткройте приложение и пользуйтесь VPN!",
+        "not_found": "⚠️ Платеж не найден. Если вы оплатили, подождите 1-2 минуты и нажмите снова.",
+        "how_step_1": "🚀 <b>ШАГ 1: Выбор тарифа</b>\n\nНажмите 'Купить' и выберите подходящий период (1 месяц, 1 год и т.д.). Годовой план самый выгодный! ✅",
+        "how_step_2": "📧 <b>ШАГ 2: Ввод почты</b>\n\nНа странице оплаты введите ваш Email. Это нужно для получения чека и активации Премиума. 📩",
+        "how_step_3": "💵 <b>ШАГ 3: Выбор валюты</b>\n\nПри оплате картой МИР (Элкарт) выбирайте валюту <b>RUB</b> или <b>KGS</b> для минимальной комиссии. 💰",
+        "how_step_4": "📱 <b>ШАГ 4: Данные карты</b>\n\nВведите номер карты, срок действия и CVC-код. Реквизиты можно скопировать в приложении вашего банка. 💳",
+        "how_step_5": "✅ <b>ШАГ 5: Завершение</b>\n\nНажмите 'Оплатить' и введите код из СМС. После оплаты система автоматически включит Premium! 🎉",
+        "how_step_6": "🛠 <b>ШАГ 6: Проверка</b>\n\nВернитесь в приложение. Если Premium не включился сразу, нажмите кнопку 'Проверить' в боте. @kl_mub всегда на связи! 👨‍💻",
+        "menu_back": "Главное меню:", "share_msg": "🛡 mubVPN - Самый быстрый и безопасный VPN!"
+    },
+    "en": {
+        "welcome": "🛡 <b>mubVPN Premium</b>\n\nPlease choose an option:",
+        "btn_pay": "💳 Buy", "btn_how": "📖 How to pay?",
+        "btn_support": "👨‍💻 Support", "btn_share": "🤝 Share",
+        "pay_text": "💳 <b>Proceed to Payment</b>\n\nThe payment is secure within Telegram:",
+        "pay_btn_link": "💳 Telegram", "back": "⬅️ Back", "next": "Next ➡️",
+        "check_btn": "✅ I have paid (Check)",
+        "checking": "⏳ Checking payment...",
+        "success": "🎉 <b>Premium activated!</b>\n\nOpen the app and enjoy your VPN!",
+        "not_found": "⚠️ Payment not found. If you paid, wait 1-2 minutes and try again.",
+        "how_step_1": "🚀 <b>STEP 1: Choose a plan</b>\n\nClick 'Buy' and select your preferred duration. The annual plan is the most profitable! ✅",
+        "how_step_2": "📧 <b>STEP 2: Enter Email</b>\n\nEnter your email on the payment page to receive a receipt and activate Premium. 📩",
+        "how_step_3": "💵 <b>STEP 3: Choose currency</b>\n\nSelect <b>RUB</b> or <b>KGS</b> for lower fees if paying with a local bank card. 💰",
+        "how_step_4": "📱 <b>STEP 4: Card details</b>\n\nEnter your card number, expiry date, and CVC. You can find these in your bank's mobile app. 💳",
+        "how_step_5": "✅ <b>STEP 5: Complete payment</b>\n\nClick 'Pay' and enter the SMS code from your bank. Premium activates automatically! 🎉",
+        "how_step_6": "🛠 <b>STEP 6: Verification</b>\n\nCheck the app. If Premium is not active, click 'Check Payment' in the bot. @kl_mub is here to help! 👨‍💻",
+        "menu_back": "Main Menu:", "share_msg": "🛡 mubVPN - The fastest and safest VPN!"
     }
 }
 
 # --- КЛАВИАТУРАЛАР ---
-def get_lang_kb():
-    return InlineKeyboardMarkup([[InlineKeyboardButton("🇰🇬 Кыргызча", callback_data='set_lang_ky')], [InlineKeyboardButton("🇷🇺 Русский", callback_data='set_lang_ru')]])
+def get_lang_keyboard():
+    return InlineKeyboardMarkup([[InlineKeyboardButton("🇰🇬 Кыргызча", callback_data='set_lang_ky')], [InlineKeyboardButton("🇷🇺 Русский", callback_data='set_lang_ru')], [InlineKeyboardButton("🇺🇸 English", callback_data='set_lang_en')]])
 
-def get_main_kb(lang):
+def get_main_keyboard(lang):
     L = STRINGS[lang]
     return InlineKeyboardMarkup([[InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')], [InlineKeyboardButton(L["btn_how"], callback_data='how_1')], [InlineKeyboardButton(L["btn_share"], callback_data='share_app')], [InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)]])
 
 # --- КОМАНДАЛАР ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if context.args: context.user_data['uid'] = context.args[0]
-    await (update.message.reply_text if update.message else update.callback_query.message.edit_text)("🌐 Language / Тилди тандаңыз:", reply_markup=get_lang_kb())
+    text = "🌐 Choose language / Тилди тандаңыз / Выберите язык:"
+    if update.message: await update.message.reply_text(text, reply_markup=get_lang_keyboard())
+    else: await update.callback_query.message.edit_text(text, reply_markup=get_lang_keyboard())
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    q = update.callback_query; await q.answer(); d = q.data; lang = context.user_data.get('lang', 'ru')
-    if d.startswith('set_lang_'):
-        lang = d.split('_')[2]; context.user_data['lang'] = lang
-        await q.message.edit_text(STRINGS[lang]["welcome"], reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
-    elif d == 'pay_menu':
-        L = STRINGS[lang]; uid = context.user_data.get('uid', q.from_user.id)
-        kb = [[InlineKeyboardButton(L["pay_btn_link"], web_app=WebAppInfo(url=f"{LAVA_MAIN_URL}?additional_info={uid}"))], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
-        await q.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
-    elif d.startswith('how_'):
-        step = d.split('_')[1]; L = STRINGS[lang]
-        photos = {"1": PHOTO_1, "2": PHOTO_2, "3": PHOTO_3, "4": PHOTO_4, "5": PHOTO_5}
-        texts = {"1": L["how_1"], "2": L["how_2"], "3": L["how_3"], "4": L["how_4"], "5": L["how_5"]}
-        nxt = str(int(step)+1) if int(step) < 5 else "menu"
+    query = update.callback_query; await query.answer()
+    data = query.data; lang = context.user_data.get('lang', 'ru')
+
+    if data.startswith('set_lang_'):
+        lang = data.split('_')[2]; context.user_data['lang'] = lang
+        await query.message.edit_text(STRINGS[lang]["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+
+    elif data == 'pay_menu':
+        L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
+        link = f"{LAVA_MAIN_URL}?additional_info={uid}"
+        kb = [[InlineKeyboardButton(L["pay_btn_link"], web_app=WebAppInfo(url=link))], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+        await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
+    elif data == 'share_app':
+        L = STRINGS[lang]; bot = await context.bot.get_me(); share_url = f"https://t.me/share/url?url=https://t.me/{bot.username}&text={html.escape(L['share_msg'])}"
+        kb = [[InlineKeyboardButton("📲 Бөлүшүү / Поделиться", url=share_url)], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+        await query.message.edit_text("🤝 <b>Share:</b>", reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
+    elif data.startswith('how_'):
+        step = data.split('_')[1]; L = STRINGS[lang]
+        texts = {"1": L["how_step_1"], "2": L["how_step_2"], "3": L["how_step_3"], "4": L["how_step_4"], "5": L["how_step_5"], "6": L["how_step_6"]}
+        nxt = str(int(step)+1) if int(step) < 6 else "menu"
         prv = str(int(step)-1) if int(step) > 1 else "main"
         row = [InlineKeyboardButton(L["back"], callback_data='main_menu' if prv=="main" else f'how_{prv}')]
         if nxt != "menu": row.append(InlineKeyboardButton(L["next"], callback_data=f'how_{nxt}'))
-        try:
-            if q.message.photo: await q.message.edit_media(InputMediaPhoto(photos[step], caption=texts[step], parse_mode=ParseMode.HTML), reply_markup=InlineKeyboardMarkup([row]))
+        
+        if query.message.photo: await query.message.delete()
+        await query.message.edit_text(texts[step], reply_markup=InlineKeyboardMarkup([row]), parse_mode=ParseMode.HTML)
+
+    elif data == 'main_menu':
+        if query.message.photo: await query.message.delete()
+        await query.message.edit_text(STRINGS[lang]["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+
+# --- WEB SERVER (DASHBOARD & WEBHOOK) ---
+DASHBOARD_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mubVPN Bot Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+  body { font-family: 'Inter', sans-serif; background: #050505; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; text-align: center; }
+  .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 40px; max-width: 500px; width: 100%; backdrop-filter: blur(10px); }
+  h1 { font-size: 32px; font-weight: 900; margin-bottom: 10px; background: linear-gradient(135deg, #00F5A0, #00D9F5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  p { color: rgba(255,255,255,0.6); margin-bottom: 30px; }
+  .download-btn { display: inline-flex; align-items: center; gap: 12px; background: linear-gradient(135deg, #00F5A0, #00D9F5); color: #000; font-weight: 700; padding: 16px 32px; border-radius: 100px; text-decoration: none; box-shadow: 0 10px 30px rgba(0,245,160,0.3); transition: 0.3s; }
+  .download-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,245,160,0.4); }
+  .footer { margin-top: 30px; font-size: 12px; color: rgba(255,255,255,0.2); }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🛡 mubVPN</h1>
+  <p>Android үчүн эң акыркы версиясын көчүрүп алыңыз.</p>
+  <a href="/download" class="download-btn">⬇️ Жүктөө (APK)</a>
+</div>
+<p class="footer">mubVPN © 2025 | @kl_mub</p>
+</body>
+</html>"""
+
+class BotHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/download':
+            apk_path = 'mubvpn.apk'
+            if os.path.exists(apk_path):
+                self.send_response(200); self.send_header('Content-Type', 'application/vnd.android.package-archive'); self.send_header('Content-Disposition', 'attachment; filename="mubVPN.apk"'); self.end_headers()
+                with open(apk_path, 'rb') as f: self.wfile.write(f.read())
             else:
-                await context.bot.send_photo(q.message.chat_id, photos[step], caption=texts[step], reply_markup=InlineKeyboardMarkup([row]), parse_mode=ParseMode.HTML)
-                await q.message.delete()
-        except: await q.message.edit_text(texts[step], reply_markup=InlineKeyboardMarkup([row]))
-    elif d == 'main_menu':
-        if q.message.photo: await q.message.delete()
-        await context.bot.send_message(q.message.chat_id, STRINGS[lang]["menu_back"], reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
+                self.send_response(404); self.end_headers(); self.wfile.write("APK Not Found".encode())
+            return
+        self.send_response(200); self.send_header('Content-Type', 'text/html; charset=utf-8'); self.end_headers(); self.wfile.write(DASHBOARD_HTML.encode('utf-8'))
+
+    def do_POST(self):
+        if self.path == '/webhook':
+            cl = int(self.headers['Content-Length']); data = json.loads(self.rfile.read(cl).decode())
+            status = data.get('status'); uid = data.get('additional_info') or data.get('additionalFields'); amount = float(data.get('amount', 0))
+            if status in ('success', 'paid') and uid:
+                months = 12 if amount >= 1000 else (6 if amount >= 600 else (3 if amount >= 300 else 1))
+                if firebase_set_premium(str(uid), months): log.info(f"✅ Webhook Success: {uid}")
+            self.send_response(200); self.end_headers(); self.wfile.write(b"OK")
+
+def run_server():
+    port = int(os.environ.get('PORT', 8080))
+    HTTPServer(('0.0.0.0', port), BotHandler).serve_forever()
+
+def keep_awake():
+    while True:
+        try: requests.get("https://mubvpn-bot.onrender.com", timeout=10)
+        except: pass
+        time.sleep(600)
 
 def main():
     threading.Thread(target=run_server, daemon=True).start()
+    threading.Thread(target=keep_awake, daemon=True).start()
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(handle_callback))
+    log.info("🤖 Bot is running...")
     app.run_polling()
 
 if __name__ == "__main__":
