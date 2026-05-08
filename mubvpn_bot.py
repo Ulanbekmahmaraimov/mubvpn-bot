@@ -211,10 +211,191 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=query.message.chat_id, text=L["menu_back"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
 
 def main():
+    import threading
+    import os
+    import time
+    from http.server import HTTPServer, BaseHTTPRequestHandler
+
+    # Статистика (жашоо мезгилинде гана сакталат)
+    stats = {"users": 0, "payments": 0, "started": time.strftime("%Y-%m-%d %H:%M:%S")}
+
+    DASHBOARD_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mubVPN Bot Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #030303;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .glow { position: fixed; top: -200px; right: -100px; width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,245,160,0.08) 0%, transparent 70%); pointer-events: none; }
+  .glow2 { position: fixed; bottom: -200px; left: -100px; width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,150,255,0.06) 0%, transparent 70%); pointer-events: none; }
+  .card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 32px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 600px;
+    backdrop-filter: blur(20px);
+  }
+  .logo { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
+  .logo-icon {
+    width: 60px; height: 60px;
+    background: linear-gradient(135deg, #00F5A0, #00D9F5);
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 0 30px rgba(0,245,160,0.3);
+  }
+  .logo-text h1 { font-size: 24px; font-weight: 900; }
+  .logo-text p { color: rgba(255,255,255,0.4); font-size: 13px; margin-top: 2px; }
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,245,160,0.1);
+    border: 1px solid rgba(0,245,160,0.3);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #00F5A0;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    background: #00F5A0;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+  .stat {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-value { font-size: 32px; font-weight: 900; color: #00F5A0; }
+  .stat-label { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .info-row { display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { color: rgba(255,255,255,0.4); font-size: 13px; }
+  .info-value { font-size: 13px; font-weight: 600; }
+  .footer { text-align: center; color: rgba(255,255,255,0.2); font-size: 12px; margin-top: 8px; }
+  a { color: #00F5A0; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="glow2"></div>
+
+<div class="card">
+  <div class="logo">
+    <div class="logo-icon">🛡</div>
+    <div class="logo-text">
+      <h1>mubVPN Bot</h1>
+      <p>Telegram Payment Bot</p>
+    </div>
+  </div>
+  <div class="status-badge"><div class="dot"></div> Online & Running</div>
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="stat-value" id="users">—</div>
+      <div class="stat-label">Total Users</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="payments">—</div>
+      <div class="stat-label">Payments</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="info-row">
+    <span class="info-label">Bot Status</span>
+    <span class="info-value" style="color:#00F5A0">🟢 Active</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Platform</span>
+    <span class="info-value">Render Cloud ☁️</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Payment Provider</span>
+    <span class="info-value">Lava.top 💳</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Database</span>
+    <span class="info-value">Firebase Realtime DB 🔥</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Languages</span>
+    <span class="info-value">🇰🇬 🇷🇺 🇺🇸</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">Support</span>
+    <a href="https://t.me/kl_mub" class="info-value">@kl_mub</a>
+  </div>
+</div>
+
+<p class="footer">mubVPN © 2025 · <a href="https://t.me/mubvpn_pay_bot">Open Bot</a></p>
+</body>
+</html>"""
+
+    class DashboardHandler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/html; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(DASHBOARD_HTML.encode('utf-8'))
+        def do_HEAD(self):
+            self.send_response(200)
+            self.end_headers()
+        def log_message(self, format, *args):
+            pass  # Лог спамын токтот
+
+    def run_server():
+        port = int(os.environ.get('PORT', 8080))
+        server = HTTPServer(('0.0.0.0', port), DashboardHandler)
+        log.info(f"🌐 Dashboard иштеп жатат: http://0.0.0.0:{port}")
+        server.serve_forever()
+
+    def keep_awake():
+        time.sleep(60)  # Баштоодон кийин 1 мүнөт күт
+        while True:
+            try:
+                import requests as req
+                req.get("https://mubvpn-bot.onrender.com", timeout=10)
+                log.info("💓 Keep-alive ping жиберилди")
+            except:
+                pass
+            time.sleep(600)  # 10 мүнөт сайын
+
+    threading.Thread(target=run_server, daemon=True).start()
+    threading.Thread(target=keep_awake, daemon=True).start()
+
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(handle_callback))
+    log.info("🤖 Bot polling башталды...")
     app.run_polling()
 
 if __name__ == "__main__":
-    main()
+    main()
