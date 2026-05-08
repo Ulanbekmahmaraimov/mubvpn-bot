@@ -30,13 +30,8 @@ PLANS = {
 FIREBASE_DB_URL    = "https://mubvpn-8b892-default-rtdb.firebaseio.com"
 FIREBASE_DB_SECRET = "NgRNzmtQYdgUcFWXiDRPAHAsSURVni2WaIKTw9Re"
 
-# ─── ИНСТРУКЦИЯ СҮРӨТТӨРҮ (Негизги папкада болушу керек) ───
-PHOTO_1 = "step1.jpg"
-PHOTO_2 = "step2.jpg"
-PHOTO_3 = "step3.jpg"
-PHOTO_4 = "step4.jpg"
-PHOTO_5 = "step5.jpg"
-PHOTO_6 = "step6.jpg"
+# ─── ИНСТРУКЦИЯЛАР (Сүрөтсүз, текст аркылуу) ────────────────────
+# Сүрөттөрдү жүктөөдө ката чыккандыктан, эң ишенимдүү тексттик режимге өттүк.
 
 def firebase_set_premium(uid: str, months: int) -> bool:
     """Firebase базасына Premium статусун жазат."""
@@ -84,12 +79,12 @@ STRINGS = {
         "checking": "⏳ Төлөм текшерилүүдө...",
         "success": "🎉 <b>Premium активдешти!</b>\n\nТиркемени ачып, VPN'ди колдоно бериңиз!",
         "not_found": "⚠️ Төлөм табылган жок. Төлөп бүтсөңүз, 1-2 мүнөт күтүп кайра басыңыз.",
-        "how_step_1": "🚀 1-КАДАМ: Планды тандаңыз.",
-        "how_step_2": "📧 2-КАДАМ: Тиркемедеги почтаңызды жазыңыз.",
-        "how_step_3": "💵 3-КАДАМ: Валютаны (RUB/KGS) тандаңыз.",
-        "how_step_4": "📱 4-КАДАМ: Карта маалыматын даярдаңыз.",
-        "how_step_5": "💳 5-КАДАМ: 'Оплатить' баскычын басыңыз.",
-        "how_step_6": "📱 6-КАДАМ: Банк тиркемесинен карта маалыматын көчүрүү.",
+        "how_step_1": "🚀 <b>1-КАДАМ: План тандоо</b>\n\n'Сатып алуу' баскычын басып, өзүңүзгө жаккан мөөнөттү тандаңыз (1 ай, 3 ай ж.б.). 1 жылдык план эң пайдалуу! ✅",
+        "how_step_2": "📧 <b>2-КАДАМ: Почтаны жазуу</b>\n\nТөлөм барагында электрондук почтаңызды (Email) жазыңыз. Бул сизге чек алуу жана Premium активдештирүү үчүн керек. 📩",
+        "how_step_3": "💵 <b>3-КАДАМ: Валюта тандоо</b>\n\nЭгер сиз МИР картасы (Элкарт) менен төлөсөңүз, валютаны <b>RUB</b> же <b>KGS</b> кылып тандаңыз. Бул комиссияны азайтат. 💰",
+        "how_step_4": "📱 <b>4-КАДАМ: Карта маалыматы</b>\n\nКартаңыздын номерин, мөөнөтүн жана CVC-кодун жазыңыз. Эгер маалыматтар жаныңызда жок болсо, банк тиркемесинен көчүрүп алсаңыз болот. 💳",
+        "how_step_5": "✅ <b>5-КАДАМ: Төлөмдү бүтүрүү</b>\n\n'Оплатить' баскычын басып, банктан келген SMS кодду киргизиңиз. Төлөм бүткөндө система автоматтык түрдө Premium иштетет! 🎉",
+        "how_step_6": "🛠 <b>6-КАДАМ: Текшерүү</b>\n\nТөлөп бүткөндөн кийин тиркемеге кириңиз. Эгер Premium иштебесе, боттогу 'Текшерүү' баскычын басыңыз. @kl_mub дайыма жардамга даяр! 👨‍💻",
         "menu_back": "Башкы меню:",
         "share_msg": "🛡 mubVPN - Эң тез жана коопсуз VPN!"
     },
@@ -103,12 +98,12 @@ STRINGS = {
         "checking": "⏳ Проверка платежа...",
         "success": "🎉 <b>Premium активирован!</b>\n\nОткройте приложение и пользуйтесь VPN!",
         "not_found": "⚠️ Платеж не найден. Если вы оплатили, подождите 1-2 минуты и нажмите снова.",
-        "how_step_1": "🚀 ШАГ 1: Выберите тариф.",
-        "how_step_2": "📧 ШАГ 2: Введите почту из приложения.",
-        "how_step_3": "💵 ШАГ 3: Выберите валюту (RUB/KGS).",
-        "how_step_4": "📱 ШАГ 4: Подготовьте данные карты.",
-        "how_step_5": "💳 ШАГ 5: Нажмите 'Оплатить'.",
-        "how_step_6": "📱 ШАГ 6: Копирование реквизитов из приложения банка.",
+        "how_step_1": "🚀 <b>ШАГ 1: Выбор тарифа</b>\n\nНажмите 'Купить' и выберите подходящий период (1 месяц, 1 год и т.д.). Годовой план самый выгодный! ✅",
+        "how_step_2": "📧 <b>ШАГ 2: Ввод почты</b>\n\nНа странице оплаты введите ваш Email. Это нужно для получения чека и активации Премиума. 📩",
+        "how_step_3": "💵 <b>ШАГ 3: Выбор валюты</b>\n\nПри оплате картой МИР (Элкарт) выбирайте валюту <b>RUB</b> или <b>KGS</b> для минимальной комиссии. 💰",
+        "how_step_4": "📱 <b>ШАГ 4: Данные карты</b>\n\nВведите номер карты, срок действия и CVC-код. Реквизиты можно скопировать в приложении вашего банка. 💳",
+        "how_step_5": "✅ <b>ШАГ 5: Завершение</b>\n\nНажмите 'Оплатить' и введите код из СМС. После оплаты система автоматически включит Premium! 🎉",
+        "how_step_6": "🛠 <b>ШАГ 6: Проверка</b>\n\nВернитесь в приложение. Если Premium не включился сразу, нажмите кнопку 'Проверить' в боте. @kl_mub всегда на связи! 👨‍💻",
         "menu_back": "Главное меню:",
         "share_msg": "🛡 mubVPN - Самый быстрый и безопасный VPN!"
     },
@@ -122,12 +117,12 @@ STRINGS = {
         "checking": "⏳ Checking payment...",
         "success": "🎉 <b>Premium activated!</b>\n\nOpen the app and enjoy your VPN!",
         "not_found": "⚠️ Payment not found. If you paid, wait 1-2 minutes and try again.",
-        "how_step_1": "🚀 STEP 1: Choose a plan.",
-        "how_step_2": "📧 STEP 2: Enter your email from the app.",
-        "how_step_3": "💵 STEP 3: Choose currency (RUB/KGS).",
-        "how_step_4": "📱 STEP 4: Prepare card details.",
-        "how_step_5": "💳 STEP 5: Click 'Pay'.",
-        "how_step_6": "📱 STEP 6: Copy card details from your bank app.",
+        "how_step_1": "🚀 <b>STEP 1: Choose a plan</b>\n\nClick 'Buy' and select your preferred duration. The annual plan is the most profitable! ✅",
+        "how_step_2": "📧 <b>STEP 2: Enter Email</b>\n\nEnter your email on the payment page to receive a receipt and activate Premium. 📩",
+        "how_step_3": "💵 <b>STEP 3: Choose currency</b>\n\nSelect <b>RUB</b> or <b>KGS</b> for lower fees if paying with a local bank card. 💰",
+        "how_step_4": "📱 <b>STEP 4: Card details</b>\n\nEnter your card number, expiry date, and CVC. You can find these in your bank's mobile app. 💳",
+        "how_step_5": "✅ <b>STEP 5: Complete payment</b>\n\nClick 'Pay' and enter the SMS code from your bank. Premium activates automatically! 🎉",
+        "how_step_6": "🛠 <b>STEP 6: Verification</b>\n\nCheck the app. If Premium is not active, click 'Check Payment' in the bot. @kl_mub is here to help! 👨‍💻",
         "menu_back": "Main Menu:",
         "share_msg": "🛡 mubVPN - The fastest and safest VPN!"
     }
@@ -185,7 +180,6 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data.startswith('how_'):
         step = data.split('_')[1]; L = STRINGS[lang]
-        photos = {"1": PHOTO_1, "2": PHOTO_2, "3": PHOTO_3, "4": PHOTO_4, "5": PHOTO_5, "6": PHOTO_6}
         texts = {"1": L["how_step_1"], "2": L["how_step_2"], "3": L["how_step_3"], "4": L["how_step_4"], "5": L["how_step_5"], "6": L["how_step_6"]}
 
         next_step = str(int(step) + 1) if int(step) < 6 else "menu"
@@ -200,16 +194,13 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else: row.append(InlineKeyboardButton("🏠 Menu", callback_data='main_menu'))
         kb.append(row)
 
+        if query.message.photo: await query.message.delete()
+        
         try:
-            photo_file = open(photos[step], 'rb')
-            if query.message.photo:
-                await query.message.edit_media(media=InputMediaPhoto(photo_file, caption=texts[step], parse_mode=ParseMode.HTML), reply_markup=InlineKeyboardMarkup(kb))
-            else:
-                await context.bot.send_photo(chat_id=query.message.chat_id, photo=photo_file, caption=texts[step], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
-                await query.message.delete()
-        except Exception as e:
-            log.error(f"Error sending photo: {e}")
-            await query.message.edit_text(texts[step], reply_markup=InlineKeyboardMarkup(kb))
+            await query.message.edit_text(texts[step], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+        except:
+            await context.bot.send_message(chat_id=query.message.chat_id, text=texts[step], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+            await query.message.delete()
 
     elif data == 'main_menu':
         L = STRINGS[lang]
@@ -368,6 +359,43 @@ def main():
 </html>"""
 
     class DashboardHandler(BaseHTTPRequestHandler):
+        def do_POST(self):
+            if self.path == '/webhook':
+                content_length = int(self.headers['Content-Length'])
+                post_data = self.rfile.read(content_length)
+                try:
+                    import json
+                    data = json.loads(post_data.decode('utf-8'))
+                    log.info(f"📥 Webhook келди: {data}")
+
+                    # Lava.top'тон келген маалыматтар
+                    status = data.get('status')
+                    # additional_info ичинде колдонуучунун UID номери болот
+                    uid = data.get('additional_info') or data.get('additionalFields')
+                    amount = float(data.get('amount', 0))
+
+                    if status in ('success', 'paid') and uid:
+                        # Суммасына карап планды аныктайбыз
+                        if amount >= 1000: months = 12
+                        elif amount >= 600: months = 6
+                        elif amount >= 350: months = 3
+                        else: months = 1
+                        
+                        if firebase_set_premium(str(uid), months):
+                            log.info(f"✅ Webhook аркылуу Premium иштетилди: {uid}")
+                            self.send_response(200)
+                            self.end_headers()
+                            self.wfile.write(b"OK")
+                            return
+
+                    self.send_response(400)
+                    self.end_headers()
+                except Exception as e:
+                    log.error(f"Webhook error: {e}")
+                    self.send_response(500)
+                    self.end_headers()
+                return
+
         def do_GET(self):
             if self.path == '/download':
                 apk_path = 'mubvpn.apk'
@@ -383,7 +411,7 @@ def main():
                     self.send_response(404)
                     self.send_header('Content-Type', 'text/html; charset=utf-8')
                     self.end_headers()
-                    self.wfile.write(b"<h1>APK файл табылган жок. Админге кайрылы\xd2\xa3\xd1\x8b\xd0\xb7 (@kl_mub)</h1>")
+                    self.wfile.write("<h1>APK файл табылган жок. Админге кайрылыңыз (@kl_mub)</h1>".encode('utf-8'))
                 return
 
             self.send_response(200)
