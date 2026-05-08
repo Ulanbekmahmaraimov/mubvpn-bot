@@ -30,12 +30,13 @@ PLANS = {
 FIREBASE_DB_URL    = "https://mubvpn-8b892-default-rtdb.firebaseio.com"
 FIREBASE_DB_SECRET = "NgRNzmtQYdgUcFWXiDRPAHAsSURVni2WaIKTw9Re"
 
-# ─── ИНСТРУКЦИЯ СҮРӨТТӨРҮ (URL колдонобуз, бул ишенимдүү) ───
-PHOTO_1 = "https://i.postimg.cc/8P89LdG2/image.png"  # План тандоо
-PHOTO_2 = "https://i.postimg.cc/xTfXyZzW/image.png"  # Почтаны жазуу
-PHOTO_3 = "https://i.postimg.cc/85zK09pG/image.png"  # Валюта тандоо
-PHOTO_4 = "https://i.postimg.cc/8C5YxXq0/image.png"  # Банк маалыматы
-PHOTO_5 = "https://i.postimg.cc/mD83Wfnd/image.png"  # Төлөмдү бүтүрүү
+# ─── ИНСТРУКЦИЯ СҮРӨТТӨРҮ (bot_images папкасында болушу керек) ───
+PHOTO_1 = "bot_images/step1.jpg"
+PHOTO_2 = "bot_images/step2.jpg"
+PHOTO_3 = "bot_images/step3.jpg"
+PHOTO_4 = "bot_images/step4.jpg"
+PHOTO_5 = "bot_images/step5.jpg"
+PHOTO_6 = "bot_images/step6.jpg"
 
 def firebase_set_premium(uid: str, months: int) -> bool:
     """Firebase базасына Premium статусун жазат."""
@@ -88,6 +89,7 @@ STRINGS = {
         "how_step_3": "💵 3-КАДАМ: Валютаны (RUB/KGS) тандаңыз.",
         "how_step_4": "📱 4-КАДАМ: Карта маалыматын даярдаңыз.",
         "how_step_5": "💳 5-КАДАМ: 'Оплатить' баскычын басыңыз.",
+        "how_step_6": "📱 6-КАДАМ: Банк тиркемесинен карта маалыматын көчүрүү.",
         "menu_back": "Башкы меню:",
         "share_msg": "🛡 mubVPN - Эң тез жана коопсуз VPN!"
     },
@@ -106,6 +108,7 @@ STRINGS = {
         "how_step_3": "💵 ШАГ 3: Выберите валюту (RUB/KGS).",
         "how_step_4": "📱 ШАГ 4: Подготовьте данные карты.",
         "how_step_5": "💳 ШАГ 5: Нажмите 'Оплатить'.",
+        "how_step_6": "📱 ШАГ 6: Копирование реквизитов из приложения банка.",
         "menu_back": "Главное меню:",
         "share_msg": "🛡 mubVPN - Самый быстрый и безопасный VPN!"
     },
@@ -124,6 +127,7 @@ STRINGS = {
         "how_step_3": "💵 STEP 3: Choose currency (RUB/KGS).",
         "how_step_4": "📱 STEP 4: Prepare card details.",
         "how_step_5": "💳 STEP 5: Click 'Pay'.",
+        "how_step_6": "📱 STEP 6: Copy card details from your bank app.",
         "menu_back": "Main Menu:",
         "share_msg": "🛡 mubVPN - The fastest and safest VPN!"
     }
@@ -181,10 +185,10 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data.startswith('how_'):
         step = data.split('_')[1]; L = STRINGS[lang]
-        photos = {"1": PHOTO_1, "2": PHOTO_2, "3": PHOTO_3, "4": PHOTO_4, "5": PHOTO_5}
-        texts = {"1": L["how_step_1"], "2": L["how_step_2"], "3": L["how_step_3"], "4": L["how_step_4"], "5": L["how_step_5"]}
+        photos = {"1": PHOTO_1, "2": PHOTO_2, "3": PHOTO_3, "4": PHOTO_4, "5": PHOTO_5, "6": PHOTO_6}
+        texts = {"1": L["how_step_1"], "2": L["how_step_2"], "3": L["how_step_3"], "4": L["how_step_4"], "5": L["how_step_5"], "6": L["how_step_6"]}
 
-        next_step = str(int(step) + 1) if int(step) < 5 else "menu"
+        next_step = str(int(step) + 1) if int(step) < 6 else "menu"
         back_step = str(int(step) - 1) if int(step) > 1 else "main"
 
         kb = []
@@ -197,12 +201,14 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         kb.append(row)
 
         try:
+            photo_file = open(photos[step], 'rb')
             if query.message.photo:
-                await query.message.edit_media(media=InputMediaPhoto(photos[step], caption=texts[step], parse_mode=ParseMode.HTML), reply_markup=InlineKeyboardMarkup(kb))
+                await query.message.edit_media(media=InputMediaPhoto(photo_file, caption=texts[step], parse_mode=ParseMode.HTML), reply_markup=InlineKeyboardMarkup(kb))
             else:
-                await context.bot.send_photo(chat_id=query.message.chat_id, photo=photos[step], caption=texts[step], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+                await context.bot.send_photo(chat_id=query.message.chat_id, photo=photo_file, caption=texts[step], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
                 await query.message.delete()
-        except:
+        except Exception as e:
+            log.error(f"Error sending photo: {e}")
             await query.message.edit_text(texts[step], reply_markup=InlineKeyboardMarkup(kb))
 
     elif data == 'main_menu':
@@ -301,6 +307,19 @@ def main():
   .info-value { font-size: 13px; font-weight: 600; }
   .footer { text-align: center; color: rgba(255,255,255,0.2); font-size: 12px; margin-top: 8px; }
   a { color: #00F5A0; text-decoration: none; }
+  .download-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: linear-gradient(135deg, #00F5A0, #00D9F5);
+    color: #000;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 14px 28px;
+    border-radius: 100px;
+    text-decoration: none;
+    box-shadow: 0 10px 20px rgba(0,245,160,0.2);
+    transition: all 0.3s ease;
+  }
+  .download-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(0,245,160,0.3); }
 </style>
 </head>
 <body>
@@ -311,63 +330,71 @@ def main():
   <div class="logo">
     <div class="logo-icon">🛡</div>
     <div class="logo-text">
-      <h1>mubVPN Bot</h1>
-      <p>Telegram Payment Bot</p>
+      <h1>mubVPN</h1>
+      <p>Тез жана коопсуз VPN</p>
     </div>
   </div>
-  <div class="status-badge"><div class="dot"></div> Online & Running</div>
-  <div class="stats-grid">
-    <div class="stat">
-      <div class="stat-value" id="users">—</div>
-      <div class="stat-label">Total Users</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value" id="payments">—</div>
-      <div class="stat-label">Payments</div>
-    </div>
+  <div class="status-badge"><div class="dot"></div> Активдүү / Active</div>
+  
+  <div style="margin-top: 30px; text-align: center;">
+    <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 10px;">Тиркемени Жүктөп Алуу</h2>
+    <p style="font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 20px;">
+      Android үчүн эң акыркы версиясын көчүрүп алыңыз.
+    </p>
+    <a href="/download" class="download-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      Жүктөө (APK)
+    </a>
   </div>
 </div>
 
 <div class="card">
   <div class="info-row">
-    <span class="info-label">Bot Status</span>
-    <span class="info-value" style="color:#00F5A0">🟢 Active</span>
+    <span class="info-label">Платформа</span>
+    <span class="info-value">Android 🤖</span>
   </div>
   <div class="info-row">
-    <span class="info-label">Platform</span>
-    <span class="info-value">Render Cloud ☁️</span>
+    <span class="info-label">Telegram Бот</span>
+    <a href="https://t.me/mubvpn_pay_bot" class="info-value">@mubvpn_pay_bot 🤖</a>
   </div>
   <div class="info-row">
-    <span class="info-label">Payment Provider</span>
-    <span class="info-value">Lava.top 💳</span>
-  </div>
-  <div class="info-row">
-    <span class="info-label">Database</span>
-    <span class="info-value">Firebase Realtime DB 🔥</span>
-  </div>
-  <div class="info-row">
-    <span class="info-label">Languages</span>
-    <span class="info-value">🇰🇬 🇷🇺 🇺🇸</span>
-  </div>
-  <div class="info-row">
-    <span class="info-label">Support</span>
-    <a href="https://t.me/kl_mub" class="info-value">@kl_mub</a>
+    <span class="info-label">Колдоо</span>
+    <a href="https://t.me/kl_mub" class="info-value">@kl_mub 👨‍💻</a>
   </div>
 </div>
 
-<p class="footer">mubVPN © 2025 · <a href="https://t.me/mubvpn_pay_bot">Open Bot</a></p>
+<p class="footer">mubVPN © 2025</p>
 </body>
 </html>"""
 
     class DashboardHandler(BaseHTTPRequestHandler):
         def do_GET(self):
+            if self.path == '/download':
+                apk_path = 'mubvpn.apk'
+                if os.path.exists(apk_path):
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/vnd.android.package-archive')
+                    self.send_header('Content-Disposition', 'attachment; filename="mubVPN.apk"')
+                    self.send_header('Content-Length', str(os.path.getsize(apk_path)))
+                    self.end_headers()
+                    with open(apk_path, 'rb') as f:
+                        self.wfile.write(f.read())
+                else:
+                    self.send_response(404)
+                    self.send_header('Content-Type', 'text/html; charset=utf-8')
+                    self.end_headers()
+                    self.wfile.write(b"<h1>APK файл табылган жок. Админге кайрылы\xd2\xa3\xd1\x8b\xd0\xb7 (@kl_mub)</h1>")
+                return
+
             self.send_response(200)
             self.send_header('Content-Type', 'text/html; charset=utf-8')
             self.end_headers()
             self.wfile.write(DASHBOARD_HTML.encode('utf-8'))
+        
         def do_HEAD(self):
             self.send_response(200)
             self.end_headers()
+            
         def log_message(self, format, *args):
             pass  # Лог спамын токтот
 
