@@ -12,7 +12,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppI
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 from telegram.constants import ParseMode
 
-# --- ЖӨНДӨӨЛӨР ---
+# --- CONFIG ---
 BOT_TOKEN    = "8400265569:AAHQ21_zNVS3XPDlMoE9I8TW0JwaIaUuA1s"
 LAVA_API     = "cUPUZBNvxATjd5ou8oodPIozLGb7dqzZx5eDYdYbkctCV9eRJBaDWpJKAkp8Bp8m"
 SUPPORT_URL  = "https://t.me/kl_mub"
@@ -25,7 +25,7 @@ WELCOME_PHOTO      = "https://raw.githubusercontent.com/Ulanbekmahmaraimov/mubvp
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
-# --- ФУНКЦИЯЛАР ---
+# --- HELPERS ---
 def firebase_set_premium(uid: str, months: int) -> bool:
     try:
         expiry = (datetime.now() + timedelta(days=months * 30)).isoformat()
@@ -36,7 +36,7 @@ def firebase_set_premium(uid: str, months: int) -> bool:
         log.error(f"Firebase error: {e}")
         return False
 
-# --- БОТТУН ТЕКСТТЕРИ ---
+# --- STRINGS ---
 STRINGS = {
     "ky": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nЭң тез жана коопсуз интернетке жол ачыңыз. Төлөм жүргүзүү же тиркемени жүктөө үчүн төмөнкү баскычтарды колдонуңуз:",
@@ -82,7 +82,7 @@ STRINGS = {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nEng tezkor va xavfsiz internetga ega bo'ling. To'lov qilish yoki ilovani yuklab olish uchun quyidagi tugmalardan foydalaning:",
         "btn_pay": "💳 Sotib olish", "btn_how": "📖 Qanday to'lash kerak?",
         "btn_download": "🚀 Ilovani yuklab olish",
-        "btn_support": "👨‍💻 Qo'llab-quvvatlash", "btn_share": "🤝 Ulashish",
+        "btn_support": "👨 staff-💻 Qo'llab-quvvatlash", "btn_share": "🤝 Ulashish",
         "pay_text": "💳 <b>To'lovga o'tish</b>\n\nTo'lov Telegram ichida xavfsiz amalga oshiriladi:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Orqaga", "next": "Keyingi ➡️",
         "check_btn": "✅ To'ladim (Tekshirish)",
@@ -102,7 +102,7 @@ STRINGS = {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nБа интернети зудтарин ва бехатар дастрасӣ пайдо кунед. Барои пардохт ё боргирии барнома аз тугмаҳои зерин истифода баред:",
         "btn_pay": "💳 Харидан", "btn_how": "📖 Чӣ тавр бояд пардохт кард?",
         "btn_download": "🚀 Боргирии барнома",
-        "btn_support": "👨‍💻 Дастгирӣ", "btn_share": "🤝 Ирсол",
+        "btn_support": "👨 staff-💻 Дастгирӣ", "btn_share": "🤝 Ирсол",
         "pay_text": "💳 <b>Гузаштан ба пардохт</b>\n\nПардохт дар дохили Telegram бехатар мегузарад:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Ба ақиб", "next": "Оянда ➡️",
         "check_btn": "✅ Ман пардохт кардам (Санҷиш)",
@@ -122,7 +122,7 @@ STRINGS = {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nЕң жылдам және қауіпсіз интернетке жол ашыңыз. Төлөм жасау немесе қосымшаны жүктеу үчүн төмендеге батырмаларды қолданыңыз:",
         "btn_pay": "💳 Сатып алу", "btn_how": "📖 Қалай төлеу керек?",
         "btn_download": "🚀 Қосымшаны жүктеу",
-        "btn_support": "👨‍💻 Қолдау", "btn_share": "🤝 Бөлісу",
+        "btn_support": "👨 staff-💻 Қолдау", "btn_share": "🤝 Бөлісу",
         "pay_text": "💳 <b>Төлемге өту</b>\n\nТөлем Telegram ішінде қауіпсіз өтеді:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Артқа", "next": "Келесі ➡️",
         "check_btn": "✅ Төледім (Тексеру)",
@@ -135,14 +135,14 @@ STRINGS = {
         "how_step_4": "📱 <b>4-ҚАДАМ: Карта мәліметтері</b>\n\nКарта нөмірін жана CVC-кодты енгізіңіз. 💳",
         "how_step_5": "✅ <b>5-ҚАДАМ: Аяқтау</b>\n\n'Төлеу' батырмасын басып, СМС кодты енгізіңіз. 🎉",
         "how_step_6": "🛠 <b>6-ҚАДАМ: Тексеру</b>\n\nЕгер жұмыс істемесе, боттағы 'Тексеру' батырмасын басыңыз. @kl_mub көмектеседі! 👨‍💻",
-        "menu_back": "Басты мәзір:", "share_msg": "🚀 mubVPN — Android үчүн ең жылдам жана қауіпсіз VPN!\n\n✅ Блоктауларды айналып өтеді\n✅ Деректерді қорғайды\n✅ Шектеусіз интернет\n\nҚазір жүктеп ал! 👇",
+        "menu_back": "Басты мәзір:", "share_msg": "🚀 mubVPN — Android үшін ең жылдам жана қауіпсіз VPN!\n\n✅ Блоктауларды айналып өтеді\n✅ Деректерді қорғайды\n✅ Шектеусіз интернет\n\nҚазір жүктеп ал! 👇",
         "share_title": "🤝 <b>Бөлісу:</b>", "btn_share_now": "📲 Бөлісу"
     },
     "tr": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nEn hızlı ve en güvenli internetin keyfini çıkarın. Ödeme yapmak veya uygulamayı indirmek için aşağıdaki butonları kullanın:",
         "btn_pay": "💳 Satın Al", "btn_how": "📖 Nasıl ödenir?",
         "btn_download": "🚀 Uygulamayı İndir",
-        "btn_support": "👨‍💻 Destek", "btn_share": "🤝 Paylaş",
+        "btn_support": "👨 staff-💻 Destek", "btn_share": "🤝 Paylaş",
         "pay_text": "💳 <b>Ödemeye Geç</b>\n\nÖdeme Telegram içinde güvenli bir şekilde yapılır:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Geri", "next": "İleri ➡️",
         "check_btn": "✅ Ödedim (Kontrol Et)",
@@ -162,7 +162,7 @@ STRINGS = {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nUnlock the fastest and most secure internet access. Use the buttons below to pay or download the application:",
         "btn_pay": "💳 Buy", "btn_how": "📖 How to pay?",
         "btn_download": "🚀 Download App",
-        "btn_support": "👨‍💻 Support", "btn_share": "🤝 Share",
+        "btn_support": "👨 staff-💻 Support", "btn_share": "🤝 Share",
         "pay_text": "💳 <b>Proceed to Payment</b>\n\nThe payment is secure within Telegram:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Back", "next": "Next ➡️",
         "check_btn": "✅ I have paid (Check)",
@@ -174,13 +174,13 @@ STRINGS = {
         "how_step_3": "💵 <b>STEP 3: Choose currency</b>\n\nChoose <b>RUB</b> or <b>KGS</b> for minimum commission. 💰",
         "how_step_4": "📱 <b>STEP 4: Card details</b>\n\nEnter card number and CVC code. 💳",
         "how_step_5": "✅ <b>STEP 5: Complete</b>\n\nClick 'Pay' and enter the SMS code. 🎉",
-        "how_step_6": "🛠 <b>STEP 6: Verification</b>\n\nCheck the app. If not active, click 'Check' in the bot. @kl_mub is here to help! 👨‍💻",
+        "how_step_6": "🛠 <b>STEP 6: Verification</b>\n\nCheck the app. If not active, click 'Check' in the bot. @kl_mub is here to help! 👨 staff-💻",
         "menu_back": "Main Menu:", "share_msg": "🚀 mubVPN — The fastest and safest VPN for Android!\n\n✅ Bypasses all blocks\n✅ Protects your data\n✅ Unlimited Internet\n\nDownload now! 👇",
         "share_title": "🤝 <b>Share:</b>", "btn_share_now": "📲 Share"
     }
 }
 
-# --- КЛАВИАТУРАЛАР ---
+# --- KEYBOARDS ---
 def get_lang_keyboard():
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("🇰🇬 Кыргызча", callback_data='set_lang_ky'), InlineKeyboardButton("🇷🇺 Русский", callback_data='set_lang_ru')],
@@ -199,7 +199,7 @@ def get_main_keyboard(lang):
         [InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)]
     ])
 
-# --- КОМАНДАЛАР ---
+# --- COMMANDS ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if context.args: context.user_data['uid'] = context.args[0]
     text = "🌐 Choose language / Тилди тандаңыз / Выберите язык:"
@@ -289,7 +289,7 @@ def get_dashboard_html(lang):
             'f3_t': 'Android-first', 'f3_d': 'Оптимизированный интерфейс.',
             'steps_title': 'Установка за 3 шага',
             's1_t': 'Скачайте файл', 's1_d': 'Нажмите кнопку загрузки и дождитесь APK.',
-            's2_t': 'Установите APK', 's2_d': 'Открывайте файл и подтвердите установку.',
+            's2_t': 'Установите APK', 's2_d': 'Откройте файл и подтвердите установку.',
             's3_t': 'Пользуйтесь!', 's3_d': 'Запустите приложение и включите защиту.'
         },
         'uz': {
@@ -363,37 +363,106 @@ def get_dashboard_html(lang):
     return f"""<!DOCTYPE html>
 <html lang="{lang}">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{t['h1']}</title>
-<meta property="og:type" content="website">
-<meta property="og:title" content="🛡 {t['h1']}">
-<meta property="og:description" content="{t['sub']}">
-<meta property="og:image" content="{WELCOME_PHOTO}">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="{WELCOME_PHOTO}">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-  body {{ font-family: 'Inter', sans-serif; background-color: #03060a; color: #fff; line-height: 1.6; padding: 20px; }}
-  .container {{ max-width: 800px; margin: 0 auto; text-align: center; }}
-  header {{ padding: 40px 0; }}
-  .logo {{ font-weight: 900; font-size: 32px; color: #00E5A0; }}
-  .hero {{ background: rgba(255,255,255,0.05); padding: 60px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px; }}
-  h1 {{ font-size: 36px; margin-bottom: 20px; }}
-  p {{ color: rgba(255,255,255,0.6); margin-bottom: 40px; }}
-  .btn-download {{ display: inline-block; background: #00E5A0; color: #000; padding: 15px 40px; border-radius: 15px; text-decoration: none; font-weight: 900; font-size: 18px; }}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{t['h1']}</title>
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="🛡 {t['h1']}">
+    <meta property="og:description" content="{t['sub']}">
+    <meta property="og:image" content="{WELCOME_PHOTO}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="{WELCOME_PHOTO}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+        body {{ font-family: 'Inter', sans-serif; background-color: #03060a; color: #fff; line-height: 1.6; overflow-x: hidden; }}
+        .bg-glow {{ position: fixed; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0,229,160,0.1) 0%, rgba(0,0,0,0) 70%); top: -200px; right: -200px; z-index: -1; }}
+        .bg-glow-2 {{ position: fixed; width: 500px; height: 500px; background: radial-gradient(circle, rgba(0,102,255,0.08) 0%, rgba(0,0,0,0) 70%); bottom: -150px; left: -150px; z-index: -1; }}
+        .container {{ max-width: 1000px; margin: 0 auto; padding: 20px; }}
+        header {{ padding: 40px 0; display: flex; justify-content: center; align-items: center; }}
+        .logo {{ font-weight: 900; font-size: 32px; letter-spacing: -1px; color: #fff; display: flex; align-items: center; gap: 10px; }}
+        .logo span {{ color: #00E5A0; }}
+        .hero {{ background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); border-radius: 40px; padding: 80px 40px; margin-bottom: 40px; position: relative; overflow: hidden; }}
+        .hero::before {{ content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,229,160,0.3), transparent); }}
+        h1 {{ font-size: clamp(32px, 5vw, 56px); font-weight: 900; line-height: 1.1; margin-bottom: 24px; background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.5) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }}
+        .sub {{ font-size: 18px; color: rgba(255,255,255,0.6); max-width: 600px; margin: 0 auto 40px; white-space: pre-line; }}
+        .btn-download {{ display: inline-flex; align-items: center; gap: 12px; background: #00E5A0; color: #000; padding: 20px 48px; border-radius: 20px; text-decoration: none; font-weight: 900; font-size: 20px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 20px 40px rgba(0,229,160,0.2); }}
+        .btn-download:hover {{ transform: translateY(-5px) scale(1.02); box-shadow: 0 30px 60px rgba(0,229,160,0.3); background: #00ffb3; }}
+        .features {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 60px; }}
+        .f-card {{ background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 30px; padding: 32px; text-align: left; transition: all 0.3s ease; }}
+        .f-card:hover {{ background: rgba(255,255,255,0.04); border-color: rgba(0,229,160,0.2); transform: translateY(-5px); }}
+        .f-icon {{ width: 48px; height: 48px; background: rgba(0,229,160,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: #00E5A0; font-size: 24px; }}
+        .f-card h3 {{ font-size: 20px; margin-bottom: 12px; font-weight: 700; }}
+        .f-card p {{ color: rgba(255,255,255,0.5); font-size: 15px; }}
+        .steps-section {{ padding: 60px 0; }}
+        .steps-section h2 {{ font-size: 32px; margin-bottom: 48px; font-weight: 800; }}
+        .steps-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; position: relative; }}
+        .step-item {{ position: relative; }}
+        .step-num {{ font-size: 80px; font-weight: 900; color: rgba(0,229,160,0.05); position: absolute; top: -40px; left: 0; z-index: -1; }}
+        .step-item h4 {{ font-size: 22px; margin-bottom: 12px; font-weight: 700; color: #00E5A0; }}
+        .footer {{ padding: 60px 0; border-top: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.3); font-size: 14px; }}
+        @media (max-width: 600px) {{
+            .hero {{ padding: 60px 20px; border-radius: 30px; }}
+            .btn-download {{ width: 100%; justify-content: center; }}
+        }}
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header><div class="logo">mubVPN</div></header>
-    <section class="hero">
-      <h1>{t['h1']}</h1>
-      <p>{t['sub']}</p>
-      <a href="/download" class="btn-download">{t['btn_dl']}</a>
-    </section>
-  </div>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+    <div class="container">
+        <header>
+            <div class="logo">mub<span>VPN</span></div>
+        </header>
+        <section class="hero">
+            <h1>{t['h1']}</h1>
+            <p class="sub">{t['sub']}</p>
+            <a href="/download" class="btn-download">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                {t['btn_dl']}
+            </a>
+        </section>
+        <div class="features">
+            <div class="f-card">
+                <div class="f-icon">✦</div>
+                <h3>{t['f1_t']}</h3>
+                <p>{t['f1_d']}</p>
+            </div>
+            <div class="f-card">
+                <div class="f-icon">🛡</div>
+                <h3>{t['f2_t']}</h3>
+                <p>{t['f2_d']}</p>
+            </div>
+            <div class="f-card">
+                <div class="f-icon">📱</div>
+                <h3>{t['f3_t']}</h3>
+                <p>{t['f3_d']}</p>
+            </div>
+        </div>
+        <section class="steps-section">
+            <h2>{t['steps_title']}</h2>
+            <div class="steps-grid">
+                <div class="step-item">
+                    <div class="step-num">01</div>
+                    <h4>{t['s1_t']}</h4>
+                    <p>{t['s1_d']}</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">02</div>
+                    <h4>{t['s2_t']}</h4>
+                    <p>{t['s2_d']}</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">03</div>
+                    <h4>{t['s3_t']}</h4>
+                    <p>{t['s3_d']}</p>
+                </div>
+            </div>
+        </section>
+        <footer class="footer">
+            &copy; 2026 mubVPN Core. All rights reserved.
+        </footer>
+    </div>
 </body>
 </html>"""
 
