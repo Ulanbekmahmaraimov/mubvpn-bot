@@ -1,40 +1,77 @@
-import logging
-import os
-import json
-import requests
-import threading
-import time
-import html
-from datetime import datetime, timedelta
-from http.server import HTTPServer, BaseHTTPRequestHandler
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo, InputMediaPhoto
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
-from telegram.constants import ParseMode
-
-# --- ЖӨНДӨӨЛӨР ---
-BOT_TOKEN    = "8400265569:AAHQ21_zNVS3XPDlMoE9I8TW0JwaIaUuA1s"
-LAVA_API     = "cUPUZBNvxATjd5ou8oodPIozLGb7dqzZx5eDYdYbkctCV9eRJBaDWpJKAkp8Bp8m"
-SUPPORT_URL  = "https://t.me/kl_mub"
-LAVA_MAIN_URL = "https://app.lava.top/products/db3d18c8-01e5-40f2-bf0a-e01842697312/8a98aa1a-78d0-4291-bf1e-6c143668cf15?currency=RUB"
-
-FIREBASE_DB_URL    = "https://mubvpn-8b892-default-rtdb.firebaseio.com"
-FIREBASE_DB_SECRET = "NgRNzmtQYdgUcFWXiDRPAHAsSURVni2WaIKTw9Re"
-
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-log = logging.getLogger(__name__)
-
-# --- ФУНКЦИЯЛАР ---
-def firebase_set_premium(uid: str, months: int) -> bool:
-    try:
-        expiry = (datetime.now() + timedelta(days=months * 30)).isoformat()
-        url = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
-        resp = requests.patch(url, json={"premium_expiry": expiry, "is_paid": True})
-        return resp.status_code == 200
-    except Exception as e:
-        log.error(f"Firebase error: {e}")
-        return False
-
-# --- БОТТУН ТЕКСТТЕРИ ---
+import logging
+
+import os
+
+import json
+
+import requests
+
+import threading
+
+import time
+
+import html
+
+from datetime import datetime, timedelta
+
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo, InputMediaPhoto
+
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+
+from telegram.constants import ParseMode
+
+
+
+# --- ЖӨНДӨӨЛӨР ---
+
+BOT_TOKEN    = "8400265569:AAHQ21_zNVS3XPDlMoE9I8TW0JwaIaUuA1s"
+
+LAVA_API     = "cUPUZBNvxATjd5ou8oodPIozLGb7dqzZx5eDYdYbkctCV9eRJBaDWpJKAkp8Bp8m"
+
+SUPPORT_URL  = "https://t.me/kl_mub"
+
+LAVA_MAIN_URL = "https://app.lava.top/products/db3d18c8-01e5-40f2-bf0a-e01842697312/8a98aa1a-78d0-4291-bf1e-6c143668cf15?currency=RUB"
+
+
+
+FIREBASE_DB_URL    = "https://mubvpn-8b892-default-rtdb.firebaseio.com"
+
+FIREBASE_DB_SECRET = "NgRNzmtQYdgUcFWXiDRPAHAsSURVni2WaIKTw9Re"
+
+
+
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+log = logging.getLogger(__name__)
+
+
+
+# --- ФУНКЦИЯЛАР ---
+
+def firebase_set_premium(uid: str, months: int) -> bool:
+
+    try:
+
+        expiry = (datetime.now() + timedelta(days=months * 30)).isoformat()
+
+        url = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
+
+        resp = requests.patch(url, json={"premium_expiry": expiry, "is_paid": True})
+
+        return resp.status_code == 200
+
+    except Exception as e:
+
+        log.error(f"Firebase error: {e}")
+
+        return False
+
+
+
+# --- БОТТУН ТЕКСТТЕРИ ---
+
 STRINGS = {
     "ky": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nЭң тез жана коопсуз интернетке жол ачыңыз. Төлөм жүргүзүү же тиркемени жүктөө үчүн төмөнкү баскычтарды колдонуңуз:",
@@ -178,563 +215,1130 @@ STRINGS = {
     }
 }
 
-# --- КЛАВИАТУРАЛАР ---
-def get_lang_keyboard():
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🇰🇬 Кыргызча", callback_data='set_lang_ky'), InlineKeyboardButton("🇷🇺 Русский", callback_data='set_lang_ru')],
-        [InlineKeyboardButton("🇺🇿 O'zbekcha", callback_data='set_lang_uz'), InlineKeyboardButton("🇹🇯 Тоҷикӣ", callback_data='set_lang_tg')],
-        [InlineKeyboardButton("🇰🇿 Қазақша", callback_data='set_lang_kk'), InlineKeyboardButton("🇹🇷 Türkçe", callback_data='set_lang_tr')],
-        [InlineKeyboardButton("🇺🇸 English", callback_data='set_lang_en')]
-    ])
-
-def get_main_keyboard(lang):
-    L = STRINGS[lang]
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton(L["btn_download"], url=f'https://mubvpn-bot.onrender.com/?lang={lang}')],
-        [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')], 
-        [InlineKeyboardButton(L["btn_how"], callback_data='how_1')], 
-        [InlineKeyboardButton(L["btn_share"], callback_data='share_app')], 
-        [InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)]
-    ])
-
-# --- КОМАНДАЛАР ---
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if context.args: context.user_data['uid'] = context.args[0]
-    text = "🌐 Choose language / Тилди тандаңыз / Выберите язык:"
-    if update.message: await update.message.reply_text(text, reply_markup=get_lang_keyboard())
-    else: await update.callback_query.message.edit_text(text, reply_markup=get_lang_keyboard())
-
-async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query; await query.answer()
-    data = query.data; lang = context.user_data.get('lang', 'ru')
-
-    if data.startswith('set_lang_'):
-        lang = data.split('_')[2]; context.user_data['lang'] = lang
-        await query.message.edit_text(STRINGS[lang]["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
-
-    elif data == 'pay_menu':
-        L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
-        # Шилтемеге UID кошуу (эгер '?' бар болсо '&' колдонобуз)
-        separator = '&' if '?' in LAVA_MAIN_URL else '?'
-        link = f"{LAVA_MAIN_URL}{separator}additional_info={uid}"
-        kb = [[InlineKeyboardButton(L["pay_btn_link"], web_app=WebAppInfo(url=link))], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
-        await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
-
-    elif data == 'share_app':
-        L = STRINGS[lang]
-        # Боттун шилтемесин эмес, Render сайтынын шилтемесин бөлүшөбүз (ал сүрөтү менен чыгат)
-        share_url = f"https://t.me/share/url?url=https://mubvpn-bot.onrender.com/?lang={lang}&text={html.escape(L['share_msg'])}"
-        kb = [[InlineKeyboardButton(L["btn_share_now"], url=share_url)], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
-        await query.message.edit_text(L["share_title"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
-
-    elif data.startswith('how_'):
-        step = data.split('_')[1]; L = STRINGS[lang]
-        texts = {"1": L["how_step_1"], "2": L["how_step_2"], "3": L["how_step_3"], "4": L["how_step_4"], "5": L["how_step_5"], "6": L["how_step_6"]}
-        nxt = str(int(step)+1) if int(step) < 6 else "menu"
-        prv = str(int(step)-1) if int(step) > 1 else "main"
-        row = [InlineKeyboardButton(L["back"], callback_data='main_menu' if prv=="main" else f'how_{prv}')]
-        if nxt != "menu": row.append(InlineKeyboardButton(L["next"], callback_data=f'how_{nxt}'))
-        
-        if query.message.photo: await query.message.delete()
-        await query.message.edit_text(texts[step], reply_markup=InlineKeyboardMarkup([row]), parse_mode=ParseMode.HTML)
-
-    elif data == 'main_menu':
-        if query.message.photo: await query.message.delete()
-        await query.message.edit_text(STRINGS[lang]["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
-
-# --- WEB SERVER (DASHBOARD & WEBHOOK) ---
-def get_dashboard_html(lang):
-    texts = {
-        'ky': {
-            'h1': 'mubVPN — Android үчүн тез жана коопсуз VPN',
-            'sub': '🚀 mubVPN — чектөөсүз интернетке коопсуз жол!\n\n✅ Блоктоолорду айланып өтөт\n✅ Маалыматтарды ишенимдүү шифрлейт\n✅ Бир таптоо менен туташуу\n✅ Жогорку ылдамдык\n\nАзыр жүктөп алып, эркиндиктен ырахат алыңыз! 👇',
-            'btn_dl': 'Android үчүн жүктөө',
-            'features_title': 'Эмне үчүн mubVPN тандашат?',
-            'f1_t': 'Smart Route', 'f1_d': 'Ылдам иштөө үчүн автоматтык жол тандоо.',
-            'f2_t': 'Коопсуздук', 'f2_d': 'Маалыматтарыңызды шифрлөө менен коргойт.',
-            'f3_t': 'Android үчүн', 'f3_d': 'Заманбап интерфейс.',
-            'steps_title': 'Орнотуу 3 кадамда',
-            's1_t': 'Жүктөп алыңыз', 's1_d': 'Жүктөө баскычын басып, APK күтүңүз.',
-            's2_t': 'Орнотуңуз', 's2_d': 'Файлды ачып, орнотууну ырастаңыз.',
-            's3_t': 'Туташыңыз', 's3_d': 'Тиркемени ачып, коргоону иштетиңиз.'
-        },
-        'ru': {
-            'h1': 'mubVPN — Быстрый и безопасный VPN для Android',
-            'sub': '🚀 mubVPN — ваш безопасный доступ к любимым сервисам без ограничений!\n\n✅ Обходит любые блокировки\n✅ Надежно защищает ваши данные\n✅ Подключение в один тап\n✅ Высокая и стабильная скорость\n\nСкачай и пользуйся без ограничений уже сейчас! 👇',
-            'btn_dl': 'Скачать для Android',
-            'features_title': 'Почему выбирают mubVPN?',
-            'f1_t': 'Smart Route', 'f1_d': 'Автоподбор лучшего маршрута.',
-            'f2_t': 'Безопасность', 'f2_d': 'Шифрование и полная анонимность.',
-            'f3_t': 'Android-first', 'f3_d': 'Оптимизированный интерфейс.',
-            'steps_title': 'Установка за 3 шага',
-            's1_t': 'Скачайте файл', 's1_d': 'Нажмите кнопку загрузки и дождитесь APK.',
-            's2_t': 'Установите APK', 's2_d': 'Откройте файл и подтвердите установку.',
-            's3_t': 'Пользуйтесь!', 's3_d': 'Запустите приложение и включите защиту.'
-        },
-        'uz': {
-            'h1': 'mubVPN — Android uchun tezkor va xavfsiz VPN',
-            'sub': '🚀 mubVPN — sevimli xizmatlaringizga cheklovlarsiz xavfsiz kirish!\n\n✅ Toʻsiqlarni aylanib oʻtadi\n✅ Maʼlumotlaringizni xavfsiz himoya qiladi\n✅ Bir marta bosish bilan ulanish\n✅ Yuqori va barqaror tezlik\n\nHoziroq yuklab oling va cheklovsiz foydalaning! 👇',
-            'btn_dl': 'Android uchun yuklash',
-            'features_title': 'Nima uchun mubVPN?',
-            'f1_t': 'Smart Route', 'f1_d': 'Tezlik uchun eng yaxshi yoʻnalish.',
-            'f2_t': 'Xavfsizlik', 'f2_d': 'Maʼlumotlarni shifrlash.',
-            'f3_t': 'Android-first', 'f3_d': 'Qulay interfeys.',
-            'steps_title': '3 qadamda oʻrnatish',
-            's1_t': 'Yuklab oling', 's1_d': 'Tugmani bosing va APKni kuting.',
-            's2_t': 'Oʻrnating', 's2_d': 'Faylni oching va tasdiqlang.',
-            's3_t': 'Ulaning', 's3_d': 'Ilovani oching va himoyani yoqing.'
-        },
-        'tg': {
-            'h1': 'mubVPN — VPN-и тез ва бехатар барои Android',
-            'sub': '🚀 mubVPN — дастрасии бехатари шумо ба хидматҳои дӯстдошта бе маҳдудият!\n\n✅ Маҳдудиятҳоро давр мезанад\n✅ Маълумоти шуморо боэътимод ҳифз мекунад\n✅ Пайвастшавӣ бо як клик\n✅ Суръати баланд ва устувор\n\nHоло боргирӣ кунед ва истифода баред! 👇',
-            'btn_dl': 'Боргирӣ барои Android',
-            'features_title': 'Чаро mubVPN?',
-            'f1_t': 'Smart Route', 'f1_d': 'Интихоби автоматии масир.',
-            'f2_t': 'Бехатарӣ', 'f2_d': 'Рамзгузории додаҳо.',
-            'f3_t': 'Android-first', 'f3_d': 'Интерфейси зебо.',
-            'steps_title': 'Насб дар 3 марҳила',
-            's1_t': 'Боргирӣ кунед', 's1_d': 'Тугмаро пахш кунед ва APK-ро интизор шавед.',
-            's2_t': 'Насб кунед', 's2_d': 'Файлро кушоед ва тасдиқ кунед.',
-            's3_t': 'Истифода баред!', 's3_d': 'Барномаро оғоз кунед ва муҳофизатро фаъол кунед.'
-        },
-        'kk': {
-            'h1': 'mubVPN — Android үшін жылдам және қауіпсіз VPN',
-            'sub': '🚀 mubVPN — сүйікті қызметтеріңізге шектеусіз қауіпсіз кіру!\n\n✅ Блоктауларды айналып өтеді\n✅ Деректеріңізді сенімді қорғайды\n✅ Бір рет басу арқылы қосылу\n✅ Жоғары және тұрақты жылдамдық\n\nҚазір жүктеп алыңыз және шектеусіз пайдаланыңыз! 👇',
-            'btn_dl': 'Android үшін жүктеу',
-            'features_title': 'Неліктен mubVPN?',
-            'f1_t': 'Smart Route', 'f1_d': 'Ең жақсы жолды таңдау.',
-            'f2_t': 'Қауіпсіздік', 'f2_d': 'Деректерді шифрлау.',
-            'f3_t': 'Android-first', 'f3_d': 'Ыңғайлы интерфейс.',
-            'steps_title': '3 қадамда орнату',
-            's1_t': 'Жүктеп алыңыз', 's1_d': 'Батырманы басып, APK күтіңіз.',
-            's2_t': 'Орнатыңыз', 's2_d': 'Файлды ашып, растаңыз.',
-            's3_t': 'Қосылыңыз!', 's3_d': 'Қорғауды қосыңыз.'
-        },
-        'tr': {
-            'h1': 'mubVPN — Android için Hızlı и Güvenli VPN',
-            'sub': '🚀 mubVPN — favori hizmetlerinize kısıtlama olmadan güvenli erişim!\n\n✅ Tüm engelleri aşar\n✅ Verilerinizi güvenle korur\n✅ Tek dokunuşla bağlantı\n✅ Yüksek ve istikrarlı hız\n\nHemen indirin ve özgürlüğün tadını çıkarın! 👇',
-            'btn_dl': 'Android için İndir',
-            'features_title': 'Neden mubVPN?',
-            'f1_t': 'Smart Route', 'f1_d': 'En iyi rotanın otomatik seçimi.',
-            'f2_t': 'Güvenlik', 'f2_d': 'Veri şifreleme.',
-            'f3_t': 'Android-first', 'f3_d': 'Optimize arayüz.',
-            'steps_title': '3 Adımda Kurulum',
-            's1_t': 'Dosyayı İndir', 's1_d': 'Düğmeye basın ve APKyı bekleyin.',
-            's2_t': 'Kurulumu Yap', 's2_d': 'Dosyayı açın ve onaylayın.',
-            's3_t': 'Kullanmaya Başla!', 's3_d': 'Korumayı açın.'
-        },
-        'en': {
-            'h1': 'mubVPN — Fast & Secure VPN for Android',
-            'sub': '🚀 mubVPN — your secure access to favorite services without limits!\n\n✅ Bypasses all restrictions\n✅ Reliability protects your data\n✅ One-tap connection\n✅ High and stable speed\n\nDownload and use without limits now! 👇',
-            'btn_dl': 'Download for Android',
-            'features_title': 'Why choose mubVPN?',
-            'f1_t': 'Smart Route', 'f1_d': 'Auto-selection of the best route.',
-            'f2_t': 'Security', 'f2_d': 'End-to-end encryption.',
-            'f3_t': 'Android-first', 'f3_d': 'Sleek interface.',
-            'steps_title': 'Setup in 3 steps',
-            's1_t': 'Download', 's1_d': 'Click download and wait for the APK.',
-            's2_t': 'Install', 's2_d': 'Open the file and confirm.',
-            's3_t': 'Connect', 's3_d': 'Enjoy freedom.'
-        }
-    }
-    t = texts.get(lang, texts['ru'])
-    
-    return f"""<!DOCTYPE html>
-<html lang="{lang}">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{t['h1']}</title>
-<!-- Open Graph / Social Media Preview -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://mubvpn-bot.onrender.com/">
-<meta property="og:title" content="🛡 {t['h1']}">
-<meta property="og:description" content="{t['sub']}">
-<meta property="og:image" content="https://raw.githubusercontent.com/Ulanbekmahmaraimov/mubvpn-bot/main/assets/preview.png">
-<meta property="og:image:secure_url" content="https://raw.githubusercontent.com/Ulanbekmahmaraimov/mubvpn-bot/main/assets/preview.png">
-<meta property="og:image:type" content="image/png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="🛡 {t['h1']}">
-<meta name="twitter:description" content="{t['sub']}">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/Ulanbekmahmaraimov/mubvpn-bot/main/assets/preview.png">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-  
-  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-  
-  body {{ 
-    font-family: 'Inter', sans-serif; 
-    background-color: #03060a; 
-    color: #fff; 
-    line-height: 1.6;
-    overflow-x: hidden;
-    position: relative;
-    min-height: 100vh;
-  }}
-
-  .container {{
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 24px;
-    position: relative;
-    z-index: 10;
-  }}
-
-  /* Ultra Premium Background Orbs */
-  .bg-orb {{
-    position: fixed; border-radius: 50%; z-index: 0; filter: blur(100px); opacity: 0.35;
-    animation: orbMove 20s infinite alternate cubic-bezier(0.45, 0, 0.55, 1);
-  }}
-  .orb-1 {{ width: 600px; height: 600px; background: #00E5A0; top: -200px; right: -100px; animation-duration: 15s; }}
-  .orb-2 {{ width: 500px; height: 500px; background: #00896A; bottom: -150px; left: -150px; animation-duration: 25s; }}
-  .orb-3 {{ width: 300px; height: 300px; background: #004d40; top: 40%; left: 30%; opacity: 0.2; }}
-
-  @keyframes orbMove {{
-    0% {{ transform: translate(0, 0) scale(1); }}
-    100% {{ transform: translate(50px, 50px) scale(1.1); }}
-  }}
-
-  /* Header */
-  header {{
-    padding: 40px 0;
-    display: flex;
-    justify-content: center;
-  }}
-
-  .logo {{
-    font-weight: 900;
-    font-size: 32px;
-    letter-spacing: -2px;
-    background: linear-gradient(135deg, #fff 30%, #00E5A0);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 20px rgba(0, 229, 160, 0.3));
-  }}
-
-  /* Hero Section - Ultra Glass */
-  .hero {{
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    border-radius: 48px;
-    padding: 100px 40px;
-    text-align: center;
-    margin-bottom: 60px;
-    box-shadow: 0 50px 100px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-    position: relative;
-    overflow: hidden;
-  }}
-
-  .hero::after {{
-    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-    background: conic-gradient(from 0deg, transparent, rgba(0,229,160,0.1), transparent);
-    animation: rotate 10s linear infinite; z-index: -1;
-  }}
-
-  @keyframes rotate {{ 100% {{ transform: rotate(360deg); }} }}
-
-  .badge {{
-    display: inline-block;
-    padding: 10px 20px;
-    background: rgba(0, 229, 160, 0.15);
-    border: 1px solid rgba(0, 229, 160, 0.3);
-    border-radius: 100px;
-    color: #00E5A0;
-    font-size: 12px;
-    font-weight: 900;
-    margin-bottom: 40px;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    animation: pulse 2s infinite;
-  }}
-
-  @keyframes pulse {{
-    0% {{ box-shadow: 0 0 0 0 rgba(0, 229, 160, 0.4); }}
-    70% {{ box-shadow: 0 0 0 15px rgba(0, 229, 160, 0); }}
-    100% {{ box-shadow: 0 0 0 0 rgba(0, 229, 160, 0); }}
-  }}
-
-  h1 {{
-    font-size: clamp(36px, 9vw, 72px);
-    font-weight: 950;
-    line-height: 0.95;
-    margin-bottom: 30px;
-    letter-spacing: -3px;
-    background: linear-gradient(to bottom, #fff, #888);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }}
-
-  .hero p {{
-    font-size: 20px;
-    color: rgba(255,255,255,0.6);
-    max-width: 700px;
-    margin: 0 auto 60px;
-    font-weight: 500;
-  }}
-
-  .btn-download {{
-    display: inline-flex;
-    align-items: center;
-    gap: 16px;
-    background: linear-gradient(135deg, #00E5A0, #00C58A);
-    color: #03060a;
-    padding: 24px 60px;
-    border-radius: 24px;
-    font-weight: 900;
-    font-size: 22px;
-    text-decoration: none;
-    box-shadow: 0 25px 50px rgba(0, 229, 160, 0.4);
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }}
-
-  .btn-download:hover {{
-    transform: translateY(-8px) scale(1.05);
-    box-shadow: 0 35px 70px rgba(0, 229, 160, 0.6);
-  }}
-
-  /* Floating Features Grid */
-  .grid {{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 30px;
-    margin-bottom: 80px;
-  }}
-
-  .glass-card {{
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    padding: 48px;
-    border-radius: 40px;
-    transition: all 0.4s ease;
-    animation: float 6s infinite ease-in-out;
-  }}
-  .glass-card:nth-child(2) {{ animation-delay: 1s; }}
-  .glass-card:nth-child(3) {{ animation-delay: 2s; }}
-
-  @keyframes float {{
-    0%, 100% {{ transform: translateY(0); }}
-    50% {{ transform: translateY(-15px); }}
-  }}
-
-  .glass-card:hover {{
-    background: rgba(255, 255, 255, 0.06);
-    border-color: #00E5A0;
-    transform: translateY(-20px) scale(1.02);
-  }}
-
-  .f-icon {{
-    width: 64px; height: 64px;
-    background: rgba(0, 229, 160, 0.1);
-    border-radius: 20px;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 30px;
-    color: #00E5A0;
-    border: 1px solid rgba(0, 229, 160, 0.2);
-    box-shadow: 0 10px 20px rgba(0, 229, 160, 0.1);
-  }}
-
-  .glass-card h3 {{ font-size: 24px; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px; }}
-  .glass-card p {{ color: rgba(255,255,255,0.5); font-size: 16px; line-height: 1.6; }}
-
-  /* Steps Section - Ultra Premium */
-  .steps-title {{ text-align: center; font-size: 40px; font-weight: 950; margin: 100px 0 50px; letter-spacing: -1.5px; }}
-  
-  .step-card {{
-    display: flex;
-    align-items: flex-start;
-    gap: 30px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    padding: 40px;
-    border-radius: 32px;
-    margin-bottom: 24px;
-    backdrop-filter: blur(15px);
-    transition: 0.3s;
-  }}
-  .step-card:hover {{ transform: scale(1.01); background: rgba(255, 255, 255, 0.05); }}
-
-  .step-num {{
-    flex-shrink: 0;
-    width: 60px; height: 60px;
-    background: linear-gradient(135deg, #00E5A0, #00896A);
-    color: #03060a;
-    border-radius: 18px;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 950; font-size: 24px;
-    box-shadow: 0 10px 20px rgba(0, 229, 160, 0.3);
-  }}
-
-  .step-content h4 {{ font-size: 20px; font-weight: 800; margin-bottom: 8px; }}
-  .step-content p {{ color: rgba(255,255,255,0.5); font-size: 16px; }}
-
-  footer {{
-    padding: 100px 0 60px;
-    text-align: center;
-    color: rgba(255,255,255,0.3);
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }}
-
-  @media (max-width: 768px) {{
-    .hero {{ padding: 80px 24px; }}
-    h1 {{ font-size: 48px; }}
-    .grid {{ grid-template-columns: 1fr; }}
-  }}
-</style>
-</head>
-<body>
-  <div class="bg-orb orb-1"></div>
-  <div class="bg-orb orb-2"></div>
-  <div class="bg-orb orb-3"></div>
-
-  <div class="container">
-    <header>
-      <div class="logo">mubVPN</div>
-    </header>
-
-    <section class="hero">
-      <div class="badge">💎 Next-Gen Security</div>
-      <h1>{t['h1']}</h1>
-      <p>{t['sub']}</p>
-      <a href="/download" class="btn-download">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-        {t['btn_dl']}
-      </a>
-    </section>
-
-    <div class="grid">
-      <div class="glass-card">
-        <div class="f-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
-        <h3>{t['f1_t']}</h3>
-        <p>{t['f1_d']}</p>
-      </div>
-      <div class="glass-card">
-        <div class="f-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
-        <h3>{t['f2_t']}</h3>
-        <p>{t['f2_d']}</p>
-      </div>
-      <div class="glass-card">
-        <div class="f-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg></div>
-        <h3>{t['f3_t']}</h3>
-        <p>{t['f3_d']}</p>
-      </div>
-    </div>
-
-    <h2 class="steps-title">{t['steps_title']}</h2>
-    
-    <div class="step-card">
-      <div class="step-num">01</div>
-      <div class="step-content">
-        <h4>{t['s1_t']}</h4>
-        <p>{t['s1_d']}</p>
-      </div>
-    </div>
-    
-    <div class="step-card">
-      <div class="step-num">02</div>
-      <div class="step-content">
-        <h4>{t['s2_t']}</h4>
-        <p>{t['s2_d']}</p>
-      </div>
-    </div>
-    
-    <div class="step-card">
-      <div class="step-num">03</div>
-      <div class="step-content">
-        <h4>{t['s3_t']}</h4>
-        <p>{t['s3_d']}</p>
-      </div>
-    </div>
-
-    <footer>
-      MUBVPN ULTRA PREMIUM © 2025 | @KL_MUB
-    </footer>
-  </div>
-</body>
-</html>"""
-
-import urllib.parse
-
-class BotHandler(BaseHTTPRequestHandler):
-    def do_HEAD(self):
-        self.send_response(200)
-        self.end_headers()
-
-    def do_GET(self):
-        parsed_path = urllib.parse.urlparse(self.path)
-        path = parsed_path.path
-        
-        if path == '/download':
-            apk_url = 'https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.0/mubvpn.apk'
-            self.send_response(302)
-            self.send_header('Location', apk_url)
-            self.end_headers()
-            return
-            
-        # Get language from URL params, default to 'ky'
-        query_params = urllib.parse.parse_qs(parsed_path.query)
-        lang = query_params.get('lang', ['ky'])[0]
-        
-        html_content = get_dashboard_html(lang)
-        self.send_response(200)
-        self.send_header('Content-Type', 'text/html; charset=utf-8')
-        self.end_headers()
-        self.wfile.write(html_content.encode('utf-8'))
-
-    def do_POST(self):
-        if self.path == '/webhook':
-            try:
-                cl = int(self.headers['Content-Length'])
-                body = self.rfile.read(cl).decode()
-                data = json.loads(body)
-                log.info(f"📥 Webhook received: {data}")
-
-                status = data.get('status')
-                # Lava кээде маалыматты ар кандай талааларга салат
-                uid = data.get('additional_info') or data.get('additionalFields') or data.get('comment')
-                amount = float(data.get('amount', 0))
-
-                if status in ('success', 'paid') and uid:
-                    # Суммага жараша айларды аныктоо (тиркемедегидей эле логика)
-                    months = 1
-                    if amount >= 1000: months = 12
-                    elif amount >= 600: months = 6
-                    elif amount >= 300: months = 3
-                    
-                    if firebase_set_premium(str(uid), months):
-                        log.info(f"✅ Premium activated via Webhook for UID: {uid}")
-                    else:
-                        log.error(f"❌ Failed to update Firebase for UID: {uid}")
-                
-                self.send_response(200); self.end_headers(); self.wfile.write(b"OK")
-            except Exception as e:
-                log.error(f"⚠️ Webhook error: {e}")
-                self.send_response(500); self.end_headers()
-
-def run_server():
-    port = int(os.environ.get('PORT', 8080))
-    HTTPServer(('0.0.0.0', port), BotHandler).serve_forever()
-
-def keep_awake():
-    while True:
-        try: requests.get("https://mubvpn-bot.onrender.com", timeout=10)
-        except: pass
-        time.sleep(600)
-
-def main():
-    threading.Thread(target=run_server, daemon=True).start()
-    threading.Thread(target=keep_awake, daemon=True).start()
-    app = Application.builder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(handle_callback))
-    log.info("🤖 Bot is running...")
-    app.run_polling(drop_pending_updates=True)
-
-if __name__ == "__main__":
+# --- КЛАВИАТУРАЛАР ---
+
+def get_lang_keyboard():
+
+    return InlineKeyboardMarkup([
+
+        [InlineKeyboardButton("🇰🇬 Кыргызча", callback_data='set_lang_ky'), InlineKeyboardButton("🇷🇺 Русский", callback_data='set_lang_ru')],
+
+        [InlineKeyboardButton("🇺🇿 O'zbekcha", callback_data='set_lang_uz'), InlineKeyboardButton("🇹🇯 Тоҷикӣ", callback_data='set_lang_tg')],
+
+        [InlineKeyboardButton("🇰🇿 Қазақша", callback_data='set_lang_kk'), InlineKeyboardButton("🇹🇷 Türkçe", callback_data='set_lang_tr')],
+
+        [InlineKeyboardButton("🇺🇸 English", callback_data='set_lang_en')]
+
+    ])
+
+
+
+def get_main_keyboard(lang):
+
+    L = STRINGS[lang]
+
+    return InlineKeyboardMarkup([
+
+        [InlineKeyboardButton(L["btn_download"], url=f'https://mubvpn-bot.onrender.com/?lang={lang}')],
+
+        [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')], 
+
+        [InlineKeyboardButton(L["btn_how"], callback_data='how_1')], 
+
+        [InlineKeyboardButton(L["btn_share"], callback_data='share_app')], 
+
+        [InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)]
+
+    ])
+
+
+
+# --- КОМАНДАЛАР ---
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    if context.args: context.user_data['uid'] = context.args[0]
+
+    text = "🌐 Choose language / Тилди тандаңыз / Выберите язык:"
+
+    if update.message: await update.message.reply_text(text, reply_markup=get_lang_keyboard())
+
+    else: await update.callback_query.message.edit_text(text, reply_markup=get_lang_keyboard())
+
+
+
+async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    query = update.callback_query; await query.answer()
+
+    data = query.data; lang = context.user_data.get('lang', 'ru')
+
+
+
+    if data.startswith('set_lang_'):
+
+        lang = data.split('_')[2]; context.user_data['lang'] = lang
+
+        await query.message.edit_text(STRINGS[lang]["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+
+
+
+    elif data == 'pay_menu':
+
+        L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
+
+        # Шилтемеге UID кошуу (эгер '?' бар болсо '&' колдонобуз)
+
+        separator = '&' if '?' in LAVA_MAIN_URL else '?'
+
+        link = f"{LAVA_MAIN_URL}{separator}additional_info={uid}"
+
+        kb = [[InlineKeyboardButton(L["pay_btn_link"], web_app=WebAppInfo(url=link))], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+
+        await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
+
+
+    elif data == 'share_app':
+
+        L = STRINGS[lang]
+
+        # Боттун шилтемесин эмес, Render сайтынын шилтемесин бөлүшөбүз (ал сүрөтү менен чыгат)
+
+        share_url = f"https://t.me/share/url?url=https://mubvpn-bot.onrender.com/?lang={lang}&text={html.escape(L['share_msg'])}"
+
+        kb = [[InlineKeyboardButton(L["btn_share_now"], url=share_url)], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+
+        await query.message.edit_text(L["share_title"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
+
+
+    elif data.startswith('how_'):
+
+        step = data.split('_')[1]; L = STRINGS[lang]
+
+        texts = {"1": L["how_step_1"], "2": L["how_step_2"], "3": L["how_step_3"], "4": L["how_step_4"], "5": L["how_step_5"], "6": L["how_step_6"]}
+
+        nxt = str(int(step)+1) if int(step) < 6 else "menu"
+
+        prv = str(int(step)-1) if int(step) > 1 else "main"
+
+        row = [InlineKeyboardButton(L["back"], callback_data='main_menu' if prv=="main" else f'how_{prv}')]
+
+        if nxt != "menu": row.append(InlineKeyboardButton(L["next"], callback_data=f'how_{nxt}'))
+
+        
+
+        if query.message.photo: await query.message.delete()
+
+        await query.message.edit_text(texts[step], reply_markup=InlineKeyboardMarkup([row]), parse_mode=ParseMode.HTML)
+
+
+
+    elif data == 'main_menu':
+
+        if query.message.photo: await query.message.delete()
+
+        await query.message.edit_text(STRINGS[lang]["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+
+
+
+# --- WEB SERVER (DASHBOARD & WEBHOOK) ---
+
+def get_dashboard_html(lang):
+
+    texts = {
+
+        'ky': {
+
+            'h1': 'mubVPN — Android үчүн тез жана коопсуз VPN',
+
+            'sub': '🚀 mubVPN — чектөөсүз интернетке коопсуз жол!\n\n✅ Блоктоолорду айланып өтөт\n✅ Маалыматтарды ишенимдүү шифрлейт\n✅ Бир таптоо менен туташуу\n✅ Жогорку ылдамдык\n\nАзыр жүктөп алып, эркиндиктен ырахат алыңыз! 👇',
+
+            'btn_dl': 'Android үчүн жүктөө',
+
+            'features_title': 'Эмне үчүн mubVPN тандашат?',
+
+            'f1_t': 'Smart Route', 'f1_d': 'Ылдам иштөө үчүн автоматтык жол тандоо.',
+
+            'f2_t': 'Коопсуздук', 'f2_d': 'Маалыматтарыңызды шифрлөө менен коргойт.',
+
+            'f3_t': 'Android үчүн', 'f3_d': 'Заманбап интерфейс.',
+
+            'steps_title': 'Орнотуу 3 кадамда',
+
+            's1_t': 'Жүктөп алыңыз', 's1_d': 'Жүктөө баскычын басып, APK күтүңүз.',
+
+            's2_t': 'Орнотуңуз', 's2_d': 'Файлды ачып, орнотууну ырастаңыз.',
+
+            's3_t': 'Туташыңыз', 's3_d': 'Тиркемени ачып, коргоону иштетиңиз.'
+
+        },
+
+        'ru': {
+
+            'h1': 'mubVPN — Быстрый и безопасный VPN для Android',
+
+            'sub': '🚀 mubVPN — ваш безопасный доступ к любимым сервисам без ограничений!\n\n✅ Обходит любые блокировки\n✅ Надежно защищает ваши данные\n✅ Подключение в один тап\n✅ Высокая и стабильная скорость\n\nСкачай и пользуйся без ограничений уже сейчас! 👇',
+
+            'btn_dl': 'Скачать для Android',
+
+            'features_title': 'Почему выбирают mubVPN?',
+
+            'f1_t': 'Smart Route', 'f1_d': 'Автоподбор лучшего маршрута.',
+
+            'f2_t': 'Безопасность', 'f2_d': 'Шифрование и полная анонимность.',
+
+            'f3_t': 'Android-first', 'f3_d': 'Оптимизированный интерфейс.',
+
+            'steps_title': 'Установка за 3 шага',
+
+            's1_t': 'Скачайте файл', 's1_d': 'Нажмите кнопку загрузки и дождитесь APK.',
+
+            's2_t': 'Установите APK', 's2_d': 'Откройте файл и подтвердите установку.',
+
+            's3_t': 'Пользуйтесь!', 's3_d': 'Запустите приложение и включите защиту.'
+
+        },
+
+        'uz': {
+
+            'h1': 'mubVPN — Android uchun tezkor va xavfsiz VPN',
+
+            'sub': '🚀 mubVPN — sevimli xizmatlaringizga cheklovlarsiz xavfsiz kirish!\n\n✅ Toʻsiqlarni aylanib oʻtadi\n✅ Maʼlumotlaringizni xavfsiz himoya qiladi\n✅ Bir marta bosish bilan ulanish\n✅ Yuqori va barqaror tezlik\n\nHoziroq yuklab oling va cheklovsiz foydalaning! 👇',
+
+            'btn_dl': 'Android uchun yuklash',
+
+            'features_title': 'Nima uchun mubVPN?',
+
+            'f1_t': 'Smart Route', 'f1_d': 'Tezlik uchun eng yaxshi yoʻnalish.',
+
+            'f2_t': 'Xavfsizlik', 'f2_d': 'Maʼlumotlarni shifrlash.',
+
+            'f3_t': 'Android-first', 'f3_d': 'Qulay interfeys.',
+
+            'steps_title': '3 qadamda oʻrnatish',
+
+            's1_t': 'Yuklab oling', 's1_d': 'Tugmani bosing va APKni kuting.',
+
+            's2_t': 'Oʻrnating', 's2_d': 'Faylni oching va tasdiqlang.',
+
+            's3_t': 'Ulaning', 's3_d': 'Ilovani oching va himoyani yoqing.'
+
+        },
+
+        'tg': {
+
+            'h1': 'mubVPN — VPN-и тез ва бехатар барои Android',
+
+            'sub': '🚀 mubVPN — дастрасии бехатари шумо ба хидматҳои дӯстдошта бе маҳдудият!\n\n✅ Маҳдудиятҳоро давр мезанад\n✅ Маълумоти шуморо боэътимод ҳифз мекунад\n✅ Пайвастшавӣ бо як клик\n✅ Суръати баланд ва устувор\n\nHоло боргирӣ кунед ва истифода баред! 👇',
+
+            'btn_dl': 'Боргирӣ барои Android',
+
+            'features_title': 'Чаро mubVPN?',
+
+            'f1_t': 'Smart Route', 'f1_d': 'Интихоби автоматии масир.',
+
+            'f2_t': 'Бехатарӣ', 'f2_d': 'Рамзгузории додаҳо.',
+
+            'f3_t': 'Android-first', 'f3_d': 'Интерфейси зебо.',
+
+            'steps_title': 'Насб дар 3 марҳила',
+
+            's1_t': 'Боргирӣ кунед', 's1_d': 'Тугмаро пахш кунед ва APK-ро интизор шавед.',
+
+            's2_t': 'Насб кунед', 's2_d': 'Файлро кушоед ва тасдиқ кунед.',
+
+            's3_t': 'Истифода баред!', 's3_d': 'Барномаро оғоз кунед ва муҳофизатро фаъол кунед.'
+
+        },
+
+        'kk': {
+
+            'h1': 'mubVPN — Android үшін жылдам және қауіпсіз VPN',
+
+            'sub': '🚀 mubVPN — сүйікті қызметтеріңізге шектеусіз қауіпсіз кіру!\n\n✅ Блоктауларды айналып өтеді\n✅ Деректеріңізді сенімді қорғайды\n✅ Бір рет басу арқылы қосылу\n✅ Жоғары және тұрақты жылдамдық\n\nҚазір жүктеп алыңыз және шектеусіз пайдаланыңыз! 👇',
+
+            'btn_dl': 'Android үшін жүктеу',
+
+            'features_title': 'Неліктен mubVPN?',
+
+            'f1_t': 'Smart Route', 'f1_d': 'Ең жақсы жолды таңдау.',
+
+            'f2_t': 'Қауіпсіздік', 'f2_d': 'Деректерді шифрлау.',
+
+            'f3_t': 'Android-first', 'f3_d': 'Ыңғайлы интерфейс.',
+
+            'steps_title': '3 қадамда орнату',
+
+            's1_t': 'Жүктеп алыңыз', 's1_d': 'Батырманы басып, APK күтіңіз.',
+
+            's2_t': 'Орнатыңыз', 's2_d': 'Файлды ашып, растаңыз.',
+
+            's3_t': 'Қосылыңыз!', 's3_d': 'Қорғауды қосыңыз.'
+
+        },
+
+        'tr': {
+
+            'h1': 'mubVPN — Android için Hızlı и Güvenli VPN',
+
+            'sub': '🚀 mubVPN — favori hizmetlerinize kısıtlama olmadan güvenli erişim!\n\n✅ Tüm engelleri aşar\n✅ Verilerinizi güvenle korur\n✅ Tek dokunuşla bağlantı\n✅ Yüksek ve istikrarlı hız\n\nHemen indirin ve özgürlüğün tadını çıkarın! 👇',
+
+            'btn_dl': 'Android için İndir',
+
+            'features_title': 'Neden mubVPN?',
+
+            'f1_t': 'Smart Route', 'f1_d': 'En iyi rotanın otomatik seçimi.',
+
+            'f2_t': 'Güvenlik', 'f2_d': 'Veri şifreleme.',
+
+            'f3_t': 'Android-first', 'f3_d': 'Optimize arayüz.',
+
+            'steps_title': '3 Adımda Kurulum',
+
+            's1_t': 'Dosyayı İndir', 's1_d': 'Düğmeye basın ve APKyı bekleyin.',
+
+            's2_t': 'Kurulumu Yap', 's2_d': 'Dosyayı açın ve onaylayın.',
+
+            's3_t': 'Kullanmaya Başla!', 's3_d': 'Korumayı açın.'
+
+        },
+
+        'en': {
+
+            'h1': 'mubVPN — Fast & Secure VPN for Android',
+
+            'sub': '🚀 mubVPN — your secure access to favorite services without limits!\n\n✅ Bypasses all restrictions\n✅ Reliability protects your data\n✅ One-tap connection\n✅ High and stable speed\n\nDownload and use without limits now! 👇',
+
+            'btn_dl': 'Download for Android',
+
+            'features_title': 'Why choose mubVPN?',
+
+            'f1_t': 'Smart Route', 'f1_d': 'Auto-selection of the best route.',
+
+            'f2_t': 'Security', 'f2_d': 'End-to-end encryption.',
+
+            'f3_t': 'Android-first', 'f3_d': 'Sleek interface.',
+
+            'steps_title': 'Setup in 3 steps',
+
+            's1_t': 'Download', 's1_d': 'Click download and wait for the APK.',
+
+            's2_t': 'Install', 's2_d': 'Open the file and confirm.',
+
+            's3_t': 'Connect', 's3_d': 'Enjoy freedom.'
+
+        }
+
+    }
+
+    t = texts.get(lang, texts['ru'])
+
+    
+
+    return f"""<!DOCTYPE html>
+
+<html lang="{lang}">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>{t['h1']}</title>
+
+<!-- Open Graph / Social Media Preview -->
+
+<meta property="og:type" content="website">
+
+<meta property="og:url" content="https://mubvpn-bot.onrender.com/">
+
+<meta property="og:title" content="🛡 {t['h1']}">
+
+<meta property="og:description" content="{t['sub']}">
+
+<meta property="og:image" content="https://raw.githubusercontent.com/Ulanbekmahmaraimov/mubvpn-bot/main/assets/preview.png">
+
+<meta property="og:image:secure_url" content="https://raw.githubusercontent.com/Ulanbekmahmaraimov/mubvpn-bot/main/assets/preview.png">
+
+<meta property="og:image:type" content="image/png">
+
+<meta property="og:image:width" content="1200">
+
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+
+<meta name="twitter:title" content="🛡 {t['h1']}">
+
+<meta name="twitter:description" content="{t['sub']}">
+
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Ulanbekmahmaraimov/mubvpn-bot/main/assets/preview.png">
+
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+  
+
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+
+  
+
+  body {{ 
+
+    font-family: 'Inter', sans-serif; 
+
+    background-color: #03060a; 
+
+    color: #fff; 
+
+    line-height: 1.6;
+
+    overflow-x: hidden;
+
+    position: relative;
+
+    min-height: 100vh;
+
+  }}
+
+
+
+  .container {{
+
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+    padding: 0 24px;
+
+    position: relative;
+
+    z-index: 10;
+
+  }}
+
+
+
+  /* Ultra Premium Background Orbs */
+
+  .bg-orb {{
+
+    position: fixed; border-radius: 50%; z-index: 0; filter: blur(100px); opacity: 0.35;
+
+    animation: orbMove 20s infinite alternate cubic-bezier(0.45, 0, 0.55, 1);
+
+  }}
+
+  .orb-1 {{ width: 600px; height: 600px; background: #00E5A0; top: -200px; right: -100px; animation-duration: 15s; }}
+
+  .orb-2 {{ width: 500px; height: 500px; background: #00896A; bottom: -150px; left: -150px; animation-duration: 25s; }}
+
+  .orb-3 {{ width: 300px; height: 300px; background: #004d40; top: 40%; left: 30%; opacity: 0.2; }}
+
+
+
+  @keyframes orbMove {{
+
+    0% {{ transform: translate(0, 0) scale(1); }}
+
+    100% {{ transform: translate(50px, 50px) scale(1.1); }}
+
+  }}
+
+
+
+  /* Header */
+
+  header {{
+
+    padding: 40px 0;
+
+    display: flex;
+
+    justify-content: center;
+
+  }}
+
+
+
+  .logo {{
+
+    font-weight: 900;
+
+    font-size: 32px;
+
+    letter-spacing: -2px;
+
+    background: linear-gradient(135deg, #fff 30%, #00E5A0);
+
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+
+    filter: drop-shadow(0 0 20px rgba(0, 229, 160, 0.3));
+
+  }}
+
+
+
+  /* Hero Section - Ultra Glass */
+
+  .hero {{
+
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    backdrop-filter: blur(40px);
+
+    -webkit-backdrop-filter: blur(40px);
+
+    border-radius: 48px;
+
+    padding: 100px 40px;
+
+    text-align: center;
+
+    margin-bottom: 60px;
+
+    box-shadow: 0 50px 100px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+
+    position: relative;
+
+    overflow: hidden;
+
+  }}
+
+
+
+  .hero::after {{
+
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+
+    background: conic-gradient(from 0deg, transparent, rgba(0,229,160,0.1), transparent);
+
+    animation: rotate 10s linear infinite; z-index: -1;
+
+  }}
+
+
+
+  @keyframes rotate {{ 100% {{ transform: rotate(360deg); }} }}
+
+
+
+  .badge {{
+
+    display: inline-block;
+
+    padding: 10px 20px;
+
+    background: rgba(0, 229, 160, 0.15);
+
+    border: 1px solid rgba(0, 229, 160, 0.3);
+
+    border-radius: 100px;
+
+    color: #00E5A0;
+
+    font-size: 12px;
+
+    font-weight: 900;
+
+    margin-bottom: 40px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 3px;
+
+    animation: pulse 2s infinite;
+
+  }}
+
+
+
+  @keyframes pulse {{
+
+    0% {{ box-shadow: 0 0 0 0 rgba(0, 229, 160, 0.4); }}
+
+    70% {{ box-shadow: 0 0 0 15px rgba(0, 229, 160, 0); }}
+
+    100% {{ box-shadow: 0 0 0 0 rgba(0, 229, 160, 0); }}
+
+  }}
+
+
+
+  h1 {{
+
+    font-size: clamp(36px, 9vw, 72px);
+
+    font-weight: 950;
+
+    line-height: 0.95;
+
+    margin-bottom: 30px;
+
+    letter-spacing: -3px;
+
+    background: linear-gradient(to bottom, #fff, #888);
+
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+
+  }}
+
+
+
+  .hero p {{
+
+    font-size: 20px;
+
+    color: rgba(255,255,255,0.6);
+
+    max-width: 700px;
+
+    margin: 0 auto 60px;
+
+    font-weight: 500;
+
+  }}
+
+
+
+  .btn-download {{
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    background: linear-gradient(135deg, #00E5A0, #00C58A);
+
+    color: #03060a;
+
+    padding: 24px 60px;
+
+    border-radius: 24px;
+
+    font-weight: 900;
+
+    font-size: 22px;
+
+    text-decoration: none;
+
+    box-shadow: 0 25px 50px rgba(0, 229, 160, 0.4);
+
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  }}
+
+
+
+  .btn-download:hover {{
+
+    transform: translateY(-8px) scale(1.05);
+
+    box-shadow: 0 35px 70px rgba(0, 229, 160, 0.6);
+
+  }}
+
+
+
+  /* Floating Features Grid */
+
+  .grid {{
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+
+    gap: 30px;
+
+    margin-bottom: 80px;
+
+  }}
+
+
+
+  .glass-card {{
+
+    background: rgba(255, 255, 255, 0.03);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    backdrop-filter: blur(25px);
+
+    -webkit-backdrop-filter: blur(25px);
+
+    padding: 48px;
+
+    border-radius: 40px;
+
+    transition: all 0.4s ease;
+
+    animation: float 6s infinite ease-in-out;
+
+  }}
+
+  .glass-card:nth-child(2) {{ animation-delay: 1s; }}
+
+  .glass-card:nth-child(3) {{ animation-delay: 2s; }}
+
+
+
+  @keyframes float {{
+
+    0%, 100% {{ transform: translateY(0); }}
+
+    50% {{ transform: translateY(-15px); }}
+
+  }}
+
+
+
+  .glass-card:hover {{
+
+    background: rgba(255, 255, 255, 0.06);
+
+    border-color: #00E5A0;
+
+    transform: translateY(-20px) scale(1.02);
+
+  }}
+
+
+
+  .f-icon {{
+
+    width: 64px; height: 64px;
+
+    background: rgba(0, 229, 160, 0.1);
+
+    border-radius: 20px;
+
+    display: flex; align-items: center; justify-content: center;
+
+    margin-bottom: 30px;
+
+    color: #00E5A0;
+
+    border: 1px solid rgba(0, 229, 160, 0.2);
+
+    box-shadow: 0 10px 20px rgba(0, 229, 160, 0.1);
+
+  }}
+
+
+
+  .glass-card h3 {{ font-size: 24px; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px; }}
+
+  .glass-card p {{ color: rgba(255,255,255,0.5); font-size: 16px; line-height: 1.6; }}
+
+
+
+  /* Steps Section - Ultra Premium */
+
+  .steps-title {{ text-align: center; font-size: 40px; font-weight: 950; margin: 100px 0 50px; letter-spacing: -1.5px; }}
+
+  
+
+  .step-card {{
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 30px;
+
+    background: rgba(255, 255, 255, 0.03);
+
+    border: 1px solid rgba(255, 255, 255, 0.06);
+
+    padding: 40px;
+
+    border-radius: 32px;
+
+    margin-bottom: 24px;
+
+    backdrop-filter: blur(15px);
+
+    transition: 0.3s;
+
+  }}
+
+  .step-card:hover {{ transform: scale(1.01); background: rgba(255, 255, 255, 0.05); }}
+
+
+
+  .step-num {{
+
+    flex-shrink: 0;
+
+    width: 60px; height: 60px;
+
+    background: linear-gradient(135deg, #00E5A0, #00896A);
+
+    color: #03060a;
+
+    border-radius: 18px;
+
+    display: flex; align-items: center; justify-content: center;
+
+    font-weight: 950; font-size: 24px;
+
+    box-shadow: 0 10px 20px rgba(0, 229, 160, 0.3);
+
+  }}
+
+
+
+  .step-content h4 {{ font-size: 20px; font-weight: 800; margin-bottom: 8px; }}
+
+  .step-content p {{ color: rgba(255,255,255,0.5); font-size: 16px; }}
+
+
+
+  footer {{
+
+    padding: 100px 0 60px;
+
+    text-align: center;
+
+    color: rgba(255,255,255,0.3);
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+  }}
+
+
+
+  @media (max-width: 768px) {{
+
+    .hero {{ padding: 80px 24px; }}
+
+    h1 {{ font-size: 48px; }}
+
+    .grid {{ grid-template-columns: 1fr; }}
+
+  }}
+
+</style>
+
+</head>
+
+<body>
+
+  <div class="bg-orb orb-1"></div>
+
+  <div class="bg-orb orb-2"></div>
+
+  <div class="bg-orb orb-3"></div>
+
+
+
+  <div class="container">
+
+    <header>
+
+      <div class="logo">mubVPN</div>
+
+    </header>
+
+
+
+    <section class="hero">
+
+      <div class="badge">💎 Next-Gen Security</div>
+
+      <h1>{t['h1']}</h1>
+
+      <p>{t['sub']}</p>
+
+      <a href="/download" class="btn-download">
+
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+
+        {t['btn_dl']}
+
+      </a>
+
+    </section>
+
+
+
+    <div class="grid">
+
+      <div class="glass-card">
+
+        <div class="f-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
+
+        <h3>{t['f1_t']}</h3>
+
+        <p>{t['f1_d']}</p>
+
+      </div>
+
+      <div class="glass-card">
+
+        <div class="f-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+
+        <h3>{t['f2_t']}</h3>
+
+        <p>{t['f2_d']}</p>
+
+      </div>
+
+      <div class="glass-card">
+
+        <div class="f-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg></div>
+
+        <h3>{t['f3_t']}</h3>
+
+        <p>{t['f3_d']}</p>
+
+      </div>
+
+    </div>
+
+
+
+    <h2 class="steps-title">{t['steps_title']}</h2>
+
+    
+
+    <div class="step-card">
+
+      <div class="step-num">01</div>
+
+      <div class="step-content">
+
+        <h4>{t['s1_t']}</h4>
+
+        <p>{t['s1_d']}</p>
+
+      </div>
+
+    </div>
+
+    
+
+    <div class="step-card">
+
+      <div class="step-num">02</div>
+
+      <div class="step-content">
+
+        <h4>{t['s2_t']}</h4>
+
+        <p>{t['s2_d']}</p>
+
+      </div>
+
+    </div>
+
+    
+
+    <div class="step-card">
+
+      <div class="step-num">03</div>
+
+      <div class="step-content">
+
+        <h4>{t['s3_t']}</h4>
+
+        <p>{t['s3_d']}</p>
+
+      </div>
+
+    </div>
+
+
+
+    <footer>
+
+      MUBVPN ULTRA PREMIUM © 2025 | @KL_MUB
+
+    </footer>
+
+  </div>
+
+</body>
+
+</html>"""
+
+
+
+import urllib.parse
+
+
+
+class BotHandler(BaseHTTPRequestHandler):
+
+    def do_HEAD(self):
+
+        self.send_response(200)
+
+        self.end_headers()
+
+
+
+    def do_GET(self):
+
+        parsed_path = urllib.parse.urlparse(self.path)
+
+        path = parsed_path.path
+
+        
+
+        if path == '/download':
+
+            apk_url = 'https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.0/mubvpn.apk'
+
+            self.send_response(302)
+
+            self.send_header('Location', apk_url)
+
+            self.end_headers()
+
+            return
+
+            
+
+        # --- АВТО ТИЛ ТААНУУ (Browser Language Detection) ---
+        query_params = urllib.parse.parse_qs(parsed_path.query)
+        lang = query_params.get('lang', [None])[0]
+
+        if not lang:
+            accept_lang = self.headers.get('Accept-Language', '')
+            if 'ru' in accept_lang: lang = 'ru'
+            elif 'uz' in accept_lang: lang = 'uz'
+            elif 'tg' in accept_lang: lang = 'tg'
+            elif 'kk' in accept_lang: lang = 'kk'
+            elif 'tr' in accept_lang: lang = 'tr'
+            elif 'en' in accept_lang: lang = 'en'
+            else: lang = 'ky'
+
+        
+
+        html_content = get_dashboard_html(lang)
+
+        self.send_response(200)
+
+        self.send_header('Content-Type', 'text/html; charset=utf-8')
+
+        self.end_headers()
+
+        self.wfile.write(html_content.encode('utf-8'))
+
+
+
+    def do_POST(self):
+
+        if self.path == '/webhook':
+
+            try:
+
+                cl = int(self.headers['Content-Length'])
+
+                body = self.rfile.read(cl).decode()
+
+                data = json.loads(body)
+
+                log.info(f"📥 Webhook received: {data}")
+
+
+
+                status = data.get('status')
+
+                # Lava кээде маалыматты ар кандай талааларга салат
+
+                uid = data.get('additional_info') or data.get('additionalFields') or data.get('comment')
+
+                amount = float(data.get('amount', 0))
+
+
+
+                if status in ('success', 'paid') and uid:
+
+                    # Суммага жараша айларды аныктоо (тиркемедегидей эле логика)
+
+                    months = 1
+
+                    if amount >= 1000: months = 12
+
+                    elif amount >= 600: months = 6
+
+                    elif amount >= 300: months = 3
+
+                    
+
+                    if firebase_set_premium(str(uid), months):
+
+                        log.info(f"✅ Premium activated via Webhook for UID: {uid}")
+
+                    else:
+
+                        log.error(f"❌ Failed to update Firebase for UID: {uid}")
+
+                
+
+                self.send_response(200); self.end_headers(); self.wfile.write(b"OK")
+
+            except Exception as e:
+
+                log.error(f"⚠️ Webhook error: {e}")
+
+                self.send_response(500); self.end_headers()
+
+
+
+def run_server():
+
+    port = int(os.environ.get('PORT', 8080))
+
+    HTTPServer(('0.0.0.0', port), BotHandler).serve_forever()
+
+
+
+def keep_awake():
+
+    while True:
+
+        try: requests.get("https://mubvpn-bot.onrender.com", timeout=10)
+
+        except: pass
+
+        time.sleep(600)
+
+
+
+def main():
+
+    threading.Thread(target=run_server, daemon=True).start()
+
+    threading.Thread(target=keep_awake, daemon=True).start()
+
+    app = Application.builder().token(BOT_TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+
+    app.add_handler(CallbackQueryHandler(handle_callback))
+
+    log.info("🤖 Bot is running...")
+
+    app.run_polling(drop_pending_updates=True)
+
+
+
+if __name__ == "__main__":
+
     main()
