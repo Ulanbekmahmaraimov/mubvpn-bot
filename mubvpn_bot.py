@@ -102,7 +102,7 @@ def get_lang_keyboard():
 def get_main_keyboard(lang):
     L = STRINGS[lang]
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton(L["btn_download"], url='https://mubvpn-bot.onrender.com/download')],
+        [InlineKeyboardButton(L["btn_download"], url='https://mubvpn-bot.onrender.com/')],
         [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')], 
         [InlineKeyboardButton(L["btn_how"], callback_data='how_1')], 
         [InlineKeyboardButton(L["btn_share"], callback_data='share_app')], 
