@@ -53,7 +53,8 @@ STRINGS = {
         "how_step_4": "📱 <b>4-КАДАМ: Карта маалыматы</b>\n\nКартаңыздын номерин, мөөнөтүн жана CVC-кодун жазыңыз. Эгер маалыматтар жаныңызда жок болсо, банк тиркемесинен көчүрүп алсаңыз болот. 💳",
         "how_step_5": "✅ <b>5-КАДАМ: Төлөмдү бүтүрүү</b>\n\n'Оплатить' баскычын басып, банктан келген SMS кодду киргизиңиз. Төлөм бүткөндө система автоматтык түрдө Premium иштетет! 🎉",
         "how_step_6": "🛠 <b>6-КАДАМ: Текшерүү</b>\n\nТөлөп бүткөндөн кийин тиркемеге кириңиз. Эгер Premium иштебесе, боттогу 'Текшерүү' баскычын басыңыз. @kl_mub дайыма жардамга даяр! 👨‍💻",
-        "menu_back": "Башкы меню:", "share_msg": "🛡 mubVPN - Эң тез жана коопсуз VPN!"
+        "menu_back": "Башкы меню:", "share_msg": "🛡 mubVPN - Эң тез жана коопсуз VPN!",
+        "share_title": "🤝 <b>Бөлүшүү:</b>", "btn_share_now": "📲 Бөлүшүү"
     },
     "ru": {
         "welcome": "🛡 <b>mubVPN Premium</b>\n\nВыберите действие:",
@@ -72,7 +73,8 @@ STRINGS = {
         "how_step_4": "📱 <b>ШАГ 4: Данные карты</b>\n\nВведите номер карты, срок действия и CVC-код. Реквизиты можно скопировать в приложении вашего банка. 💳",
         "how_step_5": "✅ <b>ШАГ 5: Завершение</b>\n\nНажмите 'Оплатить' и введите код из СМС. После оплаты система автоматически включит Premium! 🎉",
         "how_step_6": "🛠 <b>ШАГ 6: Проверка</b>\n\nВернитесь в приложение. Если Premium не включился сразу, нажмите кнопку 'Проверить' в боте. @kl_mub всегда на связи! 👨‍💻",
-        "menu_back": "Главное меню:", "share_msg": "🛡 mubVPN - Самый быстрый и безопасный VPN!"
+        "menu_back": "Главное меню:", "share_msg": "🛡 mubVPN - Самый быстрый и безопасный VPN!",
+        "share_title": "🤝 <b>Поделиться:</b>", "btn_share_now": "📲 Поделиться"
     },
     "en": {
         "welcome": "🛡 <b>mubVPN Premium</b>\n\nPlease choose an option:",
@@ -91,7 +93,8 @@ STRINGS = {
         "how_step_4": "📱 <b>STEP 4: Card details</b>\n\nEnter your card number, expiry date, and CVC. You can find these in your bank's mobile app. 💳",
         "how_step_5": "✅ <b>STEP 5: Complete payment</b>\n\nClick 'Pay' and enter the SMS code from your bank. Premium activates automatically! 🎉",
         "how_step_6": "🛠 <b>STEP 6: Verification</b>\n\nCheck the app. If Premium is not active, click 'Check Payment' in the bot. @kl_mub is here to help! 👨‍💻",
-        "menu_back": "Main Menu:", "share_msg": "🛡 mubVPN - The fastest and safest VPN!"
+        "menu_back": "Main Menu:", "share_msg": "🛡 mubVPN - The fastest and safest VPN!",
+        "share_title": "🤝 <b>Share:</b>", "btn_share_now": "📲 Share Now"
     },
     "uz": {
         "welcome": "🛡 <b>mubVPN Premium</b>\n\nTo'lovni amalga oshirish uchun quyidagi tugmalardan foydalaning:",
@@ -110,7 +113,8 @@ STRINGS = {
         "how_step_4": "📱 <b>4-QADAM: Karta ma'lumotlari</b>\n\nKarta raqami, muddati va CVC-kodni yozing. Ma'lumotlarni bank ilovasidan nusxalab olishingiz mumkin. 💳",
         "how_step_5": "✅ <b>5-QADAM: Yakunlash</b>\n\n'To'lash' tugmasini bosing va SMS kodni kiriting. Premium avtomatik ravishda faollashadi! 🎉",
         "how_step_6": "🛠 <b>6-QADAM: Tekshirish</b>\n\nIlovaga kiring. Agar Premium ishlamasa, botdagi 'Tekshirish' tugmasini bosing. @kl_mub yordamga tayyor! 👨‍💻",
-        "menu_back": "Asosiy menyu:", "share_msg": "🛡 mubVPN - Eng tezkor va xavfsiz VPN!"
+        "menu_back": "Asosiy menyu:", "share_msg": "🛡 mubVPN - Eng tezkor va xavfsiz VPN!",
+        "share_title": "🤝 <b>Ulashish:</b>", "btn_share_now": "📲 Ulashish"
     },
     "tg": {
         "welcome": "🛡 <b>mubVPN Premium</b>\n\nБарои пардохт кардан аз тугмаҳои зерин истифода баред:",
@@ -129,7 +133,8 @@ STRINGS = {
         "how_step_4": "📱 <b>ҚАДАМИ 4: Маълумоти корт</b>\n\nРақами корт, мӯҳлати эътибор ва рамзи CVC-ро ворид кунед. 💳",
         "how_step_5": "✅ <b>ҚАДАМИ 5: Анҷоми пардохт</b>\n\n'Пардохт кардан'-ро пахш кунед ва рамзи СМС-ро ворид кунед. Premium автоматӣ фаъол мешавад! 🎉",
         "how_step_6": "🛠 <b>ҚАДАМИ 6: Санҷиш</b>\n\nБа барнома ворид шавед. Агар Premium фаъол нашуда бошад, тугмаи 'Санҷиш'-ро дар бот пахш кунед. @kl_mub ҳамеша барои кӯмак омода аст! 👨‍💻",
-        "menu_back": "Менюи асосӣ:", "share_msg": "🛡 mubVPN - VPN-и зудтарин ва бехатар!"
+        "menu_back": "Менюи асосӣ:", "share_msg": "🛡 mubVPN - VPN-и зудтарин ва бехатар!",
+        "share_title": "🤝 <b>Ирсол:</b>", "btn_share_now": "📲 Ирсол"
     },
     "kk": {
         "welcome": "🛡 <b>mubVPN Premium</b>\n\nТөлем жасау үшін төмендегі батырмаларды қолданыңыз:",
@@ -148,7 +153,8 @@ STRINGS = {
         "how_step_4": "📱 <b>4-ҚАДАМ: Карта мәліметтері</b>\n\nКарта нөмірін және CVC-кодты енгізіңіз. 💳",
         "how_step_5": "✅ <b>5-ҚАДАМ: Аяқтау</b>\n\n'Төлеу' батырмасын басып, СМС кодты енгізіңіз. 🎉",
         "how_step_6": "🛠 <b>6-ҚАДАМ: Тексеру</b>\n\nҚосымшаға кіріңіз. Егер жұмыс істемесе, боттағы 'Тексеру' батырмасын басыңыз. @kl_mub көмектеседі! 👨‍💻",
-        "menu_back": "Басты мәзір:", "share_msg": "🛡 mubVPN - Ең жылдам және қауіпсіз VPN!"
+        "menu_back": "Басты мәзір:", "share_msg": "🛡 mubVPN - Ең жылдам және қауіпсіз VPN!",
+        "share_title": "🤝 <b>Бөлісу:</b>", "btn_share_now": "📲 Бөлісу"
     },
     "tr": {
         "welcome": "🛡 <b>mubVPN Premium</b>\n\nÖdeme yapmak için lütfen aşağıdaki butonları kullanın:",
@@ -167,7 +173,8 @@ STRINGS = {
         "how_step_4": "📱 <b>ADIM 4: Kart bilgileri</b>\n\nKart numaranızı ve CVC kodunuzu girin. 💳",
         "how_step_5": "✅ <b>ADIM 5: Ödemeyi tamamla</b>\n\n'Öde'ye tıklayın ve SMS kodunu girin. 🎉",
         "how_step_6": "🛠 <b>ADIM 6: Doğrulama</b>\n\nUygulamayı kontrol edin. Aktif değilse botta 'Kontrol Et'e tıklayın. @kl_mub yardıma hazır! 👨‍💻",
-        "menu_back": "Ana Menü:", "share_msg": "🛡 mubVPN - En hızlı ve en güvenli VPN!"
+        "menu_back": "Ana Menü:", "share_msg": "🛡 mubVPN - En hızlı ve en güvenli VPN!",
+        "share_title": "🤝 <b>Paylaş:</b>", "btn_share_now": "📲 Paylaş"
     }
 }
 
@@ -215,8 +222,8 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data == 'share_app':
         L = STRINGS[lang]; bot = await context.bot.get_me(); share_url = f"https://t.me/share/url?url=https://t.me/{bot.username}&text={html.escape(L['share_msg'])}"
-        kb = [[InlineKeyboardButton("📲 Бөлүшүү / Поделиться", url=share_url)], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
-        await query.message.edit_text("🤝 <b>Share:</b>", reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+        kb = [[InlineKeyboardButton(L["btn_share_now"], url=share_url)], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+        await query.message.edit_text(L["share_title"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
     elif data.startswith('how_'):
         step = data.split('_')[1]; L = STRINGS[lang]
