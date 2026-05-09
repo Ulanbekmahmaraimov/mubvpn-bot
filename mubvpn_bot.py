@@ -174,12 +174,10 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 class BotHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/download':
-            apk_path = 'mubvpn.apk'
-            if os.path.exists(apk_path):
-                self.send_response(200); self.send_header('Content-Type', 'application/vnd.android.package-archive'); self.send_header('Content-Disposition', 'attachment; filename="mubVPN.apk"'); self.end_headers()
-                with open(apk_path, 'rb') as f: self.wfile.write(f.read())
-            else:
-                self.send_response(404); self.end_headers(); self.wfile.write("APK Not Found".encode())
+            apk_url = 'https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.0/mubvpn.apk.apk'
+            self.send_response(302)
+            self.send_header('Location', apk_url)
+            self.end_headers()
             return
         self.send_response(200); self.send_header('Content-Type', 'text/html; charset=utf-8'); self.end_headers(); self.wfile.write(DASHBOARD_HTML.encode('utf-8'))
 
