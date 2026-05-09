@@ -402,6 +402,10 @@ def get_dashboard_html(lang):
 import urllib.parse
 
 class BotHandler(BaseHTTPRequestHandler):
+    def do_HEAD(self):
+        self.send_response(200)
+        self.end_headers()
+
     def do_GET(self):
         parsed_path = urllib.parse.urlparse(self.path)
         path = parsed_path.path
