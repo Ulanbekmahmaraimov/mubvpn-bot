@@ -37,9 +37,9 @@ def firebase_set_premium(uid: str, months: int) -> bool:
 # --- БОТТУН ТЕКСТТЕРИ ---
 STRINGS = {
     "ky": {
-        "welcome": "🛡 <b>mubVPN Premium</b>\n\nТөлөм жүргүзүү үчүн төмөнкү баскычтарды колдонуңуз:",
-        "btn_pay": "💳 Сатып алуу", "btn_how": "📖 Төлөөнү үйрөнүү",
-        "btn_download": "⬇️ Тиркемени жүктөө",
+        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nЭң тез жана коопсуз интернетке жол ачыңыз. Төлөм жүргүзүү же тиркемени жүктөө үчүн төмөнкү баскычтарды колдонуңуз:",
+        "btn_pay": "💳 Сатып алуу", "btn_how": "📖 Кантип төлөйм?",
+        "btn_download": "🚀 Тиркемени жүктөө",
         "btn_support": "👨‍💻 Колдоо", "btn_share": "🤝 Бөлүшүү",
         "pay_text": "💳 <b>Төлөөгө өтүү</b>\n\nТөлөм Telegram ичинде коопсуз өтөт:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Артка", "next": "Кийинки ➡️",
@@ -57,9 +57,9 @@ STRINGS = {
         "share_title": "🤝 <b>Бөлүшүү:</b>", "btn_share_now": "📲 Бөлүшүү"
     },
     "ru": {
-        "welcome": "🛡 <b>mubVPN Premium</b>\n\nВыберите действие:",
+        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nОткройте доступ к самому быстрому и безопасному интернету. Используйте кнопки ниже для оплаты или загрузки приложения:",
         "btn_pay": "💳 Купить", "btn_how": "📖 Как оплатить?",
-        "btn_download": "⬇️ Скачать приложение",
+        "btn_download": "🚀 Скачать приложение",
         "btn_support": "👨‍💻 Поддержка", "btn_share": "🤝 Поделиться",
         "pay_text": "💳 <b>Переход к оплате</b>\n\nОплата проходит внутри Telegram:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Назад", "next": "Далее ➡️",
@@ -77,9 +77,9 @@ STRINGS = {
         "share_title": "🤝 <b>Поделиться:</b>", "btn_share_now": "📲 Поделиться"
     },
     "en": {
-        "welcome": "🛡 <b>mubVPN Premium</b>\n\nPlease choose an option:",
+        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nUnlock the fastest and most secure internet access. Use the buttons below to pay or download the application:",
         "btn_pay": "💳 Buy", "btn_how": "📖 How to pay?",
-        "btn_download": "⬇️ Download App",
+        "btn_download": "🚀 Download App",
         "btn_support": "👨‍💻 Support", "btn_share": "🤝 Share",
         "pay_text": "💳 <b>Proceed to Payment</b>\n\nThe payment is secure within Telegram:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Back", "next": "Next ➡️",
@@ -97,9 +97,9 @@ STRINGS = {
         "share_title": "🤝 <b>Share:</b>", "btn_share_now": "📲 Share Now"
     },
     "uz": {
-        "welcome": "🛡 <b>mubVPN Premium</b>\n\nTo'lovni amalga oshirish uchun quyidagi tugmalardan foydalaning:",
+        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nEng tezkor va xavfsiz internetga ega bo'ling. To'lov qilish yoki ilovani yuklab olish uchun quyidagi tugmalardan foydalaning:",
         "btn_pay": "💳 Sotib olish", "btn_how": "📖 Qanday to'lash kerak?",
-        "btn_download": "⬇️ Ilovani yuklab olish",
+        "btn_download": "🚀 Ilovani yuklab olish",
         "btn_support": "👨‍💻 Qo'llab-quvvatlash", "btn_share": "🤝 Ulashish",
         "pay_text": "💳 <b>To'lovga o'tish</b>\n\nTo'lov Telegram ichida xavfsiz amalga oshiriladi:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Orqaga", "next": "Keyingi ➡️",
@@ -117,9 +117,9 @@ STRINGS = {
         "share_title": "🤝 <b>Ulashish:</b>", "btn_share_now": "📲 Ulashish"
     },
     "tg": {
-        "welcome": "🛡 <b>mubVPN Premium</b>\n\nБарои пардохт кардан аз тугмаҳои зерин истифода баред:",
+        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nБа интернети зудтарин ва бехатар дастрасӣ пайдо кунед. Барои пардохт ё боргирии барнома аз тугмаҳои зерин истифода баред:",
         "btn_pay": "💳 Харидан", "btn_how": "📖 Чӣ тавр бояд пардохт кард?",
-        "btn_download": "⬇️ Боргирии барнома",
+        "btn_download": "🚀 Боргирии барнома",
         "btn_support": "👨‍💻 Дастгирӣ", "btn_share": "🤝 Ирсол",
         "pay_text": "💳 <b>Гузаштан ба пардохт</b>\n\nПардохт дар дохили Telegram бехатар мегузарад:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Ба ақиб", "next": "Оянда ➡️",
@@ -137,9 +137,9 @@ STRINGS = {
         "share_title": "🤝 <b>Ирсол:</b>", "btn_share_now": "📲 Ирсол"
     },
     "kk": {
-        "welcome": "🛡 <b>mubVPN Premium</b>\n\nТөлем жасау үшін төмендегі батырмаларды қолданыңыз:",
+        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nЕң жылдам және қауіпсіз интернетке жол ашыңыз. Төлем жасау немесе қосымшаны жүктеу үшін төмендегі батырмаларды қолданыңыз:",
         "btn_pay": "💳 Сатып алу", "btn_how": "📖 Қалай төлеу керек?",
-        "btn_download": "⬇️ Қосымшаны жүктеу",
+        "btn_download": "🚀 Қосымшаны жүктеу",
         "btn_support": "👨‍💻 Қолдау", "btn_share": "🤝 Бөлісу",
         "pay_text": "💳 <b>Төлемге өту</b>\n\nТөлем Telegram ішінде қауіпсіз өтеді:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Артқа", "next": "Келесі ➡️",
@@ -157,9 +157,9 @@ STRINGS = {
         "share_title": "🤝 <b>Бөлісу:</b>", "btn_share_now": "📲 Бөлісу"
     },
     "tr": {
-        "welcome": "🛡 <b>mubVPN Premium</b>\n\nÖdeme yapmak için lütfen aşağıdaki butonları kullanın:",
+        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nEn hızlı ve en güvenli internetin keyfini çıkarın. Ödeme yapmak veya uygulamayı indirmek için aşağıdaki butonları kullanın:",
         "btn_pay": "💳 Satın Al", "btn_how": "📖 Nasıl ödenir?",
-        "btn_download": "⬇️ Uygulamayı İndir",
+        "btn_download": "🚀 Uygulamayı İndir",
         "btn_support": "👨‍💻 Destek", "btn_share": "🤝 Paylaş",
         "pay_text": "💳 <b>Ödemeye Geç</b>\n\nÖdeme Telegram içinde güvenli bir şekilde yapılır:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Geri", "next": "İleri ➡️",
@@ -259,6 +259,12 @@ def get_dashboard_html(lang):
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>mubVPN Premium</title>
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mubvpn-bot.onrender.com/">
+<meta property="og:title" content="🛡 mubVPN Premium - Fast & Secure">
+<meta property="og:description" content="Download the latest version of mubVPN. Secure your internet connection with one click.">
+<meta property="og:image" content="https://raw.githubusercontent.com/Ulanbekmahmaraimov/mubvpn-bot/main/assets/preview.png">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap');
   
@@ -266,7 +272,7 @@ def get_dashboard_html(lang):
   
   body {{ 
     font-family: 'Inter', sans-serif; 
-    background-color: #06090D; 
+    background-color: #030508; 
     color: #fff; 
     display: flex; 
     flex-direction: column; 
@@ -335,6 +341,20 @@ def get_dashboard_html(lang):
   }}
   .icon-wrapper svg {{ width: 40px; height: 40px; fill: #fff; }}
 
+  .premium-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(0, 229, 160, 0.1);
+    border: 1px solid rgba(0, 229, 160, 0.2);
+    border-radius: 100px;
+    color: #00E5A0;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+
   h1 {{ 
     font-size: 34px; font-weight: 900; margin-bottom: 12px; letter-spacing: -0.5px;
     background: linear-gradient(to right, #ffffff, #a8b2c1);
@@ -383,6 +403,7 @@ def get_dashboard_html(lang):
   <div class="bg-orb-2"></div>
 
   <div class="card">
+    <div class="premium-badge">PREMIUM ACCESS</div>
     <div class="icon-wrapper">
       <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
     </div>
