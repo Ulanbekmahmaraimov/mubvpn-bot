@@ -203,17 +203,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if context.args: context.user_data['uid'] = context.args[0]
     text = "🌐 Choose language / Тилди тандаңыз / Выберите язык:"
     
-    if update.message:
-        await update.message.reply_photo(
-            photo=WELCOME_PHOTO,
-            caption=text,
-            reply_markup=get_lang_keyboard()
-        )
-    else:
-        await update.callback_query.message.edit_media(
-            media=InputMediaPhoto(media=WELCOME_PHOTO, caption=text),
-            reply_markup=get_lang_keyboard()
-        )
+    try:
+        if update.message:
+            await update.message.reply_photo(
+                photo=WELCOME_PHOTO,
+                caption=text,
+                reply_markup=get_lang_keyboard()
+            )
+        else:
+            await update.callback_query.message.edit_media(
+                media=InputMediaPhoto(media=WELCOME_PHOTO, caption=text),
+                reply_markup=get_lang_keyboard()
+            )
+    except Exception as e:
+        log.error(f"Photo error: {e}")
+        if update.message:
+            await update.message.reply_text(text, reply_markup=get_lang_keyboard())
+        else:
+            await update.callback_query.message.edit_text(text, reply_markup=get_lang_keyboard())
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query; await query.answer()
@@ -221,10 +228,14 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if data.startswith('set_lang_'):
         lang = data.split('_')[2]; context.user_data['lang'] = lang
-        await query.message.edit_media(
-            media=InputMediaPhoto(media=WELCOME_PHOTO, caption=STRINGS[lang]["welcome"], parse_mode=ParseMode.HTML),
-            reply_markup=get_main_keyboard(lang)
-        )
+        try:
+            await query.message.edit_media(
+                media=InputMediaPhoto(media=WELCOME_PHOTO, caption=STRINGS[lang]["welcome"], parse_mode=ParseMode.HTML),
+                reply_markup=get_main_keyboard(lang)
+            )
+        except Exception as e:
+            log.error(f"Set lang photo error: {e}")
+            await query.message.edit_text(STRINGS[lang]["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
 
     elif data == 'pay_menu':
         L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
