@@ -154,7 +154,7 @@ STRINGS = {
         "how_step_3": "💵 <b>ADIM 3: Para birimi seçin</b>\n\n<b>RUB</b> veya <b>KGS</b> seçin. 💰",
         "how_step_4": "📱 <b>ADIM 4: Kart bilgileri</b>\n\nKart numaranızı ve CVC kodunuzu girin. 💳",
         "how_step_5": "✅ <b>ADIM 5: Ödemeyi tamamla</b>\n\n'Öde'ye tıklayın ve SMS kodunu girin. 🎉",
-        "how_step_6": "🛠 <b>ADIM 6: Doğrulama</b>\n\nAktif değilse ботта 'Kontrol Et'e tıklayın. @kl_mub yardıma hazır! 👨‍💻",
+        "how_step_6": "🛠 <b>ADIM 6: Doğrulama</b>\n\nAktif değilse ботта 'Kontrol Et'e tıklayın. @kl_mub yardıma hazır! 👨 staff-💻",
         "menu_back": "Ana Menü:", "share_msg": "🚀 mubVPN — Android үчүн en hızlı ve güvenli VPN!\n\n✅ Tüm engelleri aşar\n✅ Verileri korur\n✅ Sınırsız İnternet\n\nHemen indir! 👇",
         "share_title": "🤝 <b>Paylaş:</b>", "btn_share_now": "📲 Paylaş"
     },
@@ -267,10 +267,10 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def get_dashboard_html(lang):
     texts = {
         'ky': {
+            'badge': 'NEXT-GEN SECURITY',
             'h1': 'mubVPN — Android үчүн тез жана коопсуз VPN',
-            'sub': '🚀 mubVPN — чектөөсүз интернетке коопсуз жол!\n\n✅ Блоктоолорду айланып өтөт\n✅ Маалыматтарды ишенимдүү шифрлейт\n✅ Бир таптоо менен туташуу\n✅ Жогорку ылдамдык\n\nАзыр жүктөп алып, эркиндиктен ырахат алыңыз! 👇',
+            'sub': '🚀 mubVPN — чектөөсүз интернетке коопсуз жол! ✅ Блоктоолорду айланып өтөт ✅ Маалыматтарды ишенимдүү шифрлейт ✅ Бир таптоо менен туташуу ✅ Жогорку ылдамдык Азыр жүктөп алып, эркиндиктен ырахат алыңыз! 👇',
             'btn_dl': 'Android үчүн жүктөө',
-            'features_title': 'Эмне үчүн mubVPN тандашат?',
             'f1_t': 'Smart Route', 'f1_d': 'Ылдам иштөө үчүн автоматтык жол тандоо.',
             'f2_t': 'Коопсуздук', 'f2_d': 'Маалыматтарыңызды шифрлөө менен коргойт.',
             'f3_t': 'Android үчүн', 'f3_d': 'Заманбап интерфейс.',
@@ -280,80 +280,80 @@ def get_dashboard_html(lang):
             's3_t': 'Туташыңыз', 's3_d': 'Тиркемени ачып, коргоону иштетиңиз.'
         },
         'ru': {
+            'badge': 'БЕЗОПАСНОСТЬ НОВОГО ПОКОЛЕНИЯ',
             'h1': 'mubVPN — Быстрый и безопасный VPN для Android',
-            'sub': '🚀 mubVPN — ваш безопасный доступ к любимым сервисам без ограничений!\n\n✅ Обходит любые блокировки\n✅ Надежно защищает ваши данные\n✅ Подключение в один тап\n✅ Высокая и стабильная скорость\n\nСкачай и пользуйся без ограничений уже сейчас! 👇',
+            'sub': '🚀 mubVPN — ваш безопасный доступ к любимым сервисам без ограничений! ✅ Обходит любые блокировки ✅ Надежно защищает данные ✅ Подключение в один тап ✅ Высокая скорость Скачай сейчас! 👇',
             'btn_dl': 'Скачать для Android',
-            'features_title': 'Почему выбирают mubVPN?',
             'f1_t': 'Smart Route', 'f1_d': 'Автоподбор лучшего маршрута.',
-            'f2_t': 'Безопасность', 'f2_d': 'Шифрование и полная анонимность.',
+            'f2_t': 'Безопасность', 'f2_d': 'Шифрование и анонимность.',
             'f3_t': 'Android-first', 'f3_d': 'Оптимизированный интерфейс.',
             'steps_title': 'Установка за 3 шага',
-            's1_t': 'Скачайте файл', 's1_d': 'Нажмите кнопку загрузки и дождитесь APK.',
-            's2_t': 'Установите APK', 's2_d': 'Откройте файл и подтвердите установку.',
-            's3_t': 'Пользуйтесь!', 's3_d': 'Запустите приложение и включите защиту.'
+            's1_t': 'Скачайте файл', 's1_d': 'Нажмите кнопку загрузки.',
+            's2_t': 'Установите APK', 's2_d': 'Откройте файл и установите.',
+            's3_t': 'Пользуйтесь!', 's3_d': 'Включите защиту и пользуйтесь.'
         },
         'uz': {
+            'badge': 'YANGI AVLOD XAVFSIZLIGI',
             'h1': 'mubVPN — Android uchun tezkor va xavfsiz VPN',
-            'sub': '🚀 mubVPN — sevimli xizmatlaringizga cheklovlarsiz xavfsiz kirish!\n\n✅ Toʻsiqlarni aylanib oʻtadi\n✅ Maʼlumotlaringizni xavfsiz himoya qiladi\n✅ Bir marta bosish bilan ulanish\n✅ Yuqori va barqaror tezlik\n\nHoziroq yuklab oling va cheklovsiz foydalaning! 👇',
+            'sub': '🚀 mubVPN — cheklovlarsiz xavfsiz kirish! ✅ Toʻsiqlarni aylanib oʻtadi ✅ Maʼlumotlarni himoya qiladi ✅ Bir bosishda ulanish ✅ Yuqori tezlik Hoziroq yuklab oling! 👇',
             'btn_dl': 'Android uchun yuklash',
-            'features_title': 'Nima uchun mubVPN?',
-            'f1_t': 'Smart Route', 'f1_d': 'Tezlik uchun eng yaxshi yoʻnalish.',
+            'f1_t': 'Smart Route', 'f1_d': 'Eng yaxshi yoʻnalishni tanlash.',
             'f2_t': 'Xavfsizlik', 'f2_d': 'Maʼlumotlarni shifrlash.',
-            'f3_t': 'Android-first', 'f3_d': 'Qulay interfeys.',
+            'f3_t': 'Android-first', 'f3_d': 'Zamonaviy interfeys.',
             'steps_title': '3 qadamda oʻrnatish',
-            's1_t': 'Yuklab oling', 's1_d': 'Tugmani bosing va APKni kuting.',
+            's1_t': 'Yuklab oling', 's1_d': 'Tugmani bosing va kuting.',
             's2_t': 'Oʻrnating', 's2_d': 'Faylni oching va tasdiqlang.',
-            's3_t': 'Ulaning', 's3_d': 'Ilovani oching va himoyani yoqing.'
+            's3_t': 'Ulaning', 's3_d': 'Ilovani oching va yoqing.'
         },
         'tg': {
+            'badge': 'АМНИЯТИ НАВИН',
             'h1': 'mubVPN — VPN-и тез ва бехатар барои Android',
-            'sub': '🚀 mubVPN — дастрасии бехатари шумо ба хидматҳои дӯстдошта бе маҳдудият!\n\n✅ Маҳдудиятҳоро давр мезанад\n✅ Маълумоти шуморо боэътимод ҳифз мекунад\n✅ Пайвастшавӣ бо як клик\n✅ Суръати баланд ва устувор\n\nHоло боргирӣ кунед ва истифода баред! 👇',
+            'sub': '🚀 mubVPN — дастрасии бехатар бе маҳдудият! ✅ Маҳдудиятҳоро давр мезанад ✅ Маълумотро ҳифз мекунад ✅ Пайвастшавӣ бо як клик ✅ Суръати баланд Ҳоло боргирӣ кунед! 👇',
             'btn_dl': 'Боргирӣ барои Android',
-            'features_title': 'Чаро mubVPN?',
             'f1_t': 'Smart Route', 'f1_d': 'Интихоби автоматии масир.',
             'f2_t': 'Бехатарӣ', 'f2_d': 'Рамзгузории додаҳо.',
             'f3_t': 'Android-first', 'f3_d': 'Интерфейси зебо.',
             'steps_title': 'Насб дар 3 марҳила',
-            's1_t': 'Боргирӣ кунед', 's1_d': 'Тугмаро пахш кунед ва APK-ро интизор шавед.',
-            's2_t': 'Насб кунед', 's2_d': 'Файлро кушоед ва тасдиқ кунед.',
-            's3_t': 'Истифода баред!', 's3_d': 'Барномаро оғоз кунед ва муҳофизатро фаъол кунед.'
+            's1_t': 'Боргирӣ кунед', 's1_d': 'Тугмаро пахш кунед.',
+            's2_t': 'Насб кунед', 's2_d': 'Файлро кушоед.',
+            's3_t': 'Истифода баред!', 's3_d': 'Муҳофизатро фаъол кунед.'
         },
         'kk': {
+            'badge': 'ЖАҢА БУЫН ҚАУІПСІЗДІГІ',
             'h1': 'mubVPN — Android үшін жылдам және қауіпсіз VPN',
-            'sub': '🚀 mubVPN — сүйікті қызметтеріңізге шектеусіз қауіпсіз кіру!\n\n✅ Блоктауларды айналып өтеді\n✅ Деректеріңізді сенімді қорғайды\n✅ Бір рет басу арқылы қосылу\n✅ Жоғары және тұрақты жылдамдық\n\nҚазір жүктеп алыңыз және шектеусіз пайдаланыңыз! 👇',
+            'sub': '🚀 mubVPN — шектеусіз қауіпсіз кіру! ✅ Блоктауларды айналып өтеді ✅ Деректерді қорғайды ✅ Бір басумен қосылу ✅ Жоғары жылдамдық Қазір жүктеп алыңыз! 👇',
             'btn_dl': 'Android үшін жүктеу',
-            'features_title': 'Неліктен mubVPN?',
             'f1_t': 'Smart Route', 'f1_d': 'Ең жақсы жолды таңдау.',
             'f2_t': 'Қауіпсіздік', 'f2_d': 'Деректерді шифрлау.',
             'f3_t': 'Android-first', 'f3_d': 'Ыңғайлы интерфейс.',
             'steps_title': '3 қадамда орнату',
-            's1_t': 'Жүктеп алыңыз', 's1_d': 'Батырманы басып, APK күтіңіз.',
+            's1_t': 'Жүктеп алыңыз', 's1_d': 'Батырманы басыңыз.',
             's2_t': 'Орнатыңыз', 's2_d': 'Файлды ашып, растаңыз.',
             's3_t': 'Қосылыңыз!', 's3_d': 'Қорғауды қосыңыз.'
         },
         'tr': {
-            'h1': 'mubVPN — Android için Hızlı и Güvenli VPN',
-            'sub': '🚀 mubVPN — favori hizmetlerinize kısıtlama olmadan güvenli erişim!\n\n✅ Tüm engelleri aşar\n✅ Verilerinizi güvenle korur\n✅ Tek dokunuşla bağlantı\n✅ Yüksek ve istikrarlı hız\n\nHemen indirin ve özgürlüğün tadını çıkarın! 👇',
+            'badge': 'YENİ NESİL GÜVENLİK',
+            'h1': 'mubVPN — Android için Hızlı ve Güvenli VPN',
+            'sub': '🚀 mubVPN — kısıtlama olmadan güvenli erişim! ✅ Tüm engelleri aşar ✅ Verileri korur ✅ Tek dokunuşla bağlantı ✅ Yüksek hız Hemen indirin! 👇',
             'btn_dl': 'Android için İndir',
-            'features_title': 'Neden mubVPN?',
             'f1_t': 'Smart Route', 'f1_d': 'En iyi rotanın otomatik seçimi.',
             'f2_t': 'Güvenlik', 'f2_d': 'Veri şifreleme.',
             'f3_t': 'Android-first', 'f3_d': 'Optimize arayüz.',
             'steps_title': '3 Adımda Kurulum',
-            's1_t': 'Dosyayı İndir', 's1_d': 'Düğmeye basın ve APKyı bekleyin.',
+            's1_t': 'Dosyayı İndir', 's1_d': 'Düğmeye basın.',
             's2_t': 'Kurulumu Yap', 's2_d': 'Dosyayı açın ve onaylayın.',
             's3_t': 'Kullanmaya Başla!', 's3_d': 'Korumayı açın.'
         },
         'en': {
+            'badge': 'NEXT-GEN SECURITY',
             'h1': 'mubVPN — Fast & Secure VPN for Android',
-            'sub': '🚀 mubVPN — your secure access to favorite services without limits!\n\n✅ Bypasses all restrictions\n✅ Reliability protects your data\n✅ One-tap connection\n✅ High and stable speed\n\nDownload and use without limits now! 👇',
+            'sub': '🚀 mubVPN — your secure access without limits! ✅ Bypasses all restrictions ✅ Protects your data ✅ One-tap connection ✅ High speed Download now! 👇',
             'btn_dl': 'Download for Android',
-            'features_title': 'Why choose mubVPN?',
             'f1_t': 'Smart Route', 'f1_d': 'Auto-selection of the best route.',
             'f2_t': 'Security', 'f2_d': 'End-to-end encryption.',
             'f3_t': 'Android-first', 'f3_d': 'Sleek interface.',
             'steps_title': 'Setup in 3 steps',
-            's1_t': 'Download', 's1_d': 'Click download and wait for the APK.',
+            's1_t': 'Download', 's1_d': 'Click download.',
             's2_t': 'Install', 's2_d': 'Open the file and confirm.',
             's3_t': 'Connect', 's3_d': 'Enjoy freedom.'
         }
@@ -375,56 +375,39 @@ def get_dashboard_html(lang):
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
         * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-        body {{ font-family: 'Inter', sans-serif; background-color: #03060a; color: #fff; line-height: 1.6; overflow-x: hidden; }}
-        .bg-glow {{ position: fixed; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0,229,160,0.1) 0%, rgba(0,0,0,0) 70%); top: -200px; right: -200px; z-index: -1; }}
-        .bg-glow-2 {{ position: fixed; width: 500px; height: 500px; background: radial-gradient(circle, rgba(0,102,255,0.08) 0%, rgba(0,0,0,0) 70%); bottom: -150px; left: -150px; z-index: -1; }}
-        .container {{ max-width: 1000px; margin: 0 auto; padding: 20px; }}
-        header {{ padding: 40px 0; display: flex; justify-content: center; align-items: center; }}
-        .logo {{ font-weight: 900; font-size: 32px; letter-spacing: -1px; color: #fff; display: flex; align-items: center; gap: 10px; }}
-        .logo span {{ color: #00E5A0; }}
-        .hero {{ background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); border-radius: 40px; padding: 80px 40px; margin-bottom: 40px; position: relative; overflow: hidden; }}
-        .hero::before {{ content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,229,160,0.3), transparent); }}
-        h1 {{ font-size: clamp(32px, 5vw, 56px); font-weight: 900; line-height: 1.1; margin-bottom: 24px; background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.5) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }}
-        .sub {{ font-size: 18px; color: rgba(255,255,255,0.6); max-width: 600px; margin: 0 auto 40px; white-space: pre-line; }}
-        .btn-download {{ display: inline-flex; align-items: center; gap: 12px; background: #00E5A0; color: #000; padding: 20px 48px; border-radius: 20px; text-decoration: none; font-weight: 900; font-size: 20px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 20px 40px rgba(0,229,160,0.2); }}
-        .btn-download:hover {{ transform: translateY(-5px) scale(1.02); box-shadow: 0 30px 60px rgba(0,229,160,0.3); background: #00ffb3; }}
-        .features {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 60px; }}
-        .f-card {{ background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 30px; padding: 32px; text-align: left; transition: all 0.3s ease; }}
-        .f-card:hover {{ background: rgba(255,255,255,0.04); border-color: rgba(0,229,160,0.2); transform: translateY(-5px); }}
-        .f-icon {{ width: 48px; height: 48px; background: rgba(0,229,160,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: #00E5A0; font-size: 24px; }}
-        .f-card h3 {{ font-size: 20px; margin-bottom: 12px; font-weight: 700; }}
-        .f-card p {{ color: rgba(255,255,255,0.5); font-size: 15px; }}
-        .steps-section {{ padding: 60px 0; }}
-        .steps-section h2 {{ font-size: 32px; margin-bottom: 48px; font-weight: 800; }}
-        .steps-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; position: relative; }}
-        .step-item {{ position: relative; }}
-        .step-num {{ font-size: 80px; font-weight: 900; color: rgba(0,229,160,0.05); position: absolute; top: -40px; left: 0; z-index: -1; }}
-        .step-item h4 {{ font-size: 22px; margin-bottom: 12px; font-weight: 700; color: #00E5A0; }}
-        .footer {{ padding: 60px 0; border-top: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.3); font-size: 14px; }}
-        @media (max-width: 600px) {{
-            .hero {{ padding: 60px 20px; border-radius: 30px; }}
-            .btn-download {{ width: 100%; justify-content: center; }}
-        }}
+        body {{ font-family: 'Inter', sans-serif; background: radial-gradient(circle at top right, #0a2e22 0%, #051610 100%); background-attachment: fixed; color: #fff; line-height: 1.6; text-align: center; padding: 0; margin: 0; overflow-x: hidden; }}
+        .container {{ max-width: 1000px; margin: 0 auto; padding: 40px 20px; }}
+        .logo {{ font-weight: 900; font-size: 32px; margin-bottom: 60px; color: #fff; }}
+        .badge {{ display: inline-block; background: rgba(0, 229, 160, 0.1); color: #00E5A0; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 900; letter-spacing: 1px; margin-bottom: 24px; border: 1px solid rgba(0, 229, 160, 0.2); }}
+        h1 {{ font-size: clamp(32px, 8vw, 56px); font-weight: 900; margin-bottom: 30px; line-height: 1.1; }}
+        .sub {{ font-size: 18px; color: rgba(255, 255, 255, 0.7); max-width: 700px; margin: 0 auto 50px; line-height: 1.6; }}
+        .btn-download {{ display: inline-flex; align-items: center; gap: 15px; background: #00E5A0; color: #000; padding: 22px 50px; border-radius: 25px; text-decoration: none; font-weight: 900; font-size: 22px; box-shadow: 0 20px 50px rgba(0, 229, 160, 0.3); transition: all 0.3s ease; }}
+        .btn-download:hover {{ transform: translateY(-5px); box-shadow: 0 30px 60px rgba(0, 229, 160, 0.4); }}
+        .features {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin: 100px 0; }}
+        .f-card {{ background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 40px; padding: 40px; text-align: left; transition: 0.3s; }}
+        .f-icon {{ width: 60px; height: 60px; background: rgba(0, 229, 160, 0.1); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px; color: #00E5A0; font-size: 28px; }}
+        .f-card h3 {{ font-size: 24px; margin-bottom: 15px; }}
+        .f-card p {{ color: rgba(255, 255, 255, 0.5); }}
+        .steps-section h2 {{ font-size: 40px; margin-bottom: 60px; font-weight: 900; }}
+        .step-card {{ background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 35px; padding: 30px; margin-bottom: 20px; display: flex; align-items: center; gap: 30px; text-align: left; }}
+        .step-num {{ width: 60px; height: 60px; background: #00E5A0; color: #000; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; flex-shrink: 0; }}
+        .step-content h4 {{ font-size: 22px; margin-bottom: 5px; }}
+        .step-content p {{ color: rgba(255, 255, 255, 0.5); }}
     </style>
 </head>
 <body>
-    <div class="bg-glow"></div>
-    <div class="bg-glow-2"></div>
     <div class="container">
-        <header>
-            <div class="logo">mub<span>VPN</span></div>
-        </header>
-        <section class="hero">
-            <h1>{t['h1']}</h1>
-            <p class="sub">{t['sub']}</p>
-            <a href="/download" class="btn-download">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                {t['btn_dl']}
-            </a>
-        </section>
+        <div class="logo">mubVPN</div>
+        <div class="badge">✦ {t['badge']}</div>
+        <h1>{t['h1']}</h1>
+        <p class="sub">{t['sub']}</p>
+        <a href="/download" class="btn-download">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            {t['btn_dl']}
+        </a>
         <div class="features">
             <div class="f-card">
-                <div class="f-icon">✦</div>
+                <div class="f-icon">⚡</div>
                 <h3>{t['f1_t']}</h3>
                 <p>{t['f1_d']}</p>
             </div>
@@ -441,27 +424,28 @@ def get_dashboard_html(lang):
         </div>
         <section class="steps-section">
             <h2>{t['steps_title']}</h2>
-            <div class="steps-grid">
-                <div class="step-item">
-                    <div class="step-num">01</div>
+            <div class="step-card">
+                <div class="step-num">01</div>
+                <div class="step-content">
                     <h4>{t['s1_t']}</h4>
                     <p>{t['s1_d']}</p>
                 </div>
-                <div class="step-item">
-                    <div class="step-num">02</div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">02</div>
+                <div class="step-content">
                     <h4>{t['s2_t']}</h4>
                     <p>{t['s2_d']}</p>
                 </div>
-                <div class="step-item">
-                    <div class="step-num">03</div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">03</div>
+                <div class="step-content">
                     <h4>{t['s3_t']}</h4>
                     <p>{t['s3_d']}</p>
                 </div>
             </div>
         </section>
-        <footer class="footer">
-            &copy; 2026 mubVPN Core. All rights reserved.
-        </footer>
     </div>
 </body>
 </html>"""
