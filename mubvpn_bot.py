@@ -102,7 +102,7 @@ def get_lang_keyboard():
 def get_main_keyboard(lang):
     L = STRINGS[lang]
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton(L["btn_download"], url='https://mubvpn-bot.onrender.com/')],
+        [InlineKeyboardButton(L["btn_download"], url=f'https://mubvpn-bot.onrender.com/?lang={lang}')],
         [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')], 
         [InlineKeyboardButton(L["btn_how"], callback_data='how_1')], 
         [InlineKeyboardButton(L["btn_share"], callback_data='share_app')], 
@@ -153,8 +153,16 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.edit_text(STRINGS[lang]["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
 
 # --- WEB SERVER (DASHBOARD & WEBHOOK) ---
-DASHBOARD_HTML = """<!DOCTYPE html>
-<html lang="en">
+def get_dashboard_html(lang):
+    texts = {
+        'ky': {'title': 'Эң акыркы версиясын көчүрүп алып, чектөөсүз интернетке жол ачыңыз.', 'btn': 'Жүктөө (APK)'},
+        'ru': {'title': 'Скачайте последнюю версию и получите доступ к безграничному интернету.', 'btn': 'Скачать (APK)'},
+        'en': {'title': 'Download the latest version and unlock unlimited internet access.', 'btn': 'Download (APK)'}
+    }
+    t = texts.get(lang, texts['ky'])
+    
+    return f"""<!DOCTYPE html>
+<html lang="{lang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -162,9 +170,9 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap');
   
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
   
-  body { 
+  body {{ 
     font-family: 'Inter', sans-serif; 
     background-color: #06090D; 
     color: #fff; 
@@ -175,29 +183,29 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     min-height: 100vh; 
     overflow: hidden;
     position: relative;
-  }
+  }}
 
   /* Animated Background Elements */
-  .bg-orb-1 {
+  .bg-orb-1 {{
     position: absolute; width: 400px; height: 400px;
     background: radial-gradient(circle, rgba(0,229,160,0.15) 0%, rgba(0,0,0,0) 70%);
     top: -100px; right: -100px; border-radius: 50%;
     animation: pulse 6s infinite alternate; z-index: 0;
-  }
-  .bg-orb-2 {
+  }}
+  .bg-orb-2 {{
     position: absolute; width: 300px; height: 300px;
     background: radial-gradient(circle, rgba(0,217,245,0.1) 0%, rgba(0,0,0,0) 70%);
     bottom: -50px; left: -100px; border-radius: 50%;
     animation: pulse 8s infinite alternate-reverse; z-index: 0;
-  }
+  }}
 
-  @keyframes pulse {
-    0% { transform: scale(1) translate(0, 0); }
-    100% { transform: scale(1.2) translate(20px, 20px); }
-  }
+  @keyframes pulse {{
+    0% {{ transform: scale(1) translate(0, 0); }}
+    100% {{ transform: scale(1.2) translate(20px, 20px); }}
+  }}
 
   /* Glassmorphism Card */
-  .card { 
+  .card {{ 
     background: rgba(255, 255, 255, 0.03); 
     border: 1px solid rgba(255, 255, 255, 0.08); 
     border-radius: 32px; 
@@ -213,14 +221,14 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     transform: translateY(20px);
     opacity: 0;
     animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
+  }}
 
-  @keyframes slideUp {
-    to { transform: translateY(0); opacity: 1; }
-  }
+  @keyframes slideUp {{
+    to {{ transform: translateY(0); opacity: 1; }}
+  }}
 
   /* Shield Icon */
-  .icon-wrapper {
+  .icon-wrapper {{
     width: 80px; height: 80px;
     background: linear-gradient(135deg, #00E5A0, #00896A);
     border-radius: 22px;
@@ -228,54 +236,54 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     margin: 0 auto 24px;
     box-shadow: 0 10px 25px rgba(0, 229, 160, 0.4);
     position: relative;
-  }
-  .icon-wrapper::after {
+  }}
+  .icon-wrapper::after {{
     content: ''; position: absolute; inset: 0; border-radius: 22px;
     box-shadow: inset 0 2px 0 rgba(255,255,255,0.4);
-  }
-  .icon-wrapper svg { width: 40px; height: 40px; fill: #fff; }
+  }}
+  .icon-wrapper svg {{ width: 40px; height: 40px; fill: #fff; }}
 
-  h1 { 
+  h1 {{ 
     font-size: 34px; font-weight: 900; margin-bottom: 12px; letter-spacing: -0.5px;
     background: linear-gradient(to right, #ffffff, #a8b2c1);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-  }
+  }}
   
-  p.subtitle { 
+  p.subtitle {{ 
     color: rgba(255,255,255,0.5); 
     font-size: 15px; line-height: 1.5; margin-bottom: 40px; font-weight: 400;
-  }
+  }}
 
   /* Cyber Download Button */
-  .download-btn { 
+  .download-btn {{ 
     display: flex; align-items: center; justify-content: center; gap: 10px; 
     background: #00E5A0; color: #06090D; font-weight: 700; font-size: 16px;
     padding: 18px 32px; border-radius: 100px; text-decoration: none; 
     box-shadow: 0 0 20px rgba(0, 229, 160, 0.3); 
     transition: all 0.3s ease;
     position: relative; overflow: hidden;
-  }
+  }}
   
-  .download-btn::before {
+  .download-btn::before {{
     content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
     transition: all 0.5s ease;
-  }
+  }}
 
-  .download-btn:hover { 
+  .download-btn:hover {{ 
     transform: translateY(-3px); 
     box-shadow: 0 10px 30px rgba(0, 229, 160, 0.5); 
     background: #00F5A0;
-  }
+  }}
   
-  .download-btn:hover::before { left: 100%; }
+  .download-btn:hover::before {{ left: 100%; }}
   
-  .download-btn svg { width: 20px; height: 20px; fill: #06090D; }
+  .download-btn svg {{ width: 20px; height: 20px; fill: #06090D; }}
 
-  .footer { 
+  .footer {{ 
     margin-top: 40px; font-size: 13px; color: rgba(255,255,255,0.2); z-index: 10;
     font-weight: 600; letter-spacing: 1px;
-  }
+  }}
 </style>
 </head>
 <body>
@@ -287,11 +295,11 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
     </div>
     <h1>mubVPN</h1>
-    <p class="subtitle">Эң акыркы версиясын көчүрүп алып, чектөөсүз интернетке жол ачыңыз.</p>
+    <p class="subtitle">{t['title']}</p>
     
     <a href="/download" class="download-btn">
       <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-      Жүктөө (APK)
+      {t['btn']}
     </a>
   </div>
   
@@ -299,15 +307,29 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 </body>
 </html>"""
 
+import urllib.parse
+
 class BotHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path == '/download':
+        parsed_path = urllib.parse.urlparse(self.path)
+        path = parsed_path.path
+        
+        if path == '/download':
             apk_url = 'https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.0/mubvpn.apk.apk'
             self.send_response(302)
             self.send_header('Location', apk_url)
             self.end_headers()
             return
-        self.send_response(200); self.send_header('Content-Type', 'text/html; charset=utf-8'); self.end_headers(); self.wfile.write(DASHBOARD_HTML.encode('utf-8'))
+            
+        # Get language from URL params, default to 'ky'
+        query_params = urllib.parse.parse_qs(parsed_path.query)
+        lang = query_params.get('lang', ['ky'])[0]
+        
+        html_content = get_dashboard_html(lang)
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/html; charset=utf-8')
+        self.end_headers()
+        self.wfile.write(html_content.encode('utf-8'))
 
     def do_POST(self):
         if self.path == '/webhook':
