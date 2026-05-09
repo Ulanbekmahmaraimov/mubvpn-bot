@@ -15,7 +15,7 @@ from telegram.constants import ParseMode
 BOT_TOKEN    = "8400265569:AAHQ21_zNVS3XPDlMoE9I8TW0JwaIaUuA1s"
 LAVA_API     = "cUPUZBNvxATjd5ou8oodPIozLGb7dqzZx5eDYdYbkctCV9eRJBaDWpJKAkp8Bp8m"
 SUPPORT_URL  = "https://t.me/kl_mub"
-LAVA_MAIN_URL = "https://app.lava.top/products/db3d18c8-01e5-40f2-bf0a-e01842697312/8a98aa1a-78d0-4291-bf1e-6c143668cf15"
+LAVA_MAIN_URL = "https://app.lava.top/products/db3d18c8-01e5-40f2-bf0a-e01842697312/8a98aa1a-78d0-4291-bf1e-6c143668cf15?currency=RUB"
 
 FIREBASE_DB_URL    = "https://mubvpn-8b892-default-rtdb.firebaseio.com"
 FIREBASE_DB_SECRET = "NgRNzmtQYdgUcFWXiDRPAHAsSURVni2WaIKTw9Re"
@@ -117,7 +117,9 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data == 'pay_menu':
         L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
-        link = f"{LAVA_MAIN_URL}?additional_info={uid}"
+        # Шилтемеге UID кошуу (эгер '?' бар болсо '&' колдонобуз)
+        separator = '&' if '?' in LAVA_MAIN_URL else '?'
+        link = f"{LAVA_MAIN_URL}{separator}additional_info={uid}"
         kb = [[InlineKeyboardButton(L["pay_btn_link"], web_app=WebAppInfo(url=link))], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
         await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
@@ -183,12 +185,33 @@ class BotHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         if self.path == '/webhook':
-            cl = int(self.headers['Content-Length']); data = json.loads(self.rfile.read(cl).decode())
-            status = data.get('status'); uid = data.get('additional_info') or data.get('additionalFields'); amount = float(data.get('amount', 0))
-            if status in ('success', 'paid') and uid:
-                months = 12 if amount >= 1000 else (6 if amount >= 600 else (3 if amount >= 300 else 1))
-                if firebase_set_premium(str(uid), months): log.info(f"✅ Webhook Success: {uid}")
-            self.send_response(200); self.end_headers(); self.wfile.write(b"OK")
+            try:
+                cl = int(self.headers['Content-Length'])
+                body = self.rfile.read(cl).decode()
+                data = json.loads(body)
+                log.info(f"📥 Webhook received: {data}")
+
+                status = data.get('status')
+                # Lava кээде маалыматты ар кандай талааларга салат
+                uid = data.get('additional_info') or data.get('additionalFields') or data.get('comment')
+                amount = float(data.get('amount', 0))
+
+                if status in ('success', 'paid') and uid:
+                    # Суммага жараша айларды аныктоо (тиркемедегидей эле логика)
+                    months = 1
+                    if amount >= 1000: months = 12
+                    elif amount >= 600: months = 6
+                    elif amount >= 300: months = 3
+                    
+                    if firebase_set_premium(str(uid), months):
+                        log.info(f"✅ Premium activated via Webhook for UID: {uid}")
+                    else:
+                        log.error(f"❌ Failed to update Firebase for UID: {uid}")
+                
+                self.send_response(200); self.end_headers(); self.wfile.write(b"OK")
+            except Exception as e:
+                log.error(f"⚠️ Webhook error: {e}")
+                self.send_response(500); self.end_headers()
 
 def run_server():
     port = int(os.environ.get('PORT', 8080))
