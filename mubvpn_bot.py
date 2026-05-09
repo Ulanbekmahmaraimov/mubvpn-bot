@@ -341,7 +341,7 @@ def get_dashboard_html(lang):
   }}
   .icon-wrapper svg {{ width: 40px; height: 40px; fill: #fff; }}
 
-  .premium-badge {
+  .premium-badge {{
     display: inline-block;
     padding: 6px 14px;
     background: rgba(0, 229, 160, 0.1);
@@ -353,7 +353,7 @@ def get_dashboard_html(lang):
     letter-spacing: 1.5px;
     margin-bottom: 20px;
     text-transform: uppercase;
-  }
+  }}
 
   h1 {{ 
     font-size: 34px; font-weight: 900; margin-bottom: 12px; letter-spacing: -0.5px;
