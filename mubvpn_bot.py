@@ -282,6 +282,45 @@ def get_dashboard_html(lang):
             's2_t': 'Oʻrnating', 's2_d': 'Faylni oching va oʻrnatishni tasdiqlang.',
             's3_t': 'Ulaning', 's3_d': 'Ilovani oching va himoyani yoqing.'
         },
+        'tg': {
+            'h1': 'mubVPN — VPN-и тез ва бехатар барои Android',
+            'sub': 'Маҳдудиятҳоро давр занед ва бехатар монед. mubVPN барои кори мӯътадил ва суръати баланд тарҳрезӣ шудааст.',
+            'btn_dl': 'Боргирӣ барои Android',
+            'features_title': 'Чаро mubVPN-ро интихоб мекунанд?',
+            'f1_t': 'Smart Route', 'f1_d': 'Интихоби автоматии масир барои суръат.',
+            'f2_t': 'Бехатарӣ', 'f2_d': 'Рамзгузории додаҳо ва ҳифзи махфият.',
+            'f3_t': 'Android-first', 'f3_d': 'Интерфейси зебо барои смартфони шумо.',
+            'steps_title': 'Насб дар 3 марҳила',
+            's1_t': 'Боргирӣ кунед', 's1_d': 'Тугмаро пахш кунед ва APK-ро интизор шавед.',
+            's2_t': 'Насб кунед', 's2_d': 'Файлро кушоед ва насбро тасдиқ кунед.',
+            's3_t': 'Истифода баред!', 's3_d': 'Барномаро оғоз кунед ва муҳофизатро фаъол созед.'
+        },
+        'kk': {
+            'h1': 'mubVPN — Android үшін жылдам және қауіпсіз VPN',
+            'sub': 'Шектеулерді айналып өтіп, қауіпсіз болыңыз. mubVPN тұрақты жұмыс пен жоғары жылдамдыққа арналған.',
+            'btn_dl': 'Android үшін жүктеу',
+            'features_title': 'Неліктен mubVPN таңдайды?',
+            'f1_t': 'Smart Route', 'f1_d': 'Жылдамдық үшін ең жақсы жолды таңдау.',
+            'f2_t': 'Қауіпсіздік', 'f2_d': 'Деректерді шифрлау және құпиялылықты қорғау.',
+            'f3_t': 'Android-first', 'f3_d': 'Смартфоныңызға ыңғайлы интерфейс.',
+            'steps_title': '3 қадамда орнату',
+            's1_t': 'Жүктеп алыңыз', 's1_d': 'Жүктеу батырмасын басып, APK күтіңіз.',
+            's2_t': 'Орнатыңыз', 's2_d': 'Файлды ашып, орнатуды растаңыз.',
+            's3_t': 'Қосылыңыз!', 's3_d': 'Қосымшаны ашып, қорғауды қосыңыз.'
+        },
+        'tr': {
+            'h1': 'mubVPN — Android için Hızlı и Güvenli VPN',
+            'sub': 'Kısıtlamaları aşın ve güvende kalın. mubVPN istikrarlı çalışma ve yüksek hız için tasarlanmıştır.',
+            'btn_dl': 'Android için İndir',
+            'features_title': 'Neden mubVPN?',
+            'f1_t': 'Smart Route', 'f1_d': 'Hız için en iyi rotanın otomatik seçimi.',
+            'f2_t': 'Güvenlik', 'f2_d': 'Veri şifreleme ve gizlilik koruması.',
+            'f3_t': 'Android-first', 'f3_d': 'Akıllı telefonunuz için optimize arayüz.',
+            'steps_title': '3 Adımda Kurulum',
+            's1_t': 'Dosyayı İndir', 's1_d': 'İndir düğmesine basın ve APKyı bekleyin.',
+            's2_t': 'Kurulumu Yap', 's2_d': 'Dosyayı açın ve kurulumu onaylayın.',
+            's3_t': 'Kullanmaya Başla!', 's3_d': 'Uygulamayı başlatın ve korumayı açın.'
+        },
         'en': {
             'h1': 'mubVPN — Fast & Secure VPN for Android',
             'sub': 'Bypass restrictions and stay safe online. mubVPN is designed for stable connection and high speed.',
@@ -317,189 +356,232 @@ def get_dashboard_html(lang):
   
   body {{ 
     font-family: 'Inter', sans-serif; 
-    background-color: #030508; 
+    background-color: #03060a; 
     color: #fff; 
     line-height: 1.6;
     overflow-x: hidden;
     position: relative;
+    min-height: 100vh;
   }}
 
   .container {{
-    max-width: 1000px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 0 24px;
     position: relative;
     z-index: 10;
   }}
 
-  /* Glass Orbs */
+  /* Ultra Premium Background Orbs */
   .bg-orb {{
-    position: fixed; border-radius: 50%; z-index: 0; filter: blur(80px); opacity: 0.4;
+    position: fixed; border-radius: 50%; z-index: 0; filter: blur(100px); opacity: 0.35;
+    animation: orbMove 20s infinite alternate cubic-bezier(0.45, 0, 0.55, 1);
   }}
-  .orb-1 {{ width: 500px; height: 500px; background: #00E5A0; top: -200px; right: -100px; }}
-  .orb-2 {{ width: 400px; height: 400px; background: #00896A; bottom: -100px; left: -100px; }}
+  .orb-1 {{ width: 600px; height: 600px; background: #00E5A0; top: -200px; right: -100px; animation-duration: 15s; }}
+  .orb-2 {{ width: 500px; height: 500px; background: #00896A; bottom: -150px; left: -150px; animation-duration: 25s; }}
+  .orb-3 {{ width: 300px; height: 300px; background: #004d40; top: 40%; left: 30%; opacity: 0.2; }}
+
+  @keyframes orbMove {{
+    0% {{ transform: translate(0, 0) scale(1); }}
+    100% {{ transform: translate(50px, 50px) scale(1.1); }}
+  }}
 
   /* Header */
   header {{
-    padding: 32px 0;
+    padding: 40px 0;
     display: flex;
     justify-content: center;
-    align-items: center;
   }}
 
   .logo {{
-    display: flex;
-    align-items: center;
-    gap: 12px;
     font-weight: 900;
-    font-size: 24px;
-    letter-spacing: -1px;
-    background: linear-gradient(to right, #fff, #00E5A0);
+    font-size: 32px;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, #fff 30%, #00E5A0);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 20px rgba(0, 229, 160, 0.3));
   }}
 
-  /* Hero Section - Glass Card */
+  /* Hero Section - Ultra Glass */
   .hero {{
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-radius: 40px;
-    padding: 80px 40px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border-radius: 48px;
+    padding: 100px 40px;
     text-align: center;
-    margin-bottom: 48px;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.4);
+    margin-bottom: 60px;
+    box-shadow: 0 50px 100px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
   }}
+
+  .hero::after {{
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(0,229,160,0.1), transparent);
+    animation: rotate 10s linear infinite; z-index: -1;
+  }}
+
+  @keyframes rotate {{ 100% {{ transform: rotate(360deg); }} }}
 
   .badge {{
     display: inline-block;
-    padding: 8px 16px;
-    background: rgba(0, 229, 160, 0.1);
-    border: 1px solid rgba(0, 229, 160, 0.2);
+    padding: 10px 20px;
+    background: rgba(0, 229, 160, 0.15);
+    border: 1px solid rgba(0, 229, 160, 0.3);
     border-radius: 100px;
     color: #00E5A0;
-    font-size: 11px;
-    font-weight: 800;
-    margin-bottom: 32px;
+    font-size: 12px;
+    font-weight: 900;
+    margin-bottom: 40px;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
+    animation: pulse 2s infinite;
+  }}
+
+  @keyframes pulse {{
+    0% {{ box-shadow: 0 0 0 0 rgba(0, 229, 160, 0.4); }}
+    70% {{ box-shadow: 0 0 0 15px rgba(0, 229, 160, 0); }}
+    100% {{ box-shadow: 0 0 0 0 rgba(0, 229, 160, 0); }}
   }}
 
   h1 {{
-    font-size: clamp(34px, 8vw, 60px);
-    font-weight: 900;
-    line-height: 1;
-    margin-bottom: 24px;
-    letter-spacing: -2px;
+    font-size: clamp(36px, 9vw, 72px);
+    font-weight: 950;
+    line-height: 0.95;
+    margin-bottom: 30px;
+    letter-spacing: -3px;
+    background: linear-gradient(to bottom, #fff, #888);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }}
 
   .hero p {{
-    font-size: 18px;
-    color: rgba(255,255,255,0.5);
-    max-width: 640px;
-    margin: 0 auto 48px;
+    font-size: 20px;
+    color: rgba(255,255,255,0.6);
+    max-width: 700px;
+    margin: 0 auto 60px;
+    font-weight: 500;
   }}
 
   .btn-download {{
     display: inline-flex;
     align-items: center;
-    gap: 14px;
-    background: #00E5A0;
-    color: #030508;
-    padding: 22px 48px;
-    border-radius: 20px;
+    gap: 16px;
+    background: linear-gradient(135deg, #00E5A0, #00C58A);
+    color: #03060a;
+    padding: 24px 60px;
+    border-radius: 24px;
     font-weight: 900;
-    font-size: 20px;
+    font-size: 22px;
     text-decoration: none;
-    box-shadow: 0 20px 40px rgba(0, 229, 160, 0.3);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 25px 50px rgba(0, 229, 160, 0.4);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }}
 
   .btn-download:hover {{
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 30px 60px rgba(0, 229, 160, 0.5);
-    background: #00F5A0;
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 35px 70px rgba(0, 229, 160, 0.6);
   }}
 
-  /* Features Grid */
+  /* Floating Features Grid */
   .grid {{
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-    margin-bottom: 60px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    margin-bottom: 80px;
   }}
 
   .glass-card {{
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    padding: 40px;
-    border-radius: 32px;
-    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    padding: 48px;
+    border-radius: 40px;
+    transition: all 0.4s ease;
+    animation: float 6s infinite ease-in-out;
   }}
+  .glass-card:nth-child(2) {{ animation-delay: 1s; }}
+  .glass-card:nth-child(3) {{ animation-delay: 2s; }}
+
+  @keyframes float {{
+    0%, 100% {{ transform: translateY(0); }}
+    50% {{ transform: translateY(-15px); }}
+  }}
+
   .glass-card:hover {{
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(0, 229, 160, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: #00E5A0;
+    transform: translateY(-20px) scale(1.02);
   }}
 
   .f-icon {{
-    width: 56px; height: 56px;
-    background: linear-gradient(135deg, rgba(0,229,160,0.2), rgba(0,229,160,0));
-    border-radius: 16px;
+    width: 64px; height: 64px;
+    background: rgba(0, 229, 160, 0.1);
+    border-radius: 20px;
     display: flex; align-items: center; justify-content: center;
-    margin-bottom: 24px;
+    margin-bottom: 30px;
     color: #00E5A0;
-    border: 1px solid rgba(0,229,160,0.2);
+    border: 1px solid rgba(0, 229, 160, 0.2);
+    box-shadow: 0 10px 20px rgba(0, 229, 160, 0.1);
   }}
 
-  .glass-card h3 {{ font-size: 22px; font-weight: 700; margin-bottom: 12px; }}
-  .glass-card p {{ color: rgba(255,255,255,0.4); font-size: 15px; }}
+  .glass-card h3 {{ font-size: 24px; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px; }}
+  .glass-card p {{ color: rgba(255,255,255,0.5); font-size: 16px; line-height: 1.6; }}
 
-  /* Steps Section */
-  .steps-title {{ text-align: center; font-size: 32px; font-weight: 900; margin: 80px 0 40px; }}
+  /* Steps Section - Ultra Premium */
+  .steps-title {{ text-align: center; font-size: 40px; font-weight: 950; margin: 100px 0 50px; letter-spacing: -1.5px; }}
   
   .step-card {{
     display: flex;
     align-items: flex-start;
-    gap: 24px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 32px;
-    border-radius: 24px;
-    margin-bottom: 20px;
+    gap: 30px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 40px;
+    border-radius: 32px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(15px);
+    transition: 0.3s;
   }}
+  .step-card:hover {{ transform: scale(1.01); background: rgba(255, 255, 255, 0.05); }}
 
   .step-num {{
     flex-shrink: 0;
-    width: 48px; height: 48px;
-    background: #00E5A0;
-    color: #030508;
-    border-radius: 14px;
+    width: 60px; height: 60px;
+    background: linear-gradient(135deg, #00E5A0, #00896A);
+    color: #03060a;
+    border-radius: 18px;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 900; font-size: 20px;
+    font-weight: 950; font-size: 24px;
+    box-shadow: 0 10px 20px rgba(0, 229, 160, 0.3);
   }}
 
-  .step-content h4 {{ font-size: 18px; font-weight: 700; margin-bottom: 6px; }}
-  .step-content p {{ color: rgba(255,255,255,0.4); font-size: 14px; }}
+  .step-content h4 {{ font-size: 20px; font-weight: 800; margin-bottom: 8px; }}
+  .step-content p {{ color: rgba(255,255,255,0.5); font-size: 16px; }}
 
   footer {{
-    padding: 60px 0;
+    padding: 100px 0 60px;
     text-align: center;
-    color: rgba(255,255,255,0.2);
-    font-size: 14px;
-    font-weight: 600;
+    color: rgba(255,255,255,0.3);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
   }}
 
-  @media (max-width: 600px) {{
-    .hero {{ padding: 60px 24px; }}
-    h1 {{ font-size: 40px; }}
-    .container {{ padding: 0 16px; }}
+  @media (max-width: 768px) {{
+    .hero {{ padding: 80px 24px; }}
+    h1 {{ font-size: 48px; }}
+    .grid {{ grid-template-columns: 1fr; }}
   }}
 </style>
 </head>
 <body>
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
 
   <div class="container">
     <header>
@@ -507,28 +589,28 @@ def get_dashboard_html(lang):
     </header>
 
     <section class="hero">
-      <div class="badge">💎 Premium Core</div>
+      <div class="badge">💎 Next-Gen Security</div>
       <h1>{t['h1']}</h1>
       <p>{t['sub']}</p>
       <a href="/download" class="btn-download">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
         {t['btn_dl']}
       </a>
     </section>
 
     <div class="grid">
       <div class="glass-card">
-        <div class="f-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
+        <div class="f-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
         <h3>{t['f1_t']}</h3>
         <p>{t['f1_d']}</p>
       </div>
       <div class="glass-card">
-        <div class="f-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+        <div class="f-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
         <h3>{t['f2_t']}</h3>
         <p>{t['f2_d']}</p>
       </div>
       <div class="glass-card">
-        <div class="f-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg></div>
+        <div class="f-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg></div>
         <h3>{t['f3_t']}</h3>
         <p>{t['f3_d']}</p>
       </div>
@@ -561,7 +643,7 @@ def get_dashboard_html(lang):
     </div>
 
     <footer>
-      MUBVPN PREMIUM © 2025 | @KL_MUB
+      MUBVPN ULTRA PREMIUM © 2025 | @KL_MUB
     </footer>
   </div>
 </body>
