@@ -5,6 +5,7 @@ import requests
 import threading
 import time
 import html
+import urllib.parse
 from datetime import datetime, timedelta
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo, InputMediaPhoto
@@ -74,7 +75,7 @@ STRINGS = {
         "how_step_4": "📱 <b>ШАГ 4: Данные карты</b>\n\nВведите номер карты и CVC-код. 💳",
         "how_step_5": "✅ <b>ШАГ 5: Завершение</b>\n\nНажмите 'Оплатить' и введите код из СМС. 🎉",
         "how_step_6": "🛠 <b>ШАГ 6: Проверка</b>\n\nЕсли Premium не активен, нажмите 'Проверить' в боте. @kl_mub на связи! 👨‍💻",
-        "menu_back": "Главное меню:", "share_msg": "🚀 mubVPN — Самый быстрый и безопасный VPN для Android!\n\n✅ Обходит любые блокировки\n✅ Надежно защищает данные\n✅ Интернет без границ\n\nСкачай сейчас! 👇",
+        "menu_back": "Главное меню:", "share_msg": "🚀 mubVPN — Самый быстрый и безопасный VPN для Android!\n\n✅ Обходит любые блокировки\n✅ Надежно защищает ваши данные\n✅ Подключение в один тап\n✅ Высокая и стабильная скорость\n\nСкачай сейчас! 👇",
         "share_title": "🤝 <b>Поделиться:</b>", "btn_share_now": "📲 Поделиться"
     },
     "uz": {
@@ -134,7 +135,7 @@ STRINGS = {
         "how_step_4": "📱 <b>4-ҚАДАМ: Карта мәліметтері</b>\n\nКарта нөмірін жана CVC-кодты енгізіңіз. 💳",
         "how_step_5": "✅ <b>5-ҚАДАМ: Аяқтау</b>\n\n'Төлеу' батырмасын басып, СМС кодты енгізіңіз. 🎉",
         "how_step_6": "🛠 <b>6-ҚАДАМ: Тексеру</b>\n\nЕгер жұмыс істемесе, боттағы 'Тексеру' батырмасын басыңыз. @kl_mub көмектеседі! 👨‍💻",
-        "menu_back": "Басты мәзір:", "share_msg": "🚀 mubVPN — Android үшін ең жылдам және қауіпсіз VPN!\n\n✅ Блоктауларды айналып өтеді\n✅ Деректерді қорғайды\n✅ Шектеусіз интернет\n\nҚазір жүктеп ал! 👇",
+        "menu_back": "Басты мәзір:", "share_msg": "🚀 mubVPN — Android үчүн ең жылдам жана қауіпсіз VPN!\n\n✅ Блоктауларды айналып өтеді\n✅ Деректерді қорғайды\n✅ Шектеусіз интернет\n\nҚазір жүктеп ал! 👇",
         "share_title": "🤝 <b>Бөлісу:</b>", "btn_share_now": "📲 Бөлісу"
     },
     "tr": {
@@ -161,7 +162,7 @@ STRINGS = {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nUnlock the fastest and most secure internet access. Use the buttons below to pay or download the application:",
         "btn_pay": "💳 Buy", "btn_how": "📖 How to pay?",
         "btn_download": "🚀 Download App",
-        "btn_support": "👨 staff-💻 Support", "btn_share": "🤝 Share",
+        "btn_support": "👨‍💻 Support", "btn_share": "🤝 Share",
         "pay_text": "💳 <b>Proceed to Payment</b>\n\nThe payment is secure within Telegram:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Back", "next": "Next ➡️",
         "check_btn": "✅ I have paid (Check)",
@@ -288,8 +289,73 @@ def get_dashboard_html(lang):
             'f3_t': 'Android-first', 'f3_d': 'Оптимизированный интерфейс.',
             'steps_title': 'Установка за 3 шага',
             's1_t': 'Скачайте файл', 's1_d': 'Нажмите кнопку загрузки и дождитесь APK.',
-            's2_t': 'Установите APK', 's2_d': 'Откройте файл и подтвердите установку.',
+            's2_t': 'Установите APK', 's2_d': 'Открывайте файл и подтвердите установку.',
             's3_t': 'Пользуйтесь!', 's3_d': 'Запустите приложение и включите защиту.'
+        },
+        'uz': {
+            'h1': 'mubVPN — Android uchun tezkor va xavfsiz VPN',
+            'sub': '🚀 mubVPN — sevimli xizmatlaringizga cheklovlarsiz xavfsiz kirish!\n\n✅ Toʻsiqlarni aylanib oʻtadi\n✅ Maʼlumotlaringizni xavfsiz himoya qiladi\n✅ Bir marta bosish bilan ulanish\n✅ Yuqori va barqaror tezlik\n\nHoziroq yuklab oling va cheklovsiz foydalaning! 👇',
+            'btn_dl': 'Android uchun yuklash',
+            'features_title': 'Nima uchun mubVPN?',
+            'f1_t': 'Smart Route', 'f1_d': 'Tezlik uchun eng yaxshi yoʻnalish.',
+            'f2_t': 'Xavfsizlik', 'f2_d': 'Maʼlumotlarni shifrlash.',
+            'f3_t': 'Android-first', 'f3_d': 'Qulay interfeys.',
+            'steps_title': '3 qadamda oʻrnatish',
+            's1_t': 'Yuklab oling', 's1_d': 'Tugmani bosing va APKni kuting.',
+            's2_t': 'Oʻrnating', 's2_d': 'Faylni oching va tasdiqlang.',
+            's3_t': 'Ulaning', 's3_d': 'Ilovani oching va himoyani yoqing.'
+        },
+        'tg': {
+            'h1': 'mubVPN — VPN-и тез ва бехатар барои Android',
+            'sub': '🚀 mubVPN — дастрасии бехатари шумо ба хидматҳои дӯстдошта бе маҳдудият!\n\n✅ Маҳдудиятҳоро давр мезанад\n✅ Маълумоти шуморо боэътимод ҳифз мекунад\n✅ Пайвастшавӣ бо як клик\n✅ Суръати баланд ва устувор\n\nHоло боргирӣ кунед ва истифода баред! 👇',
+            'btn_dl': 'Боргирӣ барои Android',
+            'features_title': 'Чаро mubVPN?',
+            'f1_t': 'Smart Route', 'f1_d': 'Интихоби автоматии масир.',
+            'f2_t': 'Бехатарӣ', 'f2_d': 'Рамзгузории додаҳо.',
+            'f3_t': 'Android-first', 'f3_d': 'Интерфейси зебо.',
+            'steps_title': 'Насб дар 3 марҳила',
+            's1_t': 'Боргирӣ кунед', 's1_d': 'Тугмаро пахш кунед ва APK-ро интизор шавед.',
+            's2_t': 'Насб кунед', 's2_d': 'Файлро кушоед ва тасдиқ кунед.',
+            's3_t': 'Истифода баред!', 's3_d': 'Барномаро оғоз кунед ва муҳофизатро фаъол кунед.'
+        },
+        'kk': {
+            'h1': 'mubVPN — Android үшін жылдам және қауіпсіз VPN',
+            'sub': '🚀 mubVPN — сүйікті қызметтеріңізге шектеусіз қауіпсіз кіру!\n\n✅ Блоктауларды айналып өтеді\n✅ Деректеріңізді сенімді қорғайды\n✅ Бір рет басу арқылы қосылу\n✅ Жоғары және тұрақты жылдамдық\n\nҚазір жүктеп алыңыз және шектеусіз пайдаланыңыз! 👇',
+            'btn_dl': 'Android үшін жүктеу',
+            'features_title': 'Неліктен mubVPN?',
+            'f1_t': 'Smart Route', 'f1_d': 'Ең жақсы жолды таңдау.',
+            'f2_t': 'Қауіпсіздік', 'f2_d': 'Деректерді шифрлау.',
+            'f3_t': 'Android-first', 'f3_d': 'Ыңғайлы интерфейс.',
+            'steps_title': '3 қадамда орнату',
+            's1_t': 'Жүктеп алыңыз', 's1_d': 'Батырманы басып, APK күтіңіз.',
+            's2_t': 'Орнатыңыз', 's2_d': 'Файлды ашып, растаңыз.',
+            's3_t': 'Қосылыңыз!', 's3_d': 'Қорғауды қосыңыз.'
+        },
+        'tr': {
+            'h1': 'mubVPN — Android için Hızlı и Güvenli VPN',
+            'sub': '🚀 mubVPN — favori hizmetlerinize kısıtlama olmadan güvenli erişim!\n\n✅ Tüm engelleri aşar\n✅ Verilerinizi güvenle korur\n✅ Tek dokunuşla bağlantı\n✅ Yüksek ve istikrarlı hız\n\nHemen indirin ve özgürlüğün tadını çıkarın! 👇',
+            'btn_dl': 'Android için İndir',
+            'features_title': 'Neden mubVPN?',
+            'f1_t': 'Smart Route', 'f1_d': 'En iyi rotanın otomatik seçimi.',
+            'f2_t': 'Güvenlik', 'f2_d': 'Veri şifreleme.',
+            'f3_t': 'Android-first', 'f3_d': 'Optimize arayüz.',
+            'steps_title': '3 Adımda Kurulum',
+            's1_t': 'Dosyayı İndir', 's1_d': 'Düğmeye basın ve APKyı bekleyin.',
+            's2_t': 'Kurulumu Yap', 's2_d': 'Dosyayı açın ve onaylayın.',
+            's3_t': 'Kullanmaya Başla!', 's3_d': 'Korumayı açın.'
+        },
+        'en': {
+            'h1': 'mubVPN — Fast & Secure VPN for Android',
+            'sub': '🚀 mubVPN — your secure access to favorite services without limits!\n\n✅ Bypasses all restrictions\n✅ Reliability protects your data\n✅ One-tap connection\n✅ High and stable speed\n\nDownload and use without limits now! 👇',
+            'btn_dl': 'Download for Android',
+            'features_title': 'Why choose mubVPN?',
+            'f1_t': 'Smart Route', 'f1_d': 'Auto-selection of the best route.',
+            'f2_t': 'Security', 'f2_d': 'End-to-end encryption.',
+            'f3_t': 'Android-first', 'f3_d': 'Sleek interface.',
+            'steps_title': 'Setup in 3 steps',
+            's1_t': 'Download', 's1_d': 'Click download and wait for the APK.',
+            's2_t': 'Install', 's2_d': 'Open the file and confirm.',
+            's3_t': 'Connect', 's3_d': 'Enjoy freedom.'
         }
     }
     t = texts.get(lang, texts['ru'])
@@ -325,7 +391,7 @@ def get_dashboard_html(lang):
     <section class="hero">
       <h1>{t['h1']}</h1>
       <p>{t['sub']}</p>
-      <a href="/download" class="btn-download">Download APK</a>
+      <a href="/download" class="btn-download">{t['btn_dl']}</a>
     </section>
   </div>
 </body>
@@ -357,8 +423,6 @@ class BotHandler(BaseHTTPRequestHandler):
                 self.send_response(200); self.end_headers(); self.wfile.write(b"OK")
             except: self.send_response(500); self.end_headers()
 
-import urllib.parse
-
 def run_server():
     port = int(os.environ.get('PORT', 8080))
     HTTPServer(('0.0.0.0', port), BotHandler).serve_forever()
@@ -368,7 +432,7 @@ def main():
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(handle_callback))
-    log.info("🤖 Bot is running with banner...")
+    log.info("🤖 Бот баннер менен иштеп жатат...")
     app.run_polling(drop_pending_updates=True)
 
 if __name__ == "__main__":
