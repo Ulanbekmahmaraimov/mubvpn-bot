@@ -347,6 +347,7 @@ class BotHandler(BaseHTTPRequestHandler):
             except: self.send_response(500); self.end_headers()
 
 import urllib.parse
+
 def run_server():
     port = int(os.environ.get('PORT', 8080))
     HTTPServer(('0.0.0.0', port), BotHandler).serve_forever()
