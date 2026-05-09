@@ -158,25 +158,144 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>mubVPN Bot Dashboard</title>
+<title>mubVPN Premium</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-  body { font-family: 'Inter', sans-serif; background: #050505; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; text-align: center; }
-  .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 40px; max-width: 500px; width: 100%; backdrop-filter: blur(10px); }
-  h1 { font-size: 32px; font-weight: 900; margin-bottom: 10px; background: linear-gradient(135deg, #00F5A0, #00D9F5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  p { color: rgba(255,255,255,0.6); margin-bottom: 30px; }
-  .download-btn { display: inline-flex; align-items: center; gap: 12px; background: linear-gradient(135deg, #00F5A0, #00D9F5); color: #000; font-weight: 700; padding: 16px 32px; border-radius: 100px; text-decoration: none; box-shadow: 0 10px 30px rgba(0,245,160,0.3); transition: 0.3s; }
-  .download-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,245,160,0.4); }
-  .footer { margin-top: 30px; font-size: 12px; color: rgba(255,255,255,0.2); }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap');
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body { 
+    font-family: 'Inter', sans-serif; 
+    background-color: #06090D; 
+    color: #fff; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    min-height: 100vh; 
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Animated Background Elements */
+  .bg-orb-1 {
+    position: absolute; width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,229,160,0.15) 0%, rgba(0,0,0,0) 70%);
+    top: -100px; right: -100px; border-radius: 50%;
+    animation: pulse 6s infinite alternate; z-index: 0;
+  }
+  .bg-orb-2 {
+    position: absolute; width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(0,217,245,0.1) 0%, rgba(0,0,0,0) 70%);
+    bottom: -50px; left: -100px; border-radius: 50%;
+    animation: pulse 8s infinite alternate-reverse; z-index: 0;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1) translate(0, 0); }
+    100% { transform: scale(1.2) translate(20px, 20px); }
+  }
+
+  /* Glassmorphism Card */
+  .card { 
+    background: rgba(255, 255, 255, 0.03); 
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+    border-radius: 32px; 
+    padding: 50px 40px; 
+    max-width: 420px; 
+    width: 90%; 
+    backdrop-filter: blur(20px); 
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+    text-align: center;
+    z-index: 10;
+    position: relative;
+    transform: translateY(20px);
+    opacity: 0;
+    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes slideUp {
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  /* Shield Icon */
+  .icon-wrapper {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, #00E5A0, #00896A);
+    border-radius: 22px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    box-shadow: 0 10px 25px rgba(0, 229, 160, 0.4);
+    position: relative;
+  }
+  .icon-wrapper::after {
+    content: ''; position: absolute; inset: 0; border-radius: 22px;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.4);
+  }
+  .icon-wrapper svg { width: 40px; height: 40px; fill: #fff; }
+
+  h1 { 
+    font-size: 34px; font-weight: 900; margin-bottom: 12px; letter-spacing: -0.5px;
+    background: linear-gradient(to right, #ffffff, #a8b2c1);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+  }
+  
+  p.subtitle { 
+    color: rgba(255,255,255,0.5); 
+    font-size: 15px; line-height: 1.5; margin-bottom: 40px; font-weight: 400;
+  }
+
+  /* Cyber Download Button */
+  .download-btn { 
+    display: flex; align-items: center; justify-content: center; gap: 10px; 
+    background: #00E5A0; color: #06090D; font-weight: 700; font-size: 16px;
+    padding: 18px 32px; border-radius: 100px; text-decoration: none; 
+    box-shadow: 0 0 20px rgba(0, 229, 160, 0.3); 
+    transition: all 0.3s ease;
+    position: relative; overflow: hidden;
+  }
+  
+  .download-btn::before {
+    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: all 0.5s ease;
+  }
+
+  .download-btn:hover { 
+    transform: translateY(-3px); 
+    box-shadow: 0 10px 30px rgba(0, 229, 160, 0.5); 
+    background: #00F5A0;
+  }
+  
+  .download-btn:hover::before { left: 100%; }
+  
+  .download-btn svg { width: 20px; height: 20px; fill: #06090D; }
+
+  .footer { 
+    margin-top: 40px; font-size: 13px; color: rgba(255,255,255,0.2); z-index: 10;
+    font-weight: 600; letter-spacing: 1px;
+  }
 </style>
 </head>
 <body>
-<div class="card">
-  <h1>🛡 mubVPN</h1>
-  <p>Android үчүн эң акыркы версиясын көчүрүп алыңыз.</p>
-  <a href="/download" class="download-btn">⬇️ Жүктөө (APK)</a>
-</div>
-<p class="footer">mubVPN © 2025 | @kl_mub</p>
+  <div class="bg-orb-1"></div>
+  <div class="bg-orb-2"></div>
+
+  <div class="card">
+    <div class="icon-wrapper">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+    </div>
+    <h1>mubVPN</h1>
+    <p class="subtitle">Эң акыркы версиясын көчүрүп алып, чектөөсүз интернетке жол ачыңыз.</p>
+    
+    <a href="/download" class="download-btn">
+      <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+      Жүктөө (APK)
+    </a>
+  </div>
+  
+  <p class="footer">MUBVPN © 2025 | @KL_MUB</p>
 </body>
 </html>"""
 
