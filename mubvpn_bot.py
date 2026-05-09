@@ -39,6 +39,7 @@ STRINGS = {
     "ky": {
         "welcome": "🛡 <b>mubVPN Premium</b>\n\nТөлөм жүргүзүү үчүн төмөнкү баскычтарды колдонуңуз:",
         "btn_pay": "💳 Сатып алуу", "btn_how": "📖 Төлөөнү үйрөнүү",
+        "btn_download": "⬇️ Тиркемени жүктөө",
         "btn_support": "👨‍💻 Колдоо", "btn_share": "🤝 Бөлүшүү",
         "pay_text": "💳 <b>Төлөөгө өтүү</b>\n\nТөлөм Telegram ичинде коопсуз өтөт:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Артка", "next": "Кийинки ➡️",
@@ -57,6 +58,7 @@ STRINGS = {
     "ru": {
         "welcome": "🛡 <b>mubVPN Premium</b>\n\nВыберите действие:",
         "btn_pay": "💳 Купить", "btn_how": "📖 Как оплатить?",
+        "btn_download": "⬇️ Скачать приложение",
         "btn_support": "👨‍💻 Поддержка", "btn_share": "🤝 Поделиться",
         "pay_text": "💳 <b>Переход к оплате</b>\n\nОплата проходит внутри Telegram:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Назад", "next": "Далее ➡️",
@@ -75,6 +77,7 @@ STRINGS = {
     "en": {
         "welcome": "🛡 <b>mubVPN Premium</b>\n\nPlease choose an option:",
         "btn_pay": "💳 Buy", "btn_how": "📖 How to pay?",
+        "btn_download": "⬇️ Download App",
         "btn_support": "👨‍💻 Support", "btn_share": "🤝 Share",
         "pay_text": "💳 <b>Proceed to Payment</b>\n\nThe payment is secure within Telegram:",
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Back", "next": "Next ➡️",
@@ -98,7 +101,13 @@ def get_lang_keyboard():
 
 def get_main_keyboard(lang):
     L = STRINGS[lang]
-    return InlineKeyboardMarkup([[InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')], [InlineKeyboardButton(L["btn_how"], callback_data='how_1')], [InlineKeyboardButton(L["btn_share"], callback_data='share_app')], [InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)]])
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton(L["btn_download"], url='https://mubvpn-bot.onrender.com/download')],
+        [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')], 
+        [InlineKeyboardButton(L["btn_how"], callback_data='how_1')], 
+        [InlineKeyboardButton(L["btn_share"], callback_data='share_app')], 
+        [InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)]
+    ])
 
 # --- КОМАНДАЛАР ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
