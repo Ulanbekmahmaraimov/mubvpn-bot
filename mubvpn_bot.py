@@ -90,7 +90,8 @@ STRINGS = {
         "how_step_4": "📱 <b>4-КАДАМ: Карта маалыматы</b>\n\nКарта номерин жана CVC-кодун жазыңыз. 💳",
         "how_step_5": "✅ <b>5-КАДАМ: Төлөмдү бүтүрүү</b>\n\n'Оплатить' баскычын басып, SMS кодду киргизиңиз. 🎉",
         "how_step_6": "🛠 <b>6-КАДАМ: Текшерүү</b>\n\nЭгер Premium иштебесе, боттогу 'Текшерүү' баскычын басыңыз. @kl_mub дайыма жардамга даяр! 👨‍💻",
-        "menu_back": "Башкы меню:", "share_msg": "🚀 mubVPN — Android үчүн эң тез жана коопсуз VPN!\n\n✅ Блоктоолорду айланып өтөт\n✅ Маалыматтарды коргойт\n✅ Чектөөсүз интернет\n\nАзыр жүктөп ал! 👇",
+        "menu_back": "Башкы меню:",
+        "share_msg": "🚀 mubVPN — Android үчүн эң тез жана коопсуз VPN!\n\n✅ Блоктоолорду айланып өтөт\n✅ Маалыматтарды ишенимдүү шифрлейт\n✅ Бир таптоо менен туташуу\n✅ Жогорку жана туруктуу ылдамдык\n\nАзыр жүктөп ал! 👇",
         "share_title": "🤝 <b>Бөлүшүү:</b>", "btn_share_now": "📲 Бөлүшүү"
     },
     "ru": {
@@ -110,7 +111,8 @@ STRINGS = {
         "how_step_4": "📱 <b>ШАГ 4: Данные карты</b>\n\nВведите номер карты и CVC-код. 💳",
         "how_step_5": "✅ <b>ШАГ 5: Завершение</b>\n\nНажмите 'Оплатить' и введите код из СМС. 🎉",
         "how_step_6": "🛠 <b>ШАГ 6: Проверка</b>\n\nЕсли Premium не активен, нажмите 'Проверить' в боте. @kl_mub на связи! 👨‍💻",
-        "menu_back": "Главное меню:", "share_msg": "🚀 mubVPN — Самый быстрый и безопасный VPN для Android!\n\n✅ Обходит любые блокировки\n✅ Надежно защищает данные\n✅ Интернет без границ\n\nСкачай сейчас! 👇",
+        "menu_back": "Главное меню:",
+        "share_msg": "🚀 mubVPN — Самый быстрый и безопасный VPN для Android!\n\n✅ Обходит любые блокировки\n✅ Надежно защищает ваши данные\n✅ Подключение в один тап\n✅ Высокая и стабильная скорость\n\nСкачай сейчас! 👇",
         "share_title": "🤝 <b>Поделиться:</b>", "btn_share_now": "📲 Поделиться"
     },
     "uz": {
@@ -130,7 +132,8 @@ STRINGS = {
         "how_step_4": "📱 <b>4-QADAM: Karta ma'lumotlari</b>\n\nKarta raqami va CVC-kodni yozing. 💳",
         "how_step_5": "✅ <b>5-QADAM: Yakunlash</b>\n\n'To'lash' tugmasini bosing va SMS kodni kiriting. 🎉",
         "how_step_6": "🛠 <b>6-QADAM: Tekshirish</b>\n\nAgar Premium ishlamasa, ботdagi 'Tekshirish' tugmasini bosing. @kl_mub yordamga tayyor! 👨‍💻",
-        "menu_back": "Asosiy menyu:", "share_msg": "🚀 mubVPN — Android uchun eng tezkor va xavfsiz VPN!\n\n✅ Blokirovkalarni aylanib o'tadi\n✅ Ma'lumotlarni himoya qiladi\n✅ Cheksiz internet\n\nHozir yuklab ol! 👇",
+        "menu_back": "Asosiy menyu:",
+        "share_msg": "🚀 mubVPN — Android uchun eng tezkor va xavfsiz VPN!\n\n✅ To'siqlarni aylanib o'tadi\n✅ Ma'lumotlarni xavfsiz himoya qiladi\n✅ Bir marta bosish bilan ulanish\n✅ Yuqori va barqaror tezlik\n\nHozir yuklab ol! 👇",
         "share_title": "🤝 <b>Ulashish:</b>", "btn_share_now": "📲 Ulashish"
     },
     "tg": {
@@ -150,7 +153,8 @@ STRINGS = {
         "how_step_4": "📱 <b>ҚАДАМИ 4: Маълумоти корт</b>\n\nРақами корт ва рамзи CVC-ро ворид кунед. 💳",
         "how_step_5": "✅ <b>ҚАДАМИ 5: Анҷоми пардохт</b>\n\n'Пардохт кардан'-ро пахш кунед ва рамзи СМС-ро ворид кунед. 🎉",
         "how_step_6": "🛠 <b>ҚАДАМИ 6: Санҷиш</b>\n\nАгар Premium фаъол нашуда бошад, тугмаи 'Санҷиш'-ро пахш кунед. @kl_mub ҳамеша тайёр аст! 👨‍💻",
-        "menu_back": "Менюи асосӣ:", "share_msg": "🚀 mubVPN — VPN-и зудтарин ва бехатар барои Android!\n\n✅ Маҳдудиятҳоро давр мезанад\n✅ Маълумотро ҳифз мекунад\n✅ Интернети бемаҳдуд\n\nHоло боргирӣ кун! 👇",
+        "menu_back": "Менюи асосӣ:",
+        "share_msg": "🚀 mubVPN — VPN-и зудтарин ва бехатар барои Android!\n\n✅ Маҳдудиятҳоро давр мезанад\n✅ Маълумоти шуморо боэътимод ҳифз мекунад\n✅ Пайвастшавӣ бо як клик\n✅ Суръати баланд ва устувор\n\nHоло боргирӣ кун! 👇",
         "share_title": "🤝 <b>Ирсол:</b>", "btn_share_now": "📲 Ирсол"
     },
     "kk": {
