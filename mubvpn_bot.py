@@ -342,13 +342,19 @@ def get_dashboard_html(lang):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>mubVPN Premium</title>
-<!-- Open Graph / Facebook -->
+<title>{t['h1']}</title>
+<!-- Open Graph / Social Media Preview -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mubvpn-bot.onrender.com/">
-<meta property="og:title" content="🛡 mubVPN Premium - Fast & Secure">
-<meta property="og:description" content="Download the latest version of mubVPN. Secure your internet connection with one click.">
+<meta property="og:title" content="🛡 {t['h1']}">
+<meta property="og:description" content="{t['sub']}">
 <meta property="og:image" content="https://raw.githubusercontent.com/Ulanbekmahmaraimov/mubvpn-bot/main/assets/preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="🛡 {t['h1']}">
+<meta name="twitter:description" content="{t['sub']}">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Ulanbekmahmaraimov/mubvpn-bot/main/assets/preview.png">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
   
