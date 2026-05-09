@@ -243,15 +243,60 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # --- WEB SERVER (DASHBOARD & WEBHOOK) ---
 def get_dashboard_html(lang):
     texts = {
-        'ky': {'title': 'Эң акыркы версиясын көчүрүп алып, чектөөсүз интернетке жол ачыңыз.', 'btn': 'Жүктөө (APK)'},
-        'ru': {'title': 'Скачайте последнюю версию и получите доступ к безграничному интернету.', 'btn': 'Скачать (APK)'},
-        'uz': {'title': 'Eng soʻnggi versiyasini yuklab oling va cheksiz internetga ega boʻling.', 'btn': 'Yuklab olish (APK)'},
-        'tg': {'title': 'Версияи охиринро боргирӣ кунед ва ба интернети бемаҳдуд дастрасӣ пайдо кунед.', 'btn': 'Боргирӣ (APK)'},
-        'kk': {'title': 'Соңғы нұсқасын жүктеп алып, шексіз интернетке қол жеткізіңіз.', 'btn': 'Жүктеу (APK)'},
-        'tr': {'title': 'En son sürümü indirin ve sınırsız internet erişiminin kilidini açın.', 'btn': 'İndir (APK)'},
-        'en': {'title': 'Download the latest version and unlock unlimited internet access.', 'btn': 'Download (APK)'}
+        'ky': {
+            'h1': 'mubVPN — Android үчүн тез жана коопсуз VPN',
+            'sub': 'Чектөөлөрдү айланып өтүп, интернетте коопсуз болуңуз. mubVPN туруктуу иштөө жана жогорку ылдамдык үчүн иштелип чыккан.',
+            'btn_dl': 'Android үчүн жүктөө',
+            'features_title': 'Эмне үчүн mubVPN тандашат?',
+            'f1_t': 'Smart Route', 'f1_d': 'Ылдам иштөө үчүн автоматтык жол тандоо.',
+            'f2_t': 'Коопсуздук', 'f2_d': 'Маалыматтарыңызды шифрлөө менен коргойт.',
+            'f3_t': 'Android үчүн', 'f3_d': 'Заманбап жана түшүнүктүү интерфейс.',
+            'steps_title': 'Орнотуу 3 кадамда',
+            's1_t': 'Жүктөп алыңыз', 's1_d': 'Жүктөө баскычын басып, APK файлын күтүңүз.',
+            's2_t': 'Орнотуңуз', 's2_d': 'Файлды ачып, орнотууну ырастаңыз.',
+            's3_t': 'Туташыңыз', 's3_d': 'Тиркемени ачып, коргоону иштетиңиз.'
+        },
+        'ru': {
+            'h1': 'mubVPN — Быстрый и безопасный VPN для Android',
+            'sub': 'Обходите блокировки и оставайтесь в безопасности. mubVPN рассчитан на стабильную работу и высокую скорость.',
+            'btn_dl': 'Скачать для Android',
+            'features_title': 'Почему выбирают mubVPN?',
+            'f1_t': 'Smart Route', 'f1_d': 'Автоподбор лучшего маршрута для скорости.',
+            'f2_t': 'Безопасность', 'f2_d': 'Шифрование данных и защита конфиденциальности.',
+            'f3_t': 'Android-first', 'f3_d': 'Интерфейс, оптимизированный под ваш смартфон.',
+            'steps_title': 'Установка за 3 шага',
+            's1_t': 'Скачайте файл', 's1_d': 'Нажмите кнопку загрузки и дождитесь APK.',
+            's2_t': 'Установите APK', 's2_d': 'Откройте файл и подтвердите установку.',
+            's3_t': 'Пользуйтесь!', 's3_d': 'Запустите приложение и включите защиту.'
+        },
+        'uz': {
+            'h1': 'mubVPN — Android uchun tezkor va xavfsiz VPN',
+            'sub': 'Cheklovlarni chetlab oʻting va xavfsiz qoling. mubVPN yuqori tezlikda barqaror ishlash uchun moʻljallangan.',
+            'btn_dl': 'Android uchun yuklash',
+            'features_title': 'Nima uchun mubVPN?',
+            'f1_t': 'Smart Route', 'f1_d': 'Tezlik uchun eng yaxshi yoʻnalishni tanlash.',
+            'f2_t': 'Xavfsizlik', 'f2_d': 'Maʼlumotlarni shifrlash va himoya qilish.',
+            'f3_t': 'Android-first', 'f3_d': 'Smartfoningiz uchun qulay interfeys.',
+            'steps_title': '3 qadamda oʻrnatish',
+            's1_t': 'Yuklab oling', 's1_d': 'Tugmani bosing va APK faylini kuting.',
+            's2_t': 'Oʻrnating', 's2_d': 'Faylni oching va oʻrnatishni tasdiqlang.',
+            's3_t': 'Ulaning', 's3_d': 'Ilovani oching va himoyani yoqing.'
+        },
+        'en': {
+            'h1': 'mubVPN — Fast & Secure VPN for Android',
+            'sub': 'Bypass restrictions and stay safe online. mubVPN is designed for stable connection and high speed.',
+            'btn_dl': 'Download for Android',
+            'features_title': 'Why choose mubVPN?',
+            'f1_t': 'Smart Route', 'f1_d': 'Auto-selection of the best route for speed.',
+            'f2_t': 'Security', 'f2_d': 'End-to-end encryption for your data.',
+            'f3_t': 'Android-first', 'f3_d': 'Sleek interface optimized for Android.',
+            'steps_title': 'Setup in 3 steps',
+            's1_t': 'Download', 's1_d': 'Click download and wait for the APK.',
+            's2_t': 'Install', 's2_d': 'Open the file and confirm installation.',
+            's3_t': 'Connect', 's3_d': 'Launch the app and enjoy freedom.'
+        }
     }
-    t = texts.get(lang, texts['ky'])
+    t = texts.get(lang, texts['ru'])
     
     return f"""<!DOCTYPE html>
 <html lang="{lang}">
@@ -266,7 +311,7 @@ def get_dashboard_html(lang):
 <meta property="og:description" content="Download the latest version of mubVPN. Secure your internet connection with one click.">
 <meta property="og:image" content="https://raw.githubusercontent.com/Ulanbekmahmaraimov/mubvpn-bot/main/assets/preview.png">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
   
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
   
@@ -274,149 +319,251 @@ def get_dashboard_html(lang):
     font-family: 'Inter', sans-serif; 
     background-color: #030508; 
     color: #fff; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: center; 
-    min-height: 100vh; 
-    overflow: hidden;
+    line-height: 1.6;
+    overflow-x: hidden;
     position: relative;
   }}
 
-  /* Animated Background Elements */
-  .bg-orb-1 {{
-    position: absolute; width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(0,229,160,0.15) 0%, rgba(0,0,0,0) 70%);
-    top: -100px; right: -100px; border-radius: 50%;
-    animation: pulse 6s infinite alternate; z-index: 0;
-  }}
-  .bg-orb-2 {{
-    position: absolute; width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(0,217,245,0.1) 0%, rgba(0,0,0,0) 70%);
-    bottom: -50px; left: -100px; border-radius: 50%;
-    animation: pulse 8s infinite alternate-reverse; z-index: 0;
-  }}
-
-  @keyframes pulse {{
-    0% {{ transform: scale(1) translate(0, 0); }}
-    100% {{ transform: scale(1.2) translate(20px, 20px); }}
-  }}
-
-  /* Glassmorphism Card */
-  .card {{ 
-    background: rgba(255, 255, 255, 0.03); 
-    border: 1px solid rgba(255, 255, 255, 0.08); 
-    border-radius: 32px; 
-    padding: 50px 40px; 
-    max-width: 420px; 
-    width: 90%; 
-    backdrop-filter: blur(20px); 
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
-    text-align: center;
+  .container {{
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
     z-index: 10;
-    position: relative;
-    transform: translateY(20px);
-    opacity: 0;
-    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }}
 
-  @keyframes slideUp {{
-    to {{ transform: translateY(0); opacity: 1; }}
+  /* Glass Orbs */
+  .bg-orb {{
+    position: fixed; border-radius: 50%; z-index: 0; filter: blur(80px); opacity: 0.4;
+  }}
+  .orb-1 {{ width: 500px; height: 500px; background: #00E5A0; top: -200px; right: -100px; }}
+  .orb-2 {{ width: 400px; height: 400px; background: #00896A; bottom: -100px; left: -100px; }}
+
+  /* Header */
+  header {{
+    padding: 32px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }}
 
-  /* Shield Icon */
-  .icon-wrapper {{
-    width: 80px; height: 80px;
-    background: linear-gradient(135deg, #00E5A0, #00896A);
-    border-radius: 22px;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 24px;
-    box-shadow: 0 10px 25px rgba(0, 229, 160, 0.4);
-    position: relative;
+  .logo {{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 900;
+    font-size: 24px;
+    letter-spacing: -1px;
+    background: linear-gradient(to right, #fff, #00E5A0);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }}
-  .icon-wrapper::after {{
-    content: ''; position: absolute; inset: 0; border-radius: 22px;
-    box-shadow: inset 0 2px 0 rgba(255,255,255,0.4);
-  }}
-  .icon-wrapper svg {{ width: 40px; height: 40px; fill: #fff; }}
 
-  .premium-badge {{
+  /* Hero Section - Glass Card */
+  .hero {{
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-radius: 40px;
+    padding: 80px 40px;
+    text-align: center;
+    margin-bottom: 48px;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.4);
+  }}
+
+  .badge {{
     display: inline-block;
-    padding: 6px 14px;
+    padding: 8px 16px;
     background: rgba(0, 229, 160, 0.1);
     border: 1px solid rgba(0, 229, 160, 0.2);
     border-radius: 100px;
     color: #00E5A0;
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing: 1.5px;
-    margin-bottom: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    margin-bottom: 32px;
     text-transform: uppercase;
+    letter-spacing: 2px;
   }}
 
-  h1 {{ 
-    font-size: 34px; font-weight: 900; margin-bottom: 12px; letter-spacing: -0.5px;
-    background: linear-gradient(to right, #ffffff, #a8b2c1);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-  }}
-  
-  p.subtitle {{ 
-    color: rgba(255,255,255,0.5); 
-    font-size: 15px; line-height: 1.5; margin-bottom: 40px; font-weight: 400;
+  h1 {{
+    font-size: clamp(34px, 8vw, 60px);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 24px;
+    letter-spacing: -2px;
   }}
 
-  /* Cyber Download Button */
-  .download-btn {{ 
-    display: flex; align-items: center; justify-content: center; gap: 10px; 
-    background: #00E5A0; color: #06090D; font-weight: 700; font-size: 16px;
-    padding: 18px 32px; border-radius: 100px; text-decoration: none; 
-    box-shadow: 0 0 20px rgba(0, 229, 160, 0.3); 
-    transition: all 0.3s ease;
-    position: relative; overflow: hidden;
-  }}
-  
-  .download-btn::before {{
-    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transition: all 0.5s ease;
+  .hero p {{
+    font-size: 18px;
+    color: rgba(255,255,255,0.5);
+    max-width: 640px;
+    margin: 0 auto 48px;
   }}
 
-  .download-btn:hover {{ 
-    transform: translateY(-3px); 
-    box-shadow: 0 10px 30px rgba(0, 229, 160, 0.5); 
+  .btn-download {{
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    background: #00E5A0;
+    color: #030508;
+    padding: 22px 48px;
+    border-radius: 20px;
+    font-weight: 900;
+    font-size: 20px;
+    text-decoration: none;
+    box-shadow: 0 20px 40px rgba(0, 229, 160, 0.3);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }}
+
+  .btn-download:hover {{
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(0, 229, 160, 0.5);
     background: #00F5A0;
   }}
-  
-  .download-btn:hover::before {{ left: 100%; }}
-  
-  .download-btn svg {{ width: 20px; height: 20px; fill: #06090D; }}
 
-  .footer {{ 
-    margin-top: 40px; font-size: 13px; color: rgba(255,255,255,0.2); z-index: 10;
-    font-weight: 600; letter-spacing: 1px;
+  /* Features Grid */
+  .grid {{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 60px;
+  }}
+
+  .glass-card {{
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    padding: 40px;
+    border-radius: 32px;
+    transition: all 0.3s ease;
+  }}
+  .glass-card:hover {{
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(0, 229, 160, 0.3);
+  }}
+
+  .f-icon {{
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, rgba(0,229,160,0.2), rgba(0,229,160,0));
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+    color: #00E5A0;
+    border: 1px solid rgba(0,229,160,0.2);
+  }}
+
+  .glass-card h3 {{ font-size: 22px; font-weight: 700; margin-bottom: 12px; }}
+  .glass-card p {{ color: rgba(255,255,255,0.4); font-size: 15px; }}
+
+  /* Steps Section */
+  .steps-title {{ text-align: center; font-size: 32px; font-weight: 900; margin: 80px 0 40px; }}
+  
+  .step-card {{
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 32px;
+    border-radius: 24px;
+    margin-bottom: 20px;
+  }}
+
+  .step-num {{
+    flex-shrink: 0;
+    width: 48px; height: 48px;
+    background: #00E5A0;
+    color: #030508;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 20px;
+  }}
+
+  .step-content h4 {{ font-size: 18px; font-weight: 700; margin-bottom: 6px; }}
+  .step-content p {{ color: rgba(255,255,255,0.4); font-size: 14px; }}
+
+  footer {{
+    padding: 60px 0;
+    text-align: center;
+    color: rgba(255,255,255,0.2);
+    font-size: 14px;
+    font-weight: 600;
+  }}
+
+  @media (max-width: 600px) {{
+    .hero {{ padding: 60px 24px; }}
+    h1 {{ font-size: 40px; }}
+    .container {{ padding: 0 16px; }}
   }}
 </style>
 </head>
 <body>
-  <div class="bg-orb-1"></div>
-  <div class="bg-orb-2"></div>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
 
-  <div class="card">
-    <div class="premium-badge">PREMIUM ACCESS</div>
-    <div class="icon-wrapper">
-      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+  <div class="container">
+    <header>
+      <div class="logo">mubVPN</div>
+    </header>
+
+    <section class="hero">
+      <div class="badge">💎 Premium Core</div>
+      <h1>{t['h1']}</h1>
+      <p>{t['sub']}</p>
+      <a href="/download" class="btn-download">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        {t['btn_dl']}
+      </a>
+    </section>
+
+    <div class="grid">
+      <div class="glass-card">
+        <div class="f-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
+        <h3>{t['f1_t']}</h3>
+        <p>{t['f1_d']}</p>
+      </div>
+      <div class="glass-card">
+        <div class="f-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+        <h3>{t['f2_t']}</h3>
+        <p>{t['f2_d']}</p>
+      </div>
+      <div class="glass-card">
+        <div class="f-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg></div>
+        <h3>{t['f3_t']}</h3>
+        <p>{t['f3_d']}</p>
+      </div>
     </div>
-    <h1>mubVPN</h1>
-    <p class="subtitle">{t['title']}</p>
+
+    <h2 class="steps-title">{t['steps_title']}</h2>
     
-    <a href="/download" class="download-btn">
-      <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-      {t['btn']}
-    </a>
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <div class="step-content">
+        <h4>{t['s1_t']}</h4>
+        <p>{t['s1_d']}</p>
+      </div>
+    </div>
+    
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <div class="step-content">
+        <h4>{t['s2_t']}</h4>
+        <p>{t['s2_d']}</p>
+      </div>
+    </div>
+    
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <div class="step-content">
+        <h4>{t['s3_t']}</h4>
+        <p>{t['s3_d']}</p>
+      </div>
+    </div>
+
+    <footer>
+      MUBVPN PREMIUM © 2025 | @KL_MUB
+    </footer>
   </div>
-  
-  <p class="footer">MUBVPN © 2025 | @KL_MUB</p>
 </body>
 </html>"""
 
