@@ -92,12 +92,93 @@ STRINGS = {
         "how_step_5": "✅ <b>STEP 5: Complete payment</b>\n\nClick 'Pay' and enter the SMS code from your bank. Premium activates automatically! 🎉",
         "how_step_6": "🛠 <b>STEP 6: Verification</b>\n\nCheck the app. If Premium is not active, click 'Check Payment' in the bot. @kl_mub is here to help! 👨‍💻",
         "menu_back": "Main Menu:", "share_msg": "🛡 mubVPN - The fastest and safest VPN!"
+    },
+    "uz": {
+        "welcome": "🛡 <b>mubVPN Premium</b>\n\nTo'lovni amalga oshirish uchun quyidagi tugmalardan foydalaning:",
+        "btn_pay": "💳 Sotib olish", "btn_how": "📖 Qanday to'lash kerak?",
+        "btn_download": "⬇️ Ilovani yuklab olish",
+        "btn_support": "👨‍💻 Qo'llab-quvvatlash", "btn_share": "🤝 Ulashish",
+        "pay_text": "💳 <b>To'lovga o'tish</b>\n\nTo'lov Telegram ichida xavfsiz amalga oshiriladi:",
+        "pay_btn_link": "💳 Telegram", "back": "⬅️ Orqaga", "next": "Keyingi ➡️",
+        "check_btn": "✅ To'ladim (Tekshirish)",
+        "checking": "⏳ To'lov tekshirilmoqda...",
+        "success": "🎉 <b>Premium faollashdi!</b>\n\nIlovani oching va VPN-dan foydalaning!",
+        "not_found": "⚠️ To'lov topilmadi. Agar to'lagan bo'lsangiz, 1-2 daqiqa kutib qayta bosing.",
+        "how_step_1": "🚀 <b>1-QADAM: Tarifni tanlash</b>\n\n'Sotib olish' tugmasini bosing va o'zingizga yoqqan muddatni tanlang. 1 yillik plan eng foydali! ✅",
+        "how_step_2": "📧 <b>2-QADAM: Pochta kiritish</b>\n\nTo'lov sahifasida Email-ingizni yozing. Bu chek olish va Premium faollashtirish uchun kerak. 📩",
+        "how_step_3": "💵 <b>3-QADAM: Valyuta tanlash</b>\n\nAgar mahalliy karta bilan to'lasangiz, komissiya kam bo'lishi uchun <b>RUB</b> yoki <b>KGS</b> tanlang. 💰",
+        "how_step_4": "📱 <b>4-QADAM: Karta ma'lumotlari</b>\n\nKarta raqami, muddati va CVC-kodni yozing. Ma'lumotlarni bank ilovasidan nusxalab olishingiz mumkin. 💳",
+        "how_step_5": "✅ <b>5-QADAM: Yakunlash</b>\n\n'To'lash' tugmasini bosing va SMS kodni kiriting. Premium avtomatik ravishda faollashadi! 🎉",
+        "how_step_6": "🛠 <b>6-QADAM: Tekshirish</b>\n\nIlovaga kiring. Agar Premium ishlamasa, botdagi 'Tekshirish' tugmasini bosing. @kl_mub yordamga tayyor! 👨‍💻",
+        "menu_back": "Asosiy menyu:", "share_msg": "🛡 mubVPN - Eng tezkor va xavfsiz VPN!"
+    },
+    "tg": {
+        "welcome": "🛡 <b>mubVPN Premium</b>\n\nБарои пардохт кардан аз тугмаҳои зерин истифода баред:",
+        "btn_pay": "💳 Харидан", "btn_how": "📖 Чӣ тавр бояд пардохт кард?",
+        "btn_download": "⬇️ Боргирии барнома",
+        "btn_support": "👨‍💻 Дастгирӣ", "btn_share": "🤝 Ирсол",
+        "pay_text": "💳 <b>Гузаштан ба пардохт</b>\n\nПардохт дар дохили Telegram бехатар мегузарад:",
+        "pay_btn_link": "💳 Telegram", "back": "⬅️ Ба ақиб", "next": "Оянда ➡️",
+        "check_btn": "✅ Ман пардохт кардам (Санҷиш)",
+        "checking": "⏳ Санҷиши пардохт...",
+        "success": "🎉 <b>Premium фаъол шуд!</b>\n\nБарномаро кушоед ва аз VPN лаззат баред!",
+        "not_found": "⚠️ Пардохт ёфт нашуд. Агар пардохт карда бошед, 1-2 дақиқа интизор шавед ва дубора кӯшиш кунед.",
+        "how_step_1": "🚀 <b>ҚАДАМИ 1: Интихоби тариф</b>\n\n'Харидан'-ро пахш кунед ва мӯҳлати мувофиқро интихоб кунед. Нақшаи солона аз ҳама фоидаовар аст! ✅",
+        "how_step_2": "📧 <b>ҚАДАМИ 2: Ворид кардани почта</b>\n\nДар саҳифаи пардохт почтаи электронии (Email) худро ворид кунед. 📩",
+        "how_step_3": "💵 <b>ҚАДАМИ 3: Интихоби асъор</b>\n\nБарои кам кардани комиссия <b>RUB</b> ё <b>KGS</b>-ро интихоб кунед. 💰",
+        "how_step_4": "📱 <b>ҚАДАМИ 4: Маълумоти корт</b>\n\nРақами корт, мӯҳлати эътибор ва рамзи CVC-ро ворид кунед. 💳",
+        "how_step_5": "✅ <b>ҚАДАМИ 5: Анҷоми пардохт</b>\n\n'Пардохт кардан'-ро пахш кунед ва рамзи СМС-ро ворид кунед. Premium автоматӣ фаъол мешавад! 🎉",
+        "how_step_6": "🛠 <b>ҚАДАМИ 6: Санҷиш</b>\n\nБа барнома ворид шавед. Агар Premium фаъол нашуда бошад, тугмаи 'Санҷиш'-ро дар бот пахш кунед. @kl_mub ҳамеша барои кӯмак омода аст! 👨‍💻",
+        "menu_back": "Менюи асосӣ:", "share_msg": "🛡 mubVPN - VPN-и зудтарин ва бехатар!"
+    },
+    "kk": {
+        "welcome": "🛡 <b>mubVPN Premium</b>\n\nТөлем жасау үшін төмендегі батырмаларды қолданыңыз:",
+        "btn_pay": "💳 Сатып алу", "btn_how": "📖 Қалай төлеу керек?",
+        "btn_download": "⬇️ Қосымшаны жүктеу",
+        "btn_support": "👨‍💻 Қолдау", "btn_share": "🤝 Бөлісу",
+        "pay_text": "💳 <b>Төлемге өту</b>\n\nТөлем Telegram ішінде қауіпсіз өтеді:",
+        "pay_btn_link": "💳 Telegram", "back": "⬅️ Артқа", "next": "Келесі ➡️",
+        "check_btn": "✅ Төледім (Тексеру)",
+        "checking": "⏳ Төлем тексерілуде...",
+        "success": "🎉 <b>Premium белсендірілді!</b>\n\nҚосымшаны ашып, VPN-ді қолдана беріңіз!",
+        "not_found": "⚠️ Төлем табылмады. Егер төлеген болсаңыз, 1-2 минут күтіп қайта басыңыз.",
+        "how_step_1": "🚀 <b>1-ҚАДАМ: Тариф таңдау</b>\n\n'Сатып алу' батырмасын басып, мерзімді таңдаңыз. 1 жылдық жоспар ең тиімді! ✅",
+        "how_step_2": "📧 <b>2-ҚАДАМ: Поштаны енгізу</b>\n\nТөлем бетінде Email-іңізді жазыңыз. 📩",
+        "how_step_3": "💵 <b>3-ҚАДАМ: Валютаны таңдау</b>\n\nКомиссия аз болуы үшін <b>RUB</b> немесе <b>KGS</b> таңдаңыз. 💰",
+        "how_step_4": "📱 <b>4-ҚАДАМ: Карта мәліметтері</b>\n\nКарта нөмірін және CVC-кодты енгізіңіз. 💳",
+        "how_step_5": "✅ <b>5-ҚАДАМ: Аяқтау</b>\n\n'Төлеу' батырмасын басып, СМС кодты енгізіңіз. 🎉",
+        "how_step_6": "🛠 <b>6-ҚАДАМ: Тексеру</b>\n\nҚосымшаға кіріңіз. Егер жұмыс істемесе, боттағы 'Тексеру' батырмасын басыңыз. @kl_mub көмектеседі! 👨‍💻",
+        "menu_back": "Басты мәзір:", "share_msg": "🛡 mubVPN - Ең жылдам және қауіпсіз VPN!"
+    },
+    "tr": {
+        "welcome": "🛡 <b>mubVPN Premium</b>\n\nÖdeme yapmak için lütfen aşağıdaki butonları kullanın:",
+        "btn_pay": "💳 Satın Al", "btn_how": "📖 Nasıl ödenir?",
+        "btn_download": "⬇️ Uygulamayı İndir",
+        "btn_support": "👨‍💻 Destek", "btn_share": "🤝 Paylaş",
+        "pay_text": "💳 <b>Ödemeye Geç</b>\n\nÖdeme Telegram içinde güvenli bir şekilde yapılır:",
+        "pay_btn_link": "💳 Telegram", "back": "⬅️ Geri", "next": "İleri ➡️",
+        "check_btn": "✅ Ödedim (Kontrol Et)",
+        "checking": "⏳ Ödeme kontrol ediliyor...",
+        "success": "🎉 <b>Premium Aktif Edildi!</b>\n\nUygulamayı açın ve VPN'in tadını çıkarın!",
+        "not_found": "⚠️ Ödeme bulunamadı. Ödeme yaptıysanız 1-2 dakika bekleyip tekrar deneyin.",
+        "how_step_1": "🚀 <b>ADIM 1: Plan seçimi</b>\n\n'Satın Al'a tıklayın ve bir süre seçin. Yıllık plan en karlı olanıdır! ✅",
+        "how_step_2": "📧 <b>ADIM 2: E-posta girin</b>\n\nÖdeme sayfasında e-posta adresinizi girin. 📩",
+        "how_step_3": "💵 <b>ADIM 3: Para birimi seçin</b>\n\nDaha düşük komisyon için <b>RUB</b> veya <b>KGS</b> seçin. 💰",
+        "how_step_4": "📱 <b>ADIM 4: Kart bilgileri</b>\n\nKart numaranızı ve CVC kodunuzu girin. 💳",
+        "how_step_5": "✅ <b>ADIM 5: Ödemeyi tamamla</b>\n\n'Öde'ye tıklayın ve SMS kodunu girin. 🎉",
+        "how_step_6": "🛠 <b>ADIM 6: Doğrulama</b>\n\nUygulamayı kontrol edin. Aktif değilse botta 'Kontrol Et'e tıklayın. @kl_mub yardıma hazır! 👨‍💻",
+        "menu_back": "Ana Menü:", "share_msg": "🛡 mubVPN - En hızlı ve en güvenli VPN!"
     }
 }
 
 # --- КЛАВИАТУРАЛАР ---
 def get_lang_keyboard():
-    return InlineKeyboardMarkup([[InlineKeyboardButton("🇰🇬 Кыргызча", callback_data='set_lang_ky')], [InlineKeyboardButton("🇷🇺 Русский", callback_data='set_lang_ru')], [InlineKeyboardButton("🇺🇸 English", callback_data='set_lang_en')]])
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("🇰🇬 Кыргызча", callback_data='set_lang_ky'), InlineKeyboardButton("🇷🇺 Русский", callback_data='set_lang_ru')],
+        [InlineKeyboardButton("🇺🇿 O'zbekcha", callback_data='set_lang_uz'), InlineKeyboardButton("🇹🇯 Тоҷикӣ", callback_data='set_lang_tg')],
+        [InlineKeyboardButton("🇰🇿 Қазақша", callback_data='set_lang_kk'), InlineKeyboardButton("🇹🇷 Türkçe", callback_data='set_lang_tr')],
+        [InlineKeyboardButton("🇺🇸 English", callback_data='set_lang_en')]
+    ])
 
 def get_main_keyboard(lang):
     L = STRINGS[lang]
@@ -157,6 +238,10 @@ def get_dashboard_html(lang):
     texts = {
         'ky': {'title': 'Эң акыркы версиясын көчүрүп алып, чектөөсүз интернетке жол ачыңыз.', 'btn': 'Жүктөө (APK)'},
         'ru': {'title': 'Скачайте последнюю версию и получите доступ к безграничному интернету.', 'btn': 'Скачать (APK)'},
+        'uz': {'title': 'Eng soʻnggi versiyasini yuklab oling va cheksiz internetga ega boʻling.', 'btn': 'Yuklab olish (APK)'},
+        'tg': {'title': 'Версияи охиринро боргирӣ кунед ва ба интернети бемаҳдуд дастрасӣ пайдо кунед.', 'btn': 'Боргирӣ (APK)'},
+        'kk': {'title': 'Соңғы нұсқасын жүктеп алып, шексіз интернетке қол жеткізіңіз.', 'btn': 'Жүктеу (APK)'},
+        'tr': {'title': 'En son sürümü indirin ve sınırsız internet erişiminin kilidini açın.', 'btn': 'İndir (APK)'},
         'en': {'title': 'Download the latest version and unlock unlimited internet access.', 'btn': 'Download (APK)'}
     }
     t = texts.get(lang, texts['ky'])
