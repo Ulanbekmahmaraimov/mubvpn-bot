@@ -53,7 +53,13 @@ STRINGS = {
         "how_step_4": "📱 <b>4-КАДАМ: Карта маалыматы</b>\n\nКартаңыздын номерин, мөөнөтүн жана CVC-кодун жазыңыз. Эгер маалыматтар жаныңызда жок болсо, банк тиркемесинен көчүрүп алсаңыз болот. 💳",
         "how_step_5": "✅ <b>5-КАДАМ: Төлөмдү бүтүрүү</b>\n\n'Оплатить' баскычын басып, банктан келген SMS кодду киргизиңиз. Төлөм бүткөндө система автоматтык түрдө Premium иштетет! 🎉",
         "how_step_6": "🛠 <b>6-КАДАМ: Текшерүү</b>\n\nТөлөп бүткөндөн кийин тиркемеге кириңиз. Эгер Premium иштебесе, боттогу 'Текшерүү' баскычын басыңыз. @kl_mub дайыма жардамга даяр! 👨‍💻",
-        "menu_back": "Башкы меню:", "share_msg": "🛡 mubVPN - Эң тез жана коопсуз VPN!",
+        "menu_back": "Башкы меню:", "share_msg": "🚀 mubVPN — Android үчүн эң тез жана коопсуз VPN!
+
+✅ Блоктоолорду айланып өтөт
+✅ Маалыматтарды коргойт
+✅ Чектөөсүз интернет
+
+Азыр жүктөп ал! 👇",
         "share_title": "🤝 <b>Бөлүшүү:</b>", "btn_share_now": "📲 Бөлүшүү"
     },
     "ru": {
@@ -73,7 +79,13 @@ STRINGS = {
         "how_step_4": "📱 <b>ШАГ 4: Данные карты</b>\n\nВведите номер карты, срок действия и CVC-код. Реквизиты можно скопировать в приложении вашего банка. 💳",
         "how_step_5": "✅ <b>ШАГ 5: Завершение</b>\n\nНажмите 'Оплатить' и введите код из СМС. После оплаты система автоматически включит Premium! 🎉",
         "how_step_6": "🛠 <b>ШАГ 6: Проверка</b>\n\nВернитесь в приложение. Если Premium не включился сразу, нажмите кнопку 'Проверить' в боте. @kl_mub всегда на связи! 👨‍💻",
-        "menu_back": "Главное меню:", "share_msg": "🛡 mubVPN - Самый быстрый и безопасный VPN!",
+        "menu_back": "Главное меню:", "share_msg": "🚀 mubVPN — Самый быстрый и безопасный VPN для Android!
+
+✅ Обходит любые блокировки
+✅ Надежно защищает данные
+✅ Интернет без границ
+
+Скачай сейчас! 👇",
         "share_title": "🤝 <b>Поделиться:</b>", "btn_share_now": "📲 Поделиться"
     },
     "en": {
@@ -93,7 +105,13 @@ STRINGS = {
         "how_step_4": "📱 <b>STEP 4: Card details</b>\n\nEnter your card number, expiry date, and CVC. You can find these in your bank's mobile app. 💳",
         "how_step_5": "✅ <b>STEP 5: Complete payment</b>\n\nClick 'Pay' and enter the SMS code from your bank. Premium activates automatically! 🎉",
         "how_step_6": "🛠 <b>STEP 6: Verification</b>\n\nCheck the app. If Premium is not active, click 'Check Payment' in the bot. @kl_mub is here to help! 👨‍💻",
-        "menu_back": "Main Menu:", "share_msg": "🛡 mubVPN - The fastest and safest VPN!",
+        "menu_back": "Main Menu:", "share_msg": "🚀 mubVPN — The fastest and safest VPN for Android!
+
+✅ Bypasses all blocks
+✅ Protects your data
+✅ Unlimited Internet
+
+Download now! 👇",
         "share_title": "🤝 <b>Share:</b>", "btn_share_now": "📲 Share Now"
     },
     "uz": {
@@ -110,34 +128,94 @@ STRINGS = {
         "how_step_1": "🚀 <b>1-QADAM: Tarifni tanlash</b>\n\n'Sotib olish' tugmasini bosing va o'zingizga yoqqan muddatni tanlang. 1 yillik plan eng foydali! ✅",
         "how_step_2": "📧 <b>2-QADAM: Pochta kiritish</b>\n\nTo'lov sahifasida Email-ingizni yozing. Bu chek olish va Premium faollashtirish uchun kerak. 📩",
         "how_step_3": "💵 <b>3-QADAM: Valyuta tanlash</b>\n\nAgar mahalliy karta bilan to'lasangiz, komissiya kam bo'lishi uchun <b>RUB</b> yoki <b>KGS</b> tanlang. 💰",
-        "how_step_4": "📱 <b>4-QADAM: Karta ma'lumotlari</b>\n\nKarta raqami, muddati va CVC-kodni yozing. Ma'lumotlarni bank ilovasidan nusxalab olishingiz mumkin. 💳",
-        "how_step_5": "✅ <b>5-QADAM: Yakunlash</b>\n\n'To'lash' tugmasini bosing va SMS kodni kiriting. Premium avtomatik ravishda faollashadi! 🎉",
-        "how_step_6": "🛠 <b>6-QADAM: Tekshirish</b>\n\nIlovaga kiring. Agar Premium ishlamasa, botdagi 'Tekshirish' tugmasini bosing. @kl_mub yordamga tayyor! 👨‍💻",
-        "menu_back": "Asosiy menyu:", "share_msg": "🛡 mubVPN - Eng tezkor va xavfsiz VPN!",
-        "share_title": "🤝 <b>Ulashish:</b>", "btn_share_now": "📲 Ulashish"
-    },
-    "tg": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nБа интернети зудтарин ва бехатар дастрасӣ пайдо кунед. Барои пардохт ё боргирии барнома аз тугмаҳои зерин истифода баред:",
-        "btn_pay": "💳 Харидан", "btn_how": "📖 Чӣ тавр бояд пардохт кард?",
-        "btn_download": "🚀 Боргирии барнома",
-        "btn_support": "👨‍💻 Дастгирӣ", "btn_share": "🤝 Ирсол",
-        "pay_text": "💳 <b>Гузаштан ба пардохт</b>\n\nПардохт дар дохили Telegram бехатар мегузарад:",
-        "pay_btn_link": "💳 Telegram", "back": "⬅️ Ба ақиб", "next": "Оянда ➡️",
-        "check_btn": "✅ Ман пардохт кардам (Санҷиш)",
-        "checking": "⏳ Санҷиши пардохт...",
-        "success": "🎉 <b>Premium фаъол шуд!</b>\n\nБарномаро кушоед ва аз VPN лаззат баред!",
-        "not_found": "⚠️ Пардохт ёфт нашуд. Агар пардохт карда бошед, 1-2 дақиқа интизор шавед ва дубора кӯшиш кунед.",
-        "how_step_1": "🚀 <b>ҚАДАМИ 1: Интихоби тариф</b>\n\n'Харидан'-ро пахш кунед ва мӯҳлати мувофиқро интихоб кунед. Нақшаи солона аз ҳама фоидаовар аст! ✅",
-        "how_step_2": "📧 <b>ҚАДАМИ 2: Ворид кардани почта</b>\n\nДар саҳифаи пардохт почтаи электронии (Email) худро ворид кунед. 📩",
-        "how_step_3": "💵 <b>ҚАДАМИ 3: Интихоби асъор</b>\n\nБарои кам кардани комиссия <b>RUB</b> ё <b>KGS</b>-ро интихоб кунед. 💰",
-        "how_step_4": "📱 <b>ҚАДАМИ 4: Маълумоти корт</b>\n\nРақами корт, мӯҳлати эътибор ва рамзи CVC-ро ворид кунед. 💳",
-        "how_step_5": "✅ <b>ҚАДАМИ 5: Анҷоми пардохт</b>\n\n'Пардохт кардан'-ро пахш кунед ва рамзи СМС-ро ворид кунед. Premium автоматӣ фаъол мешавад! 🎉",
-        "how_step_6": "🛠 <b>ҚАДАМИ 6: Санҷиш</b>\n\nБа барнома ворид шавед. Агар Premium фаъол нашуда бошад, тугмаи 'Санҷиш'-ро дар бот пахш кунед. @kl_mub ҳамеша барои кӯмак омода аст! 👨‍💻",
-        "menu_back": "Менюи асосӣ:", "share_msg": "🛡 mubVPN - VPN-и зудтарин ва бехатар!",
+        "how_step_4": "📱 <b>4-QADAM: Karta ma'lumotlari</b>\n\nKarta raqami, muddati va CVC-kodni yozing. Ma'lumotlarni bank ilovasidan nusxalab oli        "menu_back": "Менюи асосӣ:", "share_msg": "🚀 mubVPN — Android uchun eng tezkor va xavfsiz VPN!
+
+✅ Blokirovkalarni aylanib o'tadi
+✅ Ma'lumotlarni himoya qiladi
+✅ Cheksiz internet
+
+Hozir yuklab ol! 👇",
         "share_title": "🤝 <b>Ирсол:</b>", "btn_share_now": "📲 Ирсол"
     },
     "kk": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nЕң жылдам және қауіпсіз интернетке жол ашыңыз. Төлем жасау немесе қосымшаны жүктеу үшін төмендегі батырмаларды қолданыңыз:",
+        "btn_pay": "💳 Сатып алу", "btn_how": "📖 Қалай төлеу керек?",
+        "btn_download": "🚀 Қосымшаны жүктеу",
+        "btn_support": "👨‍💻 Қолдау", "btn_share": "🤝 Бөлісу",
+        "pay_text": "💳 <b>Төлемге өту</b>\n\nТөлем Telegram ішінде қауіпсіз өтеді:",
+        "pay_btn_link": "💳 Telegram", "back": "⬅️ Артқа", "next": "Келесі ➡️",
+        "check_btn": "✅ Төледім (Тексеру)",
+        "checking": "⏳ Төлем тексерілуде...",
+        "success": "🎉 <b>Premium белсендірілді!</b>\n\nҚосымшаны ашып, VPN-ді қолдана беріңіз!",
+        "not_found": "⚠️ Төлем табылмады. Егер төлеген болсаңыз, 1-2 минут күтіп қайта басыңыз.",
+        "how_step_1": "🚀 <b>1-ҚАДАМ: Тариф таңдау</b>\n\n'Сатып алу' батырмасын басып, мерзімді таңдаңыз. 1 жылдық жоспар ең тиімді! ✅",
+        "how_step_2": "📧 <b>2-ҚАДАМ: Поштаны енгізу</b>\n\nТөлем бетінде Email-іңізді жазыңыз. 📩",
+        "how_step_3": "💵 <b>3-ҚАДАМ: Валютаны таңдау</b>\n\nКомиссия аз болуы үшін <b>RUB</b> немесе <b>KGS</b> таңдаңыз. 💰",
+        "how_step_4": "📱 <b>4-ҚАДАМ: Карта мәліметтері</b>\n\nКарта нөмірін және CVC-кодты енгізіңіз. 💳",
+        "how_step_5": "✅ <b>5-ҚАДАМ: Аяқтау</b>\n\n'Төлеу' батырмасын басып, СМС кодты енгізіңіз. 🎉",
+        "how_step_6": "🛠 <b>6-ҚАДАМ: Тексеру</b>\n\nҚосымшаға кіріңіз. Егер жұмыс істемесе, боттағы 'Тексеру' батырмасын басыңыз. @kl_mub көмектеседі! 👨‍💻",
+        "menu_back": "Басты мәзір:", "share_msg": "🚀 mubVPN — Android үшін ең жылдам және қауіпсіз VPN!
+
+✅ Блоктауларды айналып өтеді
+✅ Деректерді қорғайды
+✅ Шектеусіз интернет
+
+Қазір жүктеп ал! 👇",
+        "share_title": "🤝 <b>Бөлісу:</b>", "btn_share_now": "📲 Бөлісу"
+    },
+    "tr": {
+        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nEn hızlı ve en güvenli internetin keyfini çıkarın. Ödeme yapmak veya uygulamayı indirmek için aşağıdaki butonları kullanın:",
+        "btn_pay": "💳 Satın Al", "btn_how": "📖 Nasıl ödenir?",
+        "btn_download": "🚀 Uygulamayı İndir",
+        "btn_support": "👨‍💻 Destek", "btn_share": "🤝 Paylaş",
+        "pay_text": "💳 <b>Ödemeye Geç</b>\n\nÖdeme Telegram içinde güvenli bir şekilde yapılır:",
+        "pay_btn_link": "💳 Telegram", "back": "⬅️ Geri", "next": "İleri ➡️",
+        "check_btn": "✅ Ödedim (Kontrol Et)",
+        "checking": "⏳ Ödeme kontrol ediliyor...",
+        "success": "🎉 <b>Premium Aktif Edildi!</b>\n\nUygulamayı açın ve VPN'in tadını çıkarın!",
+        "not_found": "⚠️ Ödeme bulunamadı. Ödeme yaptıysanız 1-2 dakika bekleyip tekrar deneyin.",
+        "how_step_1": "🚀 <b>ADIM 1: Plan seçimi</b>\n\n'Satın Al'a tıklayın ve bir süre seçin. Yıllık plan en karlı olanıdır! ✅",
+        "how_step_2": "📧 <b>ADIM 2: E-posta girin</b>\n\nÖdeme sayfasında e-posta adresinizi girin. 📩",
+        "how_step_3": "💵 <b>ADIM 3: Para birimi seçin</b>\n\nDaha düşük komisyon için <b>RUB</b> veya <b>KGS</b> seçin. 💰",
+        "how_step_4": "📱 <b>ADIM 4: Kart bilgileri</b>\n\nKart numaranızı ve CVC kodunuzu girin. 💳",
+        "how_step_5": "✅ <b>ADIM 5: Ödemeyi tamamla</b>\n\n'Öde'ye tıklayın ve SMS kodunu girin. 🎉",
+        "how_step_6": "🛠 <b>ADIM 6: Doğrulama</b>\n\nUygulamayı kontrol edin. Aktif değilse botta 'Kontrol Et'e tıklayın. @kl_mub yardıma hazır! 👨‍💻",
+        "menu_back": "Ana Menü:", "share_msg": "🚀 mubVPN — Android için en hızlı ve güvenli VPN!
+
+✅ Tüm engelleri aşar
+✅ Verileri korur
+✅ Sınırsız İnternet
+
+Hemen indir! 👇",
+        "share_title": "🤝 <b>Paylaş:</b>", "btn_share_now": "📲 Paylaş"
+    },
+    "en": {
+        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nEnjoy the fastest and safest internet. Use the buttons below to pay or download the app:",
+        "btn_pay": "💳 Buy", "btn_how": "📖 How to pay?",
+        "btn_download": "🚀 Download App",
+        "btn_support": "👨‍💻 Support", "btn_share": "🤝 Share",
+        "pay_text": "💳 <b>Proceed to payment</b>\n\nPayment is processed safely inside Telegram:",
+        "pay_btn_link": "💳 Telegram", "back": "⬅️ Back", "next": "Next ➡️",
+        "check_btn": "✅ I paid (Verify)",
+        "checking": "⏳ Verifying payment...",
+        "success": "🎉 <b>Premium Activated!</b>\n\nOpen the app and enjoy VPN!",
+        "not_found": "⚠️ Payment not found. If you paid, wait 1-2 minutes and try again.",
+        "how_step_1": "🚀 <b>STEP 1: Choose plan</b>\n\nClick 'Buy' and choose a period. Yearly plan is the best value! ✅",
+        "how_step_2": "📧 <b>STEP 2: Enter Email</b>\n\nEnter your Email on the payment page. 📩",
+        "how_step_3": "💵 <b>STEP 3: Choose currency</b>\n\nChoose <b>RUB</b> or <b>KGS</b> to pay with a local card with minimum commission. 💰",
+        "how_step_4": "📱 <b>STEP 4: Card details</b>\n\nEnter card number and CVC code. 💳",
+        "how_step_5": "✅ <b>STEP 5: Complete</b>\n\nClick 'Pay' and enter the SMS code. 🎉",
+        "how_step_6": "🛠 <b>STEP 6: Verification</b>\n\nCheck the app. If not active, click 'Verify' in the bot. @kl_mub is here to help! 👨‍💻",
+        "menu_back": "Main Menu:", "share_msg": "🚀 mubVPN — The fastest and safest VPN for Android!
+
+✅ Bypasses all blocks
+✅ Protects your data
+✅ Unlimited Internet
+
+Download now! 👇",
+        "share_title": "🤝 <b>Share:</b>", "btn_share_now": "📲 Share"
+    }
+},з. Төлем жасау немесе қосымшаны жүктеу үшін төмендегі батырмаларды қолданыңыз:",
         "btn_pay": "💳 Сатып алу", "btn_how": "📖 Қалай төлеу керек?",
         "btn_download": "🚀 Қосымшаны жүктеу",
         "btn_support": "👨‍💻 Қолдау", "btn_share": "🤝 Бөлісу",
@@ -173,7 +251,13 @@ STRINGS = {
         "how_step_4": "📱 <b>ADIM 4: Kart bilgileri</b>\n\nKart numaranızı ve CVC kodunuzu girin. 💳",
         "how_step_5": "✅ <b>ADIM 5: Ödemeyi tamamla</b>\n\n'Öde'ye tıklayın ve SMS kodunu girin. 🎉",
         "how_step_6": "🛠 <b>ADIM 6: Doğrulama</b>\n\nUygulamayı kontrol edin. Aktif değilse botta 'Kontrol Et'e tıklayın. @kl_mub yardıma hazır! 👨‍💻",
-        "menu_back": "Ana Menü:", "share_msg": "🛡 mubVPN - En hızlı ve en güvenli VPN!",
+        "menu_back": "Ana Menü:", "share_msg": "🚀 mubVPN — Android için en hızlı ve güvenli VPN!
+
+✅ Tüm engelleri aşar
+✅ Verileri korur
+✅ Sınırsız İnternet
+
+Hemen indir! 👇",
         "share_title": "🤝 <b>Paylaş:</b>", "btn_share_now": "📲 Paylaş"
     }
 }
@@ -221,7 +305,9 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
     elif data == 'share_app':
-        L = STRINGS[lang]; bot = await context.bot.get_me(); share_url = f"https://t.me/share/url?url=https://t.me/{bot.username}&text={html.escape(L['share_msg'])}"
+        L = STRINGS[lang]
+        # Боттун шилтемесин эмес, Render сайтынын шилтемесин бөлүшөбүз (ал сүрөтү менен чыгат)
+        share_url = f"https://t.me/share/url?url=https://mubvpn-bot.onrender.com/?lang={lang}&text={html.escape(L['share_msg'])}"
         kb = [[InlineKeyboardButton(L["btn_share_now"], url=share_url)], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
         await query.message.edit_text(L["share_title"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
@@ -349,6 +435,8 @@ def get_dashboard_html(lang):
 <meta property="og:title" content="🛡 {t['h1']}">
 <meta property="og:description" content="{t['sub']}">
 <meta property="og:image" content="https://raw.githubusercontent.com/Ulanbekmahmaraimov/mubvpn-bot/main/assets/preview.png">
+<meta property="og:image:secure_url" content="https://raw.githubusercontent.com/Ulanbekmahmaraimov/mubvpn-bot/main/assets/preview.png">
+<meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
