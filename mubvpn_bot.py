@@ -1205,7 +1205,7 @@ class BotHandler(BaseHTTPRequestHandler):
 
         if path == '/download':
 
-            apk_url = 'https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.0/mubvpn.apk'
+            apk_url = 'https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.5/mubvpn.apk'
 
             self.send_response(302)
 
