@@ -54,19 +54,163 @@ def firebase_set_premium(uid: str, months: int) -> bool:
 
     try:
 
-        expiry = (datetime.now() + timedelta(days=months * 30)).isoformat()
-
         url = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
 
-        resp = requests.patch(url, json={"premium_expiry": expiry, "is_paid": True})
+        resp = requests.get(url)
 
-        return resp.status_code == 200
+        start_date = datetime.now()
+
+        if resp.status_code == 200 and resp.json():
+
+            current_expiry_str = resp.json().get("premium_expiry")
+
+            if current_expiry_str:
+
+                try:
+
+                    current_expiry = datetime.fromisoformat(current_expiry_str)
+
+                    if current_expiry > start_date:
+
+                        start_date = current_expiry
+
+                except Exception as ex:
+
+                    log.error(f"Error parsing existing premium_expiry: {ex}")
+
+        expiry = (start_date + timedelta(days=months * 30)).isoformat()
+
+        resp_patch = requests.patch(url, json={"premium_expiry": expiry, "is_paid": True})
+
+        return resp_patch.status_code == 200
 
     except Exception as e:
 
         log.error(f"Firebase error: {e}")
 
         return False
+
+
+
+def register_referral(new_user_tg_id: int, inviter_id: str) -> tuple[bool, str]:
+
+    try:
+
+        ref_check_url = f"{FIREBASE_DB_URL}/referrals/{new_user_tg_id}.json?auth={FIREBASE_DB_SECRET}"
+
+        resp_check = requests.get(ref_check_url)
+
+        if resp_check.status_code == 200 and resp_check.json() is not None:
+
+            return False, "already_referred"
+
+        inviter_uid = None
+
+        if len(str(inviter_id)) == 28:
+
+            inviter_uid = inviter_id
+
+        else:
+
+            map_url = f"{FIREBASE_DB_URL}/telegram_to_uid/{inviter_id}.json?auth={FIREBASE_DB_SECRET}"
+
+            resp_map = requests.get(map_url)
+
+            if resp_map.status_code == 200 and resp_map.json():
+
+                inviter_uid = resp_map.json()
+
+        if not inviter_uid:
+
+            return False, "inviter_not_found"
+
+        inviter_url = f"{FIREBASE_DB_URL}/users/{inviter_uid}.json?auth={FIREBASE_DB_SECRET}"
+
+        resp_inviter = requests.get(inviter_url)
+
+        if resp_inviter.status_code == 200 and resp_inviter.json():
+
+            inviter_data = resp_inviter.json()
+
+            if str(inviter_data.get("telegram_id")) == str(new_user_tg_id):
+
+                return False, "self_referral"
+
+        else:
+
+            return False, "inviter_not_found"
+
+        current_days = inviter_data.get("referral_days_granted", 0)
+
+        max_days = 365
+
+        if current_days >= max_days:
+
+            days_to_add = 0
+
+        else:
+
+            days_to_add = min(10, max_days - current_days)
+
+        new_days = current_days + days_to_add
+
+        new_count = inviter_data.get("referral_count", 0) + 1
+
+        start_date = datetime.now()
+
+        current_expiry_str = inviter_data.get("premium_expiry")
+
+        if current_expiry_str:
+
+            try:
+
+                current_expiry = datetime.fromisoformat(current_expiry_str)
+
+                if current_expiry > start_date:
+
+                    start_date = current_expiry
+
+            except:
+
+                pass
+
+        updates = {
+
+            "referral_days_granted": new_days,
+
+            "referral_count": new_count
+
+        }
+
+        if days_to_add > 0:
+
+            new_expiry = (start_date + timedelta(days=days_to_add)).isoformat()
+
+            updates["premium_expiry"] = new_expiry
+
+            updates["is_paid"] = True
+
+        requests.patch(inviter_url, json=updates)
+
+        ref_data = {
+
+            "inviter_uid": inviter_uid,
+
+            "timestamp": datetime.now().isoformat(),
+
+            "days_granted": days_to_add
+
+        }
+
+        requests.put(ref_check_url, json=ref_data)
+
+        return True, "success"
+
+    except Exception as e:
+
+        log.error(f"Error registering referral: {e}")
+
+        return False, "error"
 
 
 
@@ -92,7 +236,9 @@ STRINGS = {
         "how_step_6": "🛠 <b>6-КАДАМ: Текшерүү</b>\n\nЭгер Premium иштебесе, боттогу 'Текшерүү' баскычын басыңыз. @kl_mub дайыма жардамга даяр! 👨‍💻",
         "menu_back": "Башкы меню:",
         "share_msg": "🚀 mubVPN — Android үчүн эң тез жана коопсуз VPN!\n\n✅ Блоктоолорду айланып өтөт\n✅ Маалыматтарды ишенимдүү шифрлейт\n✅ Бир таптоо менен туташуу\n✅ Жогорку жана туруктуу ылдамдык\n\nАзыр жүктөп ал! 👇",
-        "share_title": "🤝 <b>Бөлүшүү:</b>", "btn_share_now": "📲 Бөлүшүү"
+        "share_title": "🤝 <b>Бөлүшүү:</b>", "btn_share_now": "📲 Бөлүшүү",
+        "btn_referral": "🎁 Акысыз Premium (Рефералы)",
+        "ref_menu_text": "🎁 <b>Рефераалдык программа!</b>\n\nДосторуңузду чакырып, <b>бекер Premium</b> алыңыз!\n\n• Ар бир чакырылган дос үчүн: <b>+10 күн акысыз Premium</b>.\n• Максималдуу бекер мөөнөт: <b>365 күнгө чейин (1 жыл)</b>.\n\n🔗 <b>Сиздин шилтемеңиз:</b>\n<code>{ref_link}</code>\n\n👥 Чакырылган достор: <b>{referral_count}</b> адам\n📅 Алынган бекер күндөр: <b>{referral_days_granted}</b> күн"
     },
     "ru": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nОткройте доступ к самому быстрому и безопасному интернету. Используйте кнопки ниже для оплаты или загрузки приложения:",
@@ -113,7 +259,9 @@ STRINGS = {
         "how_step_6": "🛠 <b>ШАГ 6: Проверка</b>\n\nЕсли Premium не активен, нажмите 'Проверить' в боте. @kl_mub на связи! 👨‍💻",
         "menu_back": "Главное меню:",
         "share_msg": "🚀 mubVPN — Самый быстрый и безопасный VPN для Android!\n\n✅ Обходит любые блокировки\n✅ Надежно защищает ваши данные\n✅ Подключение в один тап\n✅ Высокая и стабильная скорость\n\nСкачай сейчас! 👇",
-        "share_title": "🤝 <b>Поделиться:</b>", "btn_share_now": "📲 Поделиться"
+        "share_title": "🤝 <b>Поделиться:</b>", "btn_share_now": "📲 Поделиться",
+        "btn_referral": "🎁 Бесплатный Premium (Рефералы)",
+        "ref_menu_text": "🎁 <b>Реферальная программа!</b>\n\nПриглашайте друзей и получайте <b>бесплатный Premium</b>!\n\n• За каждого приглашенного друга: <b>+10 дней бесплатного Premium</b>.\n• Максимальный лимит: <b>до 365 дней (1 год)</b>.\n\n🔗 <b>Ваша ссылка:</b>\n<code>{ref_link}</code>\n\n👥 Приглашено друзей: <b>{referral_count}</b>\n📅 Получено дней: <b>{referral_days_granted}</b>"
     },
     "uz": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nEng tezkor va xavfsiz internetga ega bo'ling. To'lov qilish yoki ilovani yuklab olish uchun quyidagi tugmalardan foydalaning:",
@@ -134,7 +282,9 @@ STRINGS = {
         "how_step_6": "🛠 <b>6-QADAM: Tekshirish</b>\n\nAgar Premium ishlamasa, ботdagi 'Tekshirish' tugmasini bosing. @kl_mub yordamga tayyor! 👨‍💻",
         "menu_back": "Asosiy menyu:",
         "share_msg": "🚀 mubVPN — Android uchun eng tezkor va xavfsiz VPN!\n\n✅ To'siqlarni aylanib o'tadi\n✅ Ma'lumotlarni xavfsiz himoya qiladi\n✅ Bir marta bosish bilan ulanish\n✅ Yuqori va barqaror tezlik\n\nHozir yuklab ol! 👇",
-        "share_title": "🤝 <b>Ulashish:</b>", "btn_share_now": "📲 Ulashish"
+        "share_title": "🤝 <b>Ulashish:</b>", "btn_share_now": "📲 Ulashish",
+        "btn_referral": "🎁 Bepul Premium (Referal)",
+        "ref_menu_text": "🎁 <b>Referal dasturi!</b>\n\nDo'tslaringizni taklif qiling va <b>bepul Premium</b> oling!\n\n• Har bir taklif qilingan do'st uchun: <b>+10 kun bepul Premium</b>.\n• Maksimal bepul muddat: <b>365 kungacha (1 yil)</b>.\n\n🔗 <b>Sizning havolangiz:</b>\n<code>{ref_link}</code>\n\n👥 Taklif qilingan do'stlar: <b>{referral_count}</b> ta\n📅 Olingan bepul kunlar: <b>{referral_days_granted}</b> kun"
     },
     "tg": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nБа интернети зудтарин ва бехатар дастрасӣ пайдо кунед. Барои пардохт ё боргирии барнома аз тугмаҳои зерин истифода баред:",
@@ -155,7 +305,9 @@ STRINGS = {
         "how_step_6": "🛠 <b>ҚАДАМИ 6: Санҷиш</b>\n\nАгар Premium фаъол нашуда бошад, тугмаи 'Санҷиш'-ро пахш кунед. @kl_mub ҳамеша тайёр аст! 👨‍💻",
         "menu_back": "Менюи асосӣ:",
         "share_msg": "🚀 mubVPN — VPN-и зудтарин ва бехатар барои Android!\n\n✅ Маҳдудиятҳоро давр мезанад\n✅ Маълумоти шуморо боэътимод ҳифз мекунад\n✅ Пайвастшавӣ бо як клик\n✅ Суръати баланд ва устувор\n\nHоло боргирӣ кун! 👇",
-        "share_title": "🤝 <b>Ирсол:</b>", "btn_share_now": "📲 Ирсол"
+        "share_title": "🤝 <b>Ирсол:</b>", "btn_share_now": "📲 Ирсол",
+        "btn_referral": "🎁 Premium-и ройгон (Реферал)",
+        "ref_menu_text": "🎁 <b>Барномаи рефералӣ!</b>\n\nДӯстони худро даъват кунед ва <b>Premium-и ройгон</b> гиред!\n\n• Барои ҳар як дӯсти даъватшуда: <b>+10 рӯз Premium-и ройгон</b>.\n• Лимити максималӣ: <b>то 365 рӯз (1 сол)</b>.\n\n🔗 <b>Истиноди шумо:</b>\n<code>{ref_link}</code>\n\n👥 Дӯстони даъватшуда: <b>{referral_count}</b> нафар\n📅 Рӯзҳои ройгони гирифташуда: <b>{referral_days_granted}</b> рӯз"
     },
     "kk": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nЕң жылдам және қауіпсіз интернетке жол ашыңыз. Төлөм жасау немесе қосымшаны жүктеу үчүн төмендегі батырмаларды қолданыңыз:",
@@ -175,7 +327,9 @@ STRINGS = {
         "how_step_5": "✅ <b>5-ҚАДАМ: Аяқтау</b>\n\n'Төлеу' батырмасын басып, СМС кодты енгізіңіз. 🎉",
         "how_step_6": "🛠 <b>6-ҚАДАМ: Тексеру</b>\n\nЕгер жұмыс істемесе, боттағы 'Тексеру' батырмасын басыңыз. @kl_mub көмектеседі! 👨‍💻",
         "menu_back": "Басты мәзір:", "share_msg": "🚀 mubVPN — Android үшін ең жылдам және қауіпсіз VPN!\n\n✅ Блоктауларды айналып өтеді\n✅ Деректерді қорғайды\n✅ Шектеусіз интернет\n\nҚазір жүктеп ал! 👇",
-        "share_title": "🤝 <b>Бөлісу:</b>", "btn_share_now": "📲 Бөлісу"
+        "share_title": "🤝 <b>Бөлісу:</b>", "btn_share_now": "📲 Бөлісу",
+        "btn_referral": "🎁 Тегін Premium (Реферал)",
+        "ref_menu_text": "🎁 <b>Рефералды бағдарлама!</b>\n\nДостарыңызды шақырып, <b>тегін Premium</b> алыңыз!\n\n• Әрбір шақырылған дос үшін: <b>+10 күн тегін Premium</b>.\n• Максималды тегін мерзім: <b>365 күнге дейін (1 жыл)</b>.\n\n🔗 <b>Сіздің сілтемеңіз:</b>\n<code>{ref_link}</code>\n\n👥 Шақырылған достар: <b>{referral_count}</b> адам\n📅 Алынған тегін күндер: <b>{referral_days_granted}</b> күн"
     },
     "tr": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nEn hızlı ve en güvenli internetin keyfini çıkarın. Ödeme yapmak veya uygulamayı indirmek için aşağıdaki butonları kullanın:",
@@ -195,7 +349,9 @@ STRINGS = {
         "how_step_5": "✅ <b>ADIM 5: Ödemeyi tamamla</b>\n\n'Öde'ye tıklayın ve SMS kodunu girin. 🎉",
         "how_step_6": "🛠 <b>ADIM 6: Doğrulama</b>\n\nAktif değilse ботта 'Kontrol Et'e tıklayın. @kl_mub yardıma hazır! 👨‍💻",
         "menu_back": "Ana Menü:", "share_msg": "🚀 mubVPN — Android үчүн en hızlı ve güvenli VPN!\n\n✅ Tüm engelleri aşar\n✅ Verileri korur\n✅ Sınırsız İnternet\n\nHemen indir! 👇",
-        "share_title": "🤝 <b>Paylaş:</b>", "btn_share_now": "📲 Paylaş"
+        "share_title": "🤝 <b>Paylaş:</b>", "btn_share_now": "📲 Paylaş",
+        "btn_referral": "🎁 Ücretsiz Premium (Referans)",
+        "ref_menu_text": "🎁 <b>Referans Programı!</b>\n\nArkadaşlarınızı davet edin ve <b>ücretsiz Premium</b> kazanın!\n\n• Her davet edilen arkadaş için: <b>+10 gün ücretsiz Premium</b>.\n• Maksimum ücretsiz limit: <b>365 güne kadar (1 yıl)</b>.\n\n🔗 <b>Referans linkiniz:</b>\n<code>{ref_link}</code>\n\n👥 Davet edilen arkadaşlar: <b>{referral_count}</b> kişi\n📅 Kazanılan ücretsiz günler: <b>{referral_days_granted}</b> gün"
     },
     "en": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nUnlock the fastest and most secure internet access. Use the buttons below to pay or download the application:",
@@ -215,7 +371,9 @@ STRINGS = {
         "how_step_5": "✅ <b>STEP 5: Complete</b>\n\nClick 'Pay' and enter the SMS code. 🎉",
         "how_step_6": "🛠 <b>STEP 6: Verification</b>\n\nCheck the app. If not active, click 'Check' in the bot. @kl_mub is here to help! 👨‍💻",
         "menu_back": "Main Menu:", "share_msg": "🚀 mubVPN — The fastest and safest VPN for Android!\n\n✅ Bypasses all blocks\n✅ Protects your data\n✅ Unlimited Internet\n\nDownload now! 👇",
-        "share_title": "🤝 <b>Share:</b>", "btn_share_now": "📲 Share"
+        "share_title": "🤝 <b>Share:</b>", "btn_share_now": "📲 Share",
+        "btn_referral": "🎁 Free Premium (Referral)",
+        "ref_menu_text": "🎁 <b>Referral Program!</b>\n\nInvite friends and get <b>free Premium</b>!\n\n• For each invited friend: <b>+10 days of free Premium</b>.\n• Maximum free limit: <b>up to 365 days (1 year)</b>.\n\n🔗 <b>Your referral link:</b>\n<code>{ref_link}</code>\n\n👥 Invited friends: <b>{referral_count}</b>\n📅 Free days granted: <b>{referral_days_granted}</b>"
     }
 }
 
@@ -247,6 +405,8 @@ def get_main_keyboard(lang):
 
         [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')], 
 
+        [InlineKeyboardButton(L["btn_referral"], callback_data='referral_menu')], 
+
         [InlineKeyboardButton(L["btn_how"], callback_data='how_1')], 
 
         [InlineKeyboardButton(L["btn_share"], callback_data='share_app')], 
@@ -261,7 +421,71 @@ def get_main_keyboard(lang):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    if context.args: context.user_data['uid'] = context.args[0]
+    if context.args:
+
+        arg = context.args[0]
+
+        if arg.startswith('ref_'):
+
+            inviter_id = arg.replace('ref_', '')
+
+            new_user_tg_id = update.effective_user.id
+
+            success, status = register_referral(new_user_tg_id, inviter_id)
+
+            if success:
+
+                try:
+
+                    inviter_tg_id = None
+
+                    if len(str(inviter_id)) != 28:
+
+                        inviter_tg_id = int(inviter_id)
+
+                    else:
+
+                        inv_url = f"{FIREBASE_DB_URL}/users/{inviter_id}/telegram_id.json?auth={FIREBASE_DB_SECRET}"
+
+                        resp_inv = requests.get(inv_url)
+
+                        if resp_inv.status_code == 200 and resp_inv.json():
+
+                            inviter_tg_id = int(resp_inv.json())
+
+                    if inviter_tg_id:
+
+                        # Чакырган адамга кубанычтуу кабарлама жөнөтөбүз
+
+                        msg = "🎁 Досуңуз чакырууну кабыл алды! Сизге **+10 күн акысыз Premium** берилди! 🎉"
+
+                        await context.bot.send_message(chat_id=inviter_tg_id, text=msg, parse_mode=ParseMode.MARKDOWN)
+
+                except Exception as ex:
+
+                    log.error(f"Error sending referral notification: {ex}")
+
+        else:
+
+            # Бул тиркемеден келген Firebase UID
+
+            context.user_data['uid'] = arg
+
+            tg_id = update.effective_user.id
+
+            try:
+
+                url_user = f"{FIREBASE_DB_URL}/users/{arg}.json?auth={FIREBASE_DB_SECRET}"
+
+                requests.patch(url_user, json={"telegram_id": tg_id})
+
+                url_map = f"{FIREBASE_DB_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_DB_SECRET}"
+
+                requests.put(url_map, json=arg)
+
+            except Exception as ex:
+
+                log.error(f"Error saving telegram_id mapping: {ex}")
 
     text = "🌐 Choose language / Тилди тандаңыз / Выберите язык:"
 
@@ -344,6 +568,60 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if query.message.photo: await query.message.delete()
 
         await query.message.edit_text(STRINGS[lang]["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+
+
+
+    elif data == 'referral_menu':
+
+        L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
+
+        bot_info = await context.bot.get_me()
+
+        bot_username = bot_info.username
+
+        ref_link = f"https://t.me/{bot_username}?start=ref_{uid}"
+
+        referral_count = 0
+
+        referral_days_granted = 0
+
+        try:
+
+            inviter_uid = uid
+
+            if len(str(uid)) != 28:
+
+                map_url = f"{FIREBASE_DB_URL}/telegram_to_uid/{uid}.json?auth={FIREBASE_DB_SECRET}"
+
+                resp_map = requests.get(map_url)
+
+                if resp_map.status_code == 200 and resp_map.json():
+
+                    inviter_uid = resp_map.json()
+
+            user_url = f"{FIREBASE_DB_URL}/users/{inviter_uid}.json?auth={FIREBASE_DB_SECRET}"
+
+            resp_user = requests.get(user_url)
+
+            if resp_user.status_code == 200 and resp_user.json():
+
+                inviter_data = resp_user.json()
+
+                referral_count = inviter_data.get("referral_count", 0)
+
+                referral_days_granted = inviter_data.get("referral_days_granted", 0)
+
+        except Exception as ex:
+
+            log.error(f"Error fetching referral data: {ex}")
+
+        text = L["ref_menu_text"].format(ref_link=ref_link, referral_count=referral_count, referral_days_granted=referral_days_granted)
+
+        kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+
+        if query.message.photo: await query.message.delete()
+
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
 
 
@@ -1273,15 +1551,35 @@ class BotHandler(BaseHTTPRequestHandler):
 
                 if status in ('success', 'paid') and uid:
 
-                    # Суммага жараша айларды аныктоо (тиркемедегидей эле логика)
+                    # 1. Биринчи кезекте plan_id аркылуу айды аныктоого аракет кылабыз (эгер Telegram боттон төлөнсө)
+                    months = None
+                    additional = data.get('additionalFields')
+                    if isinstance(additional, dict):
+                        plan_id = additional.get('plan')
+                        if plan_id == '1y': months = 12
+                        elif plan_id == '6m': months = 6
+                        elif plan_id == '3m': months = 3
+                        elif plan_id == '1m': months = 1
 
-                    months = 1
-
-                    if amount >= 1000: months = 12
-
-                    elif amount >= 600: months = 6
-
-                    elif amount >= 300: months = 3
+                    # 2. Эгер план аныкталбаса, анда валютага жана суммага карап аныктайбыз (тиркемеден төлөнсө)
+                    if months is None:
+                        currency = data.get('currency', 'RUB')
+                        if isinstance(currency, str):
+                            currency = currency.upper()
+                            
+                        months = 1
+                        if currency == 'USD':
+                            if amount >= 30: months = 12
+                            elif amount >= 18: months = 6
+                            elif amount >= 10: months = 3
+                        elif currency == 'KGS':
+                            if amount >= 2500: months = 12
+                            elif amount >= 1500: months = 6
+                            elif amount >= 800: months = 3
+                        else: # RUB жана башка валюталар
+                            if amount >= 3000: months = 12
+                            elif amount >= 1800: months = 6
+                            elif amount >= 1000: months = 3
 
                     
 
