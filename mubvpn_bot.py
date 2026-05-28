@@ -1,17 +1,11 @@
 import logging
-
 import os
-
 import json
-
 import requests
-
 import threading
-
 import time
-
 import html
-
+import asyncio
 from datetime import datetime, timedelta
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -318,7 +312,7 @@ STRINGS = {
         "pay_btn_link": "💳 Telegram", "back": "⬅️ Артқа", "next": "Келесі ➡️",
         "check_btn": "✅ Төледім (Тексеру)",
         "checking": "⏳ Төлем тексерілуде...",
-        "success": "🎉 <b>Premium белсендірілді!</b>\n\nҚосымшаны ашып, VPN-ді қолдана беріңіз!",
+        "success": "🎉 <b>Premium белсендірілді!</b>\n\nҚосымшаны ашып, VPN-ді қолдана беріңиз!",
         "not_found": "⚠️ Төлем табылмады. Егер төлеген болсаңыз, 1-2 минут күтіңіз.",
         "how_step_1": "🚀 <b>1-ҚАДАМ: Тариф таңдау</b>\n\n'Сатып алу' батырмасын басыңыз. 1 жылдық жоспар ең тиімді! ✅",
         "how_step_2": "📧 <b>2-ҚАДАМ: Поштаны енгізу</b>\n\nEmail-іңізді жазыңыз. 📩",
@@ -326,7 +320,8 @@ STRINGS = {
         "how_step_4": "📱 <b>4-ҚАДАМ: Карта мәліметтері</b>\n\nКарта нөмірін жана CVC-кодты енгізіңіз. 💳",
         "how_step_5": "✅ <b>5-ҚАДАМ: Аяқтау</b>\n\n'Төлеу' батырмасын басып, СМС кодты енгізіңіз. 🎉",
         "how_step_6": "🛠 <b>6-ҚАДАМ: Тексеру</b>\n\nЕгер жұмыс істемесе, боттағы 'Тексеру' батырмасын басыңыз. @kl_mub көмектеседі! 👨‍💻",
-        "menu_back": "Басты мәзір:", "share_msg": "🚀 mubVPN — Android үшін ең жылдам және қауіпсіз VPN!\n\n✅ Блоктауларды айналып өтеді\n✅ Деректерді қорғайды\n✅ Шектеусіз интернет\n\nҚазір жүктеп ал! 👇",
+        "menu_back": "Басты мәзір:",
+        "share_msg": "🚀 mubVPN — Android үшін ең жылдам және қауіпсіз VPN!\n\n✅ Блоктауларды айналып өтеді\n✅ Деректерді қорғайды\n✅ Подключение в один тап\n✅ Жоғары және тұрақты жылдамдық\n\nҚазір жүктеп ал! 👇",
         "share_title": "🤝 <b>Бөлісу:</b>", "btn_share_now": "📲 Бөлісу",
         "btn_referral": "🎁 Тегін Premium (Реферал)",
         "ref_menu_text": "🎁 <b>Рефералды бағдарлама!</b>\n\nДостарыңызды шақырып, <b>тегін Premium</b> алыңыз!\n\n• Әрбір шақырылған дос үшін: <b>+10 күн тегін Premium</b>.\n• Максималды тегін мерзім: <b>365 күнге дейін (1 жыл)</b>.\n\n🔗 <b>Сіздің сілтемеңіз:</b>\n<code>{ref_link}</code>\n\n👥 Шақырылған достар: <b>{referral_count}</b> адам\n📅 Алынған тегін күндер: <b>{referral_days_granted}</b> күн"
@@ -348,7 +343,8 @@ STRINGS = {
         "how_step_4": "📱 <b>ADIM 4: Kart bilgileri</b>\n\nKart numaranızı ve CVC kodunuzu girin. 💳",
         "how_step_5": "✅ <b>ADIM 5: Ödemeyi tamamla</b>\n\n'Öde'ye tıklayın ve SMS kodunu girin. 🎉",
         "how_step_6": "🛠 <b>ADIM 6: Doğrulama</b>\n\nAktif değilse ботта 'Kontrol Et'e tıklayın. @kl_mub yardıma hazır! 👨‍💻",
-        "menu_back": "Ana Menü:", "share_msg": "🚀 mubVPN — Android үчүн en hızlı ve güvenli VPN!\n\n✅ Tüm engelleri aşar\n✅ Verileri korur\n✅ Sınırsız İnternet\n\nHemen indir! 👇",
+        "menu_back": "Ana Menü:",
+        "share_msg": "🚀 mubVPN — Android için en hızlı ve güvenli VPN!\n\n✅ Tüm engelleri aşar\n✅ Verileri güvenle şifreler\n✅ Tek dokunuşla bağlantı\n✅ Yüksek ve kararlı hız\n\nHemen indir! 👇",
         "share_title": "🤝 <b>Paylaş:</b>", "btn_share_now": "📲 Paylaş",
         "btn_referral": "🎁 Ücretsiz Premium (Referans)",
         "ref_menu_text": "🎁 <b>Referans Programı!</b>\n\nArkadaşlarınızı davet edin ve <b>ücretsiz Premium</b> kazanın!\n\n• Her davet edilen arkadaş için: <b>+10 gün ücretsiz Premium</b>.\n• Maksimum ücretsiz limit: <b>365 güne kadar (1 yıl)</b>.\n\n🔗 <b>Referans linkiniz:</b>\n<code>{ref_link}</code>\n\n👥 Davet edilen arkadaşlar: <b>{referral_count}</b> kişi\n📅 Kazanılan ücretsiz günler: <b>{referral_days_granted}</b> gün"
@@ -370,7 +366,8 @@ STRINGS = {
         "how_step_4": "📱 <b>STEP 4: Card details</b>\n\nEnter card number and CVC code. 💳",
         "how_step_5": "✅ <b>STEP 5: Complete</b>\n\nClick 'Pay' and enter the SMS code. 🎉",
         "how_step_6": "🛠 <b>STEP 6: Verification</b>\n\nCheck the app. If not active, click 'Check' in the bot. @kl_mub is here to help! 👨‍💻",
-        "menu_back": "Main Menu:", "share_msg": "🚀 mubVPN — The fastest and safest VPN for Android!\n\n✅ Bypasses all blocks\n✅ Protects your data\n✅ Unlimited Internet\n\nDownload now! 👇",
+        "menu_back": "Main Menu:",
+        "share_msg": "🚀 mubVPN — The fastest and safest VPN for Android!\n\n✅ Bypasses all blocks\n✅ Securely encrypts your data\n✅ One-tap connection\n✅ High and stable speed\n\nDownload now! 👇",
         "share_title": "🤝 <b>Share:</b>", "btn_share_now": "📲 Share",
         "btn_referral": "🎁 Free Premium (Referral)",
         "ref_menu_text": "🎁 <b>Referral Program!</b>\n\nInvite friends and get <b>free Premium</b>!\n\n• For each invited friend: <b>+10 days of free Premium</b>.\n• Maximum free limit: <b>up to 365 days (1 year)</b>.\n\n🔗 <b>Your referral link:</b>\n<code>{ref_link}</code>\n\n👥 Invited friends: <b>{referral_count}</b>\n📅 Free days granted: <b>{referral_days_granted}</b>"
@@ -399,9 +396,12 @@ def get_main_keyboard(lang):
 
     L = STRINGS[lang]
 
+    # Түз жүктөө шилтемесин колдонобуз, колдонуучуга оңой болушу үчүн
+    apk_direct_url = "https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.5/mubvpn.apk"
+
     return InlineKeyboardMarkup([
 
-        [InlineKeyboardButton(L["btn_download"], url=f'https://mubvpn-bot.onrender.com/?lang={lang}')],
+        [InlineKeyboardButton(L["btn_download"], url=apk_direct_url)],
 
         [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')], 
 
@@ -512,18 +512,44 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
     elif data == 'pay_menu':
-
         L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
-
         # Шилтемеге UID кошуу (эгер '?' бар болсо '&' колдонобуз)
-
         separator = '&' if '?' in LAVA_MAIN_URL else '?'
-
         link = f"{LAVA_MAIN_URL}{separator}additional_info={uid}"
-
-        kb = [[InlineKeyboardButton(L["pay_btn_link"], web_app=WebAppInfo(url=link))], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
-
+        kb = [
+            [InlineKeyboardButton(L["pay_btn_link"], web_app=WebAppInfo(url=link))],
+            [InlineKeyboardButton(L["check_btn"], callback_data='check_payment')],
+            [InlineKeyboardButton(L["back"], callback_data='main_menu')]
+        ]
         await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
+    elif data == 'check_payment':
+        L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
+        await query.message.edit_text(L["checking"], parse_mode=ParseMode.HTML)
+
+        # 3 секунд күтөбүз (эффект үчүн)
+        await asyncio.sleep(3)
+
+        # Firebase'ден текшерүү
+        url = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
+        try:
+            resp = requests.get(url, timeout=10)
+            if resp.status_code == 200 and resp.json():
+                user_data = resp.json()
+                is_paid = user_data.get("is_paid", False)
+                expiry = user_data.get("premium_expiry")
+
+                if is_paid and expiry:
+                    # Эгер төлөнгөн болсо - куттуктайбыз
+                    await query.message.edit_text(L["success"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+                    return
+
+            # Төлөнө элек болсо - эскертүү
+            kb = [[InlineKeyboardButton(L["check_btn"], callback_data='check_payment')], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+            await query.message.edit_text(L["not_found"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+        except Exception as e:
+            log.error(f"Error checking payment: {e}")
+            await query.message.edit_text("⚠️ Error connecting to server.", reply_markup=get_main_keyboard(lang))
 
 
 
@@ -1629,7 +1655,11 @@ def main():
 
     threading.Thread(target=keep_awake, daemon=True).start()
 
-    app = Application.builder().token(BOT_TOKEN).build()
+    # Туташуу убактысын (Timeout) узартабыз
+    from telegram.request import HTTPXRequest
+    request = HTTPXRequest(connect_timeout=20, read_timeout=20)
+
+    app = Application.builder().token(BOT_TOKEN).request(request).build()
 
     app.add_handler(CommandHandler("start", start))
 
@@ -1642,5 +1672,4 @@ def main():
 
 
 if __name__ == "__main__":
-
     main()
