@@ -513,6 +513,17 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data == 'pay_menu':
         L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
+
+        # Эгер UID эмес, Telegram ID болсо — маппинг аркылуу UID таап алабыз
+        if len(str(uid)) != 28:
+            map_url = f"{FIREBASE_DB_URL}/telegram_to_uid/{uid}.json?auth={FIREBASE_DB_SECRET}"
+            try:
+                resp_map = requests.get(map_url, timeout=10)
+                if resp_map.status_code == 200 and resp_map.json():
+                    uid = str(resp_map.json())
+                    context.user_data['uid'] = uid
+            except: pass
+
         # Шилтемеге UID кошуу (эгер '?' бар болсо '&' колдонобуз)
         separator = '&' if '?' in LAVA_MAIN_URL else '?'
         link = f"{LAVA_MAIN_URL}{separator}additional_info={uid}"
@@ -525,6 +536,17 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data == 'check_payment':
         L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
+
+        # Эгер UID эмес, Telegram ID болсо — маппинг аркылуу UID таап алабыз
+        if len(str(uid)) != 28:
+            map_url = f"{FIREBASE_DB_URL}/telegram_to_uid/{uid}.json?auth={FIREBASE_DB_SECRET}"
+            try:
+                resp_map = requests.get(map_url, timeout=10)
+                if resp_map.status_code == 200 and resp_map.json():
+                    uid = str(resp_map.json())
+                    context.user_data['uid'] = uid
+            except: pass
+
         await query.message.edit_text(L["checking"], parse_mode=ParseMode.HTML)
 
         # 3 секунд күтөбүз (эффект үчүн)
@@ -537,12 +559,27 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if resp.status_code == 200 and resp.json():
                 user_data = resp.json()
                 is_paid = user_data.get("is_paid", False)
-                expiry = user_data.get("premium_expiry")
+                expiry_str = user_data.get("premium_expiry")
 
-                if is_paid and expiry:
-                    # Эгер төлөнгөн болсо - куттуктайбыз
-                    await query.message.edit_text(L["success"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
-                    return
+                if is_paid and expiry_str:
+                    try:
+                        expiry_dt = datetime.fromisoformat(expiry_str)
+                        # Мөөнөт өтүп кеткенби текшерет
+                        if expiry_dt > datetime.now():
+                            # Premium активдүү жана мөөнөтү бар
+                            days_left = (expiry_dt - datetime.now()).days
+                            success_text = (
+                                f"{L['success']}\n\n"
+                                f"📅 <b>Premium мөөнөтү:</b> {expiry_dt.strftime('%d.%m.%Y')} чейин\n"
+                                f"⏳ <b>Калган күндөр:</b> {days_left} күн"
+                            )
+                            await query.message.edit_text(success_text, reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+                            return
+                        else:
+                            # Мөөнөт өтүп кеткен — is_paid өчүрөбүз
+                            requests.patch(url, json={"is_paid": False})
+                    except Exception as ex:
+                        log.error(f"Expiry parse error: {ex}")
 
             # Төлөнө элек болсо - эскертүү
             kb = [[InlineKeyboardButton(L["check_btn"], callback_data='check_payment')], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
@@ -1561,63 +1598,85 @@ class BotHandler(BaseHTTPRequestHandler):
 
                 data = json.loads(body)
 
-                log.info(f"📥 Webhook received: {data}")
+                log.info(f"📥 Webhook received: {json.dumps(data, indent=2)}")
 
+                # ── Lava.top webhook структурасы ──
+                # Lava статусу: 'success', 'paid', 'completed'
+                status = data.get('status') or data.get('payment', {}).get('status', '')
 
+                # UID'ди бардык мүмкүн жерлерден издеңиз
+                # Lava URLде: ?additional_info=UID деп кошулган болсо
+                uid = (
+                    data.get('additional_info')
+                    or data.get('comment')
+                    or data.get('additionalFields')
+                    or (data.get('order') or {}).get('additional_info')
+                    or (data.get('order') or {}).get('comment')
+                    or (data.get('payment') or {}).get('additional_info')
+                    or (data.get('customer') or {}).get('comment')
+                )
 
-                status = data.get('status')
+                amount_raw = (
+                    data.get('amount')
+                    or (data.get('order') or {}).get('amount')
+                    or (data.get('payment') or {}).get('amount', 0)
+                )
+                amount = float(amount_raw or 0)
 
-                # Lava кээде маалыматты ар кандай талааларга салат
+                currency = (
+                    data.get('currency')
+                    or (data.get('order') or {}).get('currency', 'RUB')
+                    or (data.get('payment') or {}).get('currency', 'RUB')
+                )
+                if isinstance(currency, str):
+                    currency = currency.upper()
 
-                uid = data.get('additional_info') or data.get('additionalFields') or data.get('comment')
+                log.info(f"📊 Parsed: status={status}, uid={uid}, amount={amount}, currency={currency}")
 
-                amount = float(data.get('amount', 0))
+                if status in ('success', 'paid', 'completed') and uid:
 
+                    uid = str(uid).strip()
 
+                    # Эгер uid Firebase UID эмес, Telegram ID болсо — маппинг аркылуу UID таап алабыз
+                    if len(uid) != 28:
+                        map_url = f"{FIREBASE_DB_URL}/telegram_to_uid/{uid}.json?auth={FIREBASE_DB_SECRET}"
+                        try:
+                            resp_map = requests.get(map_url, timeout=10)
+                            if resp_map.status_code == 200 and resp_map.json():
+                                uid = str(resp_map.json())
+                                log.info(f"🔗 UID resolved from telegram_id: {uid}")
+                        except Exception as map_err:
+                            log.error(f"UID mapping error: {map_err}")
 
-                if status in ('success', 'paid') and uid:
-
-                    # 1. Биринчи кезекте plan_id аркылуу айды аныктоого аракет кылабыз (эгер Telegram боттон төлөнсө)
-                    months = None
-                    additional = data.get('additionalFields')
-                    if isinstance(additional, dict):
-                        plan_id = additional.get('plan')
-                        if plan_id == '1y': months = 12
-                        elif plan_id == '6m': months = 6
-                        elif plan_id == '3m': months = 3
-                        elif plan_id == '1m': months = 1
-
-                    # 2. Эгер план аныкталбаса, анда валютага жана суммага карап аныктайбыз (тиркемеден төлөнсө)
-                    if months is None:
-                        currency = data.get('currency', 'RUB')
-                        if isinstance(currency, str):
-                            currency = currency.upper()
-                            
+                    # Суммага жараша план аныктоо
+                    months = 1  # демейки: 1 ай
+                    if currency == 'USD':
+                        if amount >= 40:   months = 12
+                        elif amount >= 22: months = 6
+                        elif amount >= 12: months = 3
+                        else:              months = 1
+                    elif currency == 'KGS':
+                        if amount >= 3500:  months = 12
+                        elif amount >= 1900: months = 6
+                        elif amount >= 1000: months = 3
+                        else:               months = 1
+                    elif currency == 'RUB':
+                        if amount >= 3500:  months = 12
+                        elif amount >= 1900: months = 6
+                        elif amount >= 900:  months = 3
+                        else:               months = 1
+                    else:  # башка валюта — суммасыз 1 ай
                         months = 1
-                        if currency == 'USD':
-                            if amount >= 30: months = 12
-                            elif amount >= 18: months = 6
-                            elif amount >= 10: months = 3
-                        elif currency == 'KGS':
-                            if amount >= 2500: months = 12
-                            elif amount >= 1500: months = 6
-                            elif amount >= 800: months = 3
-                        else: # RUB жана башка валюталар
-                            if amount >= 3000: months = 12
-                            elif amount >= 1800: months = 6
-                            elif amount >= 1000: months = 3
 
-                    
+                    log.info(f"📅 Plan: {months} month(s) for UID: {uid}")
 
                     if firebase_set_premium(str(uid), months):
-
-                        log.info(f"✅ Premium activated via Webhook for UID: {uid}")
-
+                        log.info(f"✅ Premium activated via Webhook: uid={uid}, months={months}")
                     else:
-
                         log.error(f"❌ Failed to update Firebase for UID: {uid}")
 
-                
+                else:
+                    log.warning(f"⚠️ Webhook ignored: status={status}, uid={uid}")
 
                 self.send_response(200); self.end_headers(); self.wfile.write(b"OK")
 
