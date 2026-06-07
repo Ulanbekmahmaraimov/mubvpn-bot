@@ -1555,7 +1555,7 @@ def get_share_html(lang, ref_link, share_msg):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{t['h1']}}</title>
+<title>{t['h1']}</title>
 <style>
   body {{
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -1581,10 +1581,10 @@ def get_share_html(lang, ref_link, share_msg):
 </head>
 <body>
   <div class="card">
-    <h1>{{t['h1']}}</h1>
-    <p>{{t['sub']}}</p>
-    <button class="btn-share" onclick="shareNow()">{{t['btn_share']}}</button>
-    <div class="link-box">{{ref_link}}</div>
+    <h1>{t['h1']}</h1>
+    <p>{t['sub']}</p>
+    <button class="btn-share" onclick="shareNow()">{t['btn_share']}</button>
+    <div class="link-box">{ref_link}</div>
   </div>
 
   <script>
@@ -1601,7 +1601,7 @@ def get_share_html(lang, ref_link, share_msg):
         }} else {{
           alert("{t['err']}");
         }}
-      } catch (err) {{
+      }} catch (err) {{
         console.log('Error sharing:', err);
       }}
     }}
