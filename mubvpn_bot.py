@@ -545,6 +545,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     context.user_data['uid'] = uid
             except: pass
 
+        log.info(f"🔍 Checking payment for UID: {uid}")
         await query.message.edit_text(L["checking"], parse_mode=ParseMode.HTML)
 
         # 3 секунд күтөбүз (эффект үчүн)
