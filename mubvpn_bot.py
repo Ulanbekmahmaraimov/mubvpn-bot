@@ -678,7 +678,18 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         text = L["ref_menu_text"].format(ref_link=ref_link, referral_count=referral_count, referral_days_granted=referral_days_granted)
 
-        kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+        # Бөлүшүү үчүн текст жана шилтемелер
+        share_msg = html.escape(L["share_msg"])
+        tg_share_url = f"https://t.me/share/url?url={ref_link}&text={share_msg}"
+        wa_share_url = f"https://wa.me/?text={urllib.parse.quote(L['share_msg'])}%0A{ref_link}"
+        web_share_url = f"https://mubvpn-bot.onrender.com/share?ref={uid}&lang={lang}"
+
+        kb = [
+            [InlineKeyboardButton(L["btn_share_now"] + " (Telegram)", url=tg_share_url)],
+            [InlineKeyboardButton(L["btn_share_now"] + " (WhatsApp)", url=wa_share_url)],
+            [InlineKeyboardButton("🔗 Башка тармактар (Instagram/TikTok...)", url=web_share_url)],
+            [InlineKeyboardButton(L["back"], callback_data='main_menu')]
+        ]
 
         if query.message.photo: await query.message.delete()
 
@@ -1504,8 +1515,6 @@ def get_dashboard_html(lang):
 
     </div>
 
-
-
     <footer>
 
       MUBVPN ULTRA PREMIUM © 2025 | @KL_MUB
@@ -1517,6 +1526,94 @@ def get_dashboard_html(lang):
 </body>
 
 </html>"""
+
+
+def get_share_html(lang, ref_link, share_msg):
+    t_ky = {
+        'h1': 'Достор менен бөлүшүү',
+        'sub': 'Төмөнкү баскычты басып, каалаган тармакка жөнөтүңүз:',
+        'btn_share': '🔗 Бөлүшүү (Share)',
+        'err': 'Сиздин браузер бөлүшүү функциясын колдобойт. Шилтемени көчүрүп алыңыз.'
+    }
+    t_ru = {
+        'h1': 'Поделиться с друзьями',
+        'sub': 'Нажмите кнопку ниже, чтобы отправить ссылку в любую соцсеть:',
+        'btn_share': '🔗 Поделиться (Share)',
+        'err': 'Ваш браузер не поддерживает функцию системного шеринга. Скопируйте ссылку вручную.'
+    }
+    t_en = {
+        'h1': 'Share with Friends',
+        'sub': 'Click the button below to share the link to any social network:',
+        'btn_share': '🔗 Share Now',
+        'err': 'Your browser does not support the Web Share API. Please copy the link manually.'
+    }
+
+    t = t_ky if lang == 'ky' else (t_ru if lang == 'ru' else t_en)
+
+    return f"""<!DOCTYPE html>
+<html lang="{lang}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{t['h1']}}</title>
+<style>
+  body {{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #03060a; color: #fff; text-align: center; padding: 40px 20px;
+  }}
+  .card {{
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    padding: 30px; border-radius: 24px; max-width: 400px; margin: 0 auto;
+    backdrop-filter: blur(20px);
+  }}
+  h1 {{ font-size: 24px; margin-bottom: 20px; }}
+  p {{ color: rgba(255,255,255,0.6); margin-bottom: 30px; }}
+  .btn-share {{
+    display: block; width: 100%; background: #00E5A0; color: #000;
+    padding: 16px; border-radius: 14px; font-weight: bold; text-decoration: none;
+    font-size: 18px; cursor: pointer; border: none;
+  }}
+  .link-box {{
+    margin-top: 20px; padding: 10px; background: rgba(0,0,0,0.3);
+    border-radius: 10px; font-size: 12px; word-break: break-all; color: #00E5A0;
+  }}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>{{t['h1']}}</h1>
+    <p>{{t['sub']}}</p>
+    <button class="btn-share" onclick="shareNow()">{{t['btn_share']}}</button>
+    <div class="link-box">{{ref_link}}</div>
+  </div>
+
+  <script>
+    async function shareNow() {{
+      const shareData = {{
+        title: 'mubVPN',
+        text: `{share_msg}`,
+        url: '{ref_link}'
+      }};
+
+      try {{
+        if (navigator.share) {{
+          await navigator.share(shareData);
+        }} else {{
+          alert("{t['err']}");
+        }}
+      } catch (err) {{
+        console.log('Error sharing:', err);
+      }}
+    }}
+
+    // Auto-trigger on mobile
+    window.onload = () => {{
+        setTimeout(shareNow, 500);
+    }};
+  </script>
+</body>
+</html>"""
+
 
 
 
@@ -1554,7 +1651,23 @@ class BotHandler(BaseHTTPRequestHandler):
 
             return
 
-            
+        # --- КӨП ТАРМАКТУУ БӨЛҮШҮҮ (Universal Sharing) ---
+        if path == '/share':
+            query_params = urllib.parse.parse_qs(parsed_path.query)
+            uid = query_params.get('ref', [''])[0]
+            lang = query_params.get('lang', ['ru'])[0]
+
+            bot_username = "mubvpn_pay_bot" # Биздин боттун юзернейми
+            ref_link = f"https://t.me/{bot_username}?start=ref_{uid}"
+            share_msg = STRINGS.get(lang, STRINGS['ru'])['share_msg']
+
+            html_content = get_share_html(lang, ref_link, share_msg)
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/html; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(html_content.encode('utf-8'))
+            return
+
 
         # --- АВТО ТИЛ ТААНУУ (Browser Language Detection) ---
         query_params = urllib.parse.parse_qs(parsed_path.query)
