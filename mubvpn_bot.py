@@ -409,8 +409,6 @@ def get_main_keyboard(lang):
 
         [InlineKeyboardButton(L["btn_how"], callback_data='how_1')], 
 
-        [InlineKeyboardButton(L["btn_share"], callback_data='share_app')], 
-
         [InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)]
 
     ])
