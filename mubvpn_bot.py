@@ -236,6 +236,9 @@ STRINGS = {
         "share_msg": "🚀 mubVPN — Android үчүн эң тез жана коопсуз VPN!\n\nАзыр жүктөп ал! 👇",
         "share_title": "🤝 <b>Бөлүшүү:</b>", "btn_share_now": "📲 Бөлүшүү",
         "btn_referral": "🎁 Акысыз Premium (Рефералы)",
+        "btn_my_vpn": "🔑 Менин шилтемем",
+        "my_vpn_text": "👤 <b>Сиздин жазылууңуз</b>\n\n• Статус: {status}\n• Мөөнөтү: {expiry}\n\n🔑 <b>Сиздин жеке шилтемеңиз:</b>\n<code>{vpn_link}</code>\n\n⚠️ <i>Бул шилтеме бир гана түзүлүш үчүн! Башкаларга бербеңиз.</i>",
+        "no_premium": "⚠️ <b>Сизде Premium жок</b>\n\nШилтеме алуу үчүн жазылуу сатып алыңыз.",
         "ref_menu_text": "🎁 <b>Рефераалдык программа!</b>\n\nДосторуңузду чакырып, <b>бекер Premium</b> алыңыз!\n\n• Ар бир чакырылган дос үчүн: <b>+10 күн акысыз Premium</b>.\n\n🔗 <b>Сиздин шилтемеңиз:</b>\n<code>{ref_link}</code>",
         "plan_1m": "1 ай", "plan_3m": "3 ай", "plan_6m": "6 ай", "plan_1y": "1 жыл",
         "pay_info": "💳 <b>{name} Premium</b>\n\nБаасы:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Төлөм кабыл алуу үчүн операторго жазыңыз.\nТөлөмдөн кийин чек жибериңиз.\n\nАдмин: @kl_mub",
@@ -404,6 +407,8 @@ def get_main_keyboard(lang):
         [InlineKeyboardButton(L["btn_download"], callback_data='dl_platforms')],
 
         [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')], 
+
+        [InlineKeyboardButton(L["btn_my_vpn"], callback_data='my_vpn')],
 
         [InlineKeyboardButton(L["btn_referral"], callback_data='referral_menu')], 
 
@@ -583,6 +588,33 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 
+    elif data == 'my_vpn':
+        L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
+        try:
+            url_user = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
+            resp = requests.get(url_user)
+            user_data = resp.json() if resp.status_code == 200 else None
+
+            if user_data and user_data.get("isPremium"):
+                expiry = user_data.get("premium_expiry", "---")
+                # Уникалдуу шилтеме генерациялоо (Мисалы, сиздин сервердин базалык шилтемесине UID кошуу)
+                # Бул жерге өзүңүздүн негизги сервериңиздин шилтемесин койсоңуз болот
+                personal_link = f"vless://25ebd509-9479-483e-a1aa-8bc996424cea@46.33.10.134:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni=auto.quattro-tech.ru&fp=qq&pbk=10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc&sid=43dcff53849b81e6#mubVPN_{uid}"
+
+                text = L["my_vpn_text"].format(
+                    status="✅ Активдүү",
+                    expiry=expiry.split('T')[0],
+                    vpn_link=personal_link
+                )
+            else:
+                text = L["no_premium"]
+
+            kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+            await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+        except Exception as e:
+            log.error(f"Error in my_vpn: {e}")
+            await query.message.edit_text("Error loading data.", reply_markup=get_main_keyboard(lang))
+
     elif data == 'referral_menu':
 
         L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
@@ -598,7 +630,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         referral_days_granted = 0
 
         try:
-            
+
             inviter_uid = uid
 
             if len(str(uid)) != 28:
