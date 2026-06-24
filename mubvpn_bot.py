@@ -726,9 +726,29 @@ def run_server():
 
 
 
-def main():
+def self_ping():
+    """Ботту өчүрбөш үчүн ар 10 мүнөт сайын өзүнө сурам жөнөтөт."""
+    # Render же Heroku'до APP_URL деген өзгөрмөгө боттун дарегин жазып коюңуз
+    app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL')
+    if not app_url:
+        log.warning("APP_URL өзгөрмөсү коюлган эмес. Өзүн-өзү ping кылуу иштебейт.")
+        return
 
+    while True:
+        try:
+            # Боттун өзүнүн веб-серверине сурам жөнөтөбүз
+            response = requests.get(app_url)
+            log.info(f"Self-ping ийгиликтүү: {response.status_code}")
+        except Exception as e:
+            log.error(f"Self-ping катасы: {e}")
+        time.sleep(600)  # 600 секунд = 10 мүнөт
+
+
+def main():
+    # Веб-серверди иштетүү
     threading.Thread(target=run_server, daemon=True).start()
+    # Өзүн-өзү ойготуп туруучу функцияны иштетүү
+    threading.Thread(target=self_ping, daemon=True).start()
 
     from telegram.request import HTTPXRequest
     request = HTTPXRequest(connect_timeout=20, read_timeout=20)
