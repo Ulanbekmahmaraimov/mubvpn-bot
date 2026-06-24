@@ -221,7 +221,7 @@ STRINGS = {
     "ky": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nЭң тез жана коопсуз интернетке жол ачыңыз. Төлөм жүргүзүү же тиркемени жүктөө үчүн төмөнкү баскычтарды колдонуңуз:",
         "btn_pay": "💳 Сатып алуу", "btn_how": "📖 Кантип төлөйм?",
-        "btn_download": "🚀 Тиркемени жүктөө",
+        "btn_download": "🚀 Жүктөп алуу",
         "btn_support": "👨‍💻 Колдоо", "btn_share": "🤝 Бөлүшүү",
         "pay_text": "💳 <b>Планды тандаңыз</b>\n\nТөлөм кабыл алуу үчүн биздин операторго жазыңыз:",
         "pay_btn_link": "💳 Операторго жазуу", "back": "⬅️ Артка", "next": "Кийинки ➡️",
@@ -238,7 +238,10 @@ STRINGS = {
         "btn_referral": "🎁 Акысыз Premium (Рефералы)",
         "ref_menu_text": "🎁 <b>Рефераалдык программа!</b>\n\nДосторуңузду чакырып, <b>бекер Premium</b> алыңыз!\n\n• Ар бир чакырылган дос үчүн: <b>+10 күн акысыз Premium</b>.\n\n🔗 <b>Сиздин шилтемеңиз:</b>\n<code>{ref_link}</code>",
         "plan_1m": "1 ай", "plan_3m": "3 ай", "plan_6m": "6 ай", "plan_1y": "1 жыл",
-        "pay_info": "💳 <b>{name} Premium</b>\n\nБаасы:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Төлөм кабыл алуу үчүн операторго жазыңыз.\nТөлөмдөн кийин чек жибериңиз.\n\nАдмин: @kl_mub"
+        "pay_info": "💳 <b>{name} Premium</b>\n\nБаасы:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Төлөм кабыл алуу үчүн операторго жазыңыз.\nТөлөмдөн кийин чек жибериңиз.\n\nАдмин: @kl_mub",
+        "dl_title": "🚀 <b>Түзмөгүңүздү тандаңыз</b>\n\nmubVPN бардык платформаларда иштейт. Жүктөө үчүн төмөнкүлөрдүн бирин тандаңыз:",
+        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>\n\nКомпьютер үчүн сунушталган версия. VLESS, Reality протоколдорун колдойт жана өтө тез иштейт.",
+        "dl_mobile_desc": "📱 <b>Мобилдик тиркемелер</b>\n\nAndroid жана iOS үчүн расмий дүкөндөрдөн жүктөп алыңыз."
     },
     "ru": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nОткройте доступ к самому быстрому и безопасному интернету. Используйте кнопки ниже для оплаты или загрузки приложения:",
@@ -396,11 +399,9 @@ def get_main_keyboard(lang):
 
     L = STRINGS.get(lang, STRINGS['ru'])
 
-    apk_direct_url = "https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.5/mubvpn.apk"
-
     return InlineKeyboardMarkup([
 
-        [InlineKeyboardButton(L["btn_download"], url=apk_direct_url)],
+        [InlineKeyboardButton(L["btn_download"], callback_data='dl_platforms')],
 
         [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')], 
 
@@ -537,6 +538,49 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == 'main_menu':
         await query.message.edit_text(STRINGS.get(lang, STRINGS['ru'])["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
 
+    elif data == 'dl_platforms':
+        L = STRINGS.get(lang, STRINGS['ky'])
+        text = L.get("dl_title", STRINGS['ky']["dl_title"])
+        kb = [
+            [InlineKeyboardButton("📱 Android (APK)", url="https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.5/mubvpn.apk")],
+            [InlineKeyboardButton("🤖 Google Play", url="https://play.google.com/store/apps/details?id=com.happproxy"),
+             InlineKeyboardButton("🍎 App Store", url="https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973")],
+            [InlineKeyboardButton("💻 Windows", callback_data="dl_win"), InlineKeyboardButton("🖥 macOS", callback_data="dl_mac")],
+            [InlineKeyboardButton("🐧 Linux", callback_data="dl_linux")],
+            [InlineKeyboardButton(L["back"], callback_data='main_menu')]
+        ]
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
+    elif data == 'dl_win':
+        L = STRINGS.get(lang, STRINGS['ky'])
+        text = L.get("dl_pc_desc", STRINGS['ky']["dl_pc_desc"])
+        kb = [
+            [InlineKeyboardButton("🪟 Windows x64 (EXE)", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe")],
+            [InlineKeyboardButton("🪟 Windows ARM64", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_arm64-setup.exe")],
+            [InlineKeyboardButton(L["back"], callback_data='dl_platforms')]
+        ]
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
+    elif data == 'dl_mac':
+        L = STRINGS.get(lang, STRINGS['ky'])
+        text = L.get("dl_pc_desc", STRINGS['ky']["dl_pc_desc"])
+        kb = [
+            [InlineKeyboardButton("🍎 Mac M-series (M1/M2/M3)", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_aarch64.dmg")],
+            [InlineKeyboardButton("🍎 Mac Intel Chip", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64.dmg")],
+            [InlineKeyboardButton(L["back"], callback_data='dl_platforms')]
+        ]
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
+    elif data == 'dl_linux':
+        L = STRINGS.get(lang, STRINGS['ky'])
+        text = "🐧 <b>Linux үчүн Clash Verge</b>\n\nОрнотуу буйругу:\n<code>sudo apt install ./Clash.Verge_2.5.1_amd64.deb</code>"
+        kb = [
+            [InlineKeyboardButton("🐧 Linux x64 (DEB)", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_amd64.deb")],
+            [InlineKeyboardButton("🐧 Linux ARM64 (DEB)", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_arm64.deb")],
+            [InlineKeyboardButton(L["back"], callback_data='dl_platforms')]
+        ]
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
 
 
     elif data == 'referral_menu':
@@ -554,7 +598,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         referral_days_granted = 0
 
         try:
-
+            
             inviter_uid = uid
 
             if len(str(uid)) != 28:
