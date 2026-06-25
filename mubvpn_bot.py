@@ -244,10 +244,13 @@ STRINGS = {
         "pay_info": "💳 <b>{name} Premium</b>\n\nБаасы:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Төлөм кабыл алуу үчүн операторго жазыңыз.\nТөлөмдөн кийин чек жибериңиз.\n\nАдмин: @kl_mub",
         "dl_title": "🚀 <b>Түзмөгүңүздү тандаңыз</b>\n\nmubVPN бардык платформаларда иштейт. Жүктөө үчүн төмөнкүлөрдүн бирин тандаңыз:",
         "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>\n\nКомпьютер үчүн сунушталган версия. VLESS, Reality протоколдорун колдойт жана өтө тез иштейт.",
-        "dl_mobile_desc": "📱 <b>Мобилдик тиркемелер</b>\n\nAndroid жана iOS үчүн расмий дүкөндөрдөн жүктөп алыңыз."
+        "dl_mobile_desc": "📱 <b>Мобилдик тиркемелер</b>\n\nAndroid жана iOS үчүн расмий дүкөндөрдөн жүктөп алыңыз.",
+        "btn_legal": "📄 Юридикалык маалымат",
+        "legal_text": "📄 <b>Юридикалык документтер</b>\n\nБиздин кызматты колдонуудан мурун келишимдер менен таанышып чыгыңыз:",
+        "policy": "Купуялык саясаты", "terms": "Колдонуучу келишими"
     },
     "ru": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nОткройте доступ к самому быстрому и безопасному интернету. Используйте кнопки ниже для оплаты или загрузки приложения:",
+        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nОткройте доступ к быстрому и безопасному интернету. Используйте кнопки ниже для оплаты или загрузки приложения:",
         "btn_pay": "💳 Купить", "btn_how": "📖 Как оплатить?",
         "btn_download": "🚀 Скачать приложение",
         "btn_support": "👨‍💻 Поддержка", "btn_share": "🤝 Поделиться",
@@ -261,12 +264,18 @@ STRINGS = {
         "how_step_2": "💬 <b>ШАГ 2: Написать оператору</b>\n\nНажмите 'Написать оператору' и отправьте чек.",
         "how_step_3": "✅ <b>ШАГ 3: Активация</b>\n\nPremium активируется после проверки оплаты оператором.",
         "menu_back": "Главное меню:",
-        "share_msg": "🚀 mubVPN — Самый быстрый и безопасный VPN для Android!\n\nСкачай сейчас! 👇",
+        "share_msg": "🚀 mubVPN — Быстрый и безопасный VPN!\n\nСкачай сейчас! 👇",
         "share_title": "🤝 <b>Поделиться:</b>", "btn_share_now": "📲 Поделиться",
         "btn_referral": "🎁 Бесплатный Premium (Рефералы)",
-        "ref_menu_text": "🎁 <b>Реферальная программа!</b>\n\nПриглашайте друзей и получайте <b>бесплатный Premium</b>!\n\n• За каждого друга: <b>+10 дней бесплатного Premium</b>.\n\n🔗 <b>Ваша ссылка:</b>\n<code>{ref_link}</code>",
+        "btn_my_vpn": "🔑 Моя ссылка",
+        "my_vpn_text": "👤 <b>Ваша подписка</b>\n\n• Статус: {status}\n• Истекает: {expiry}\n\n🔑 <b>Ваша персональная ссылка:</b>\n<code>{vpn_link}</code>\n\n⚠️ <i>Эта ссылка только для одного устройства!</i>",
+        "no_premium": "⚠️ <b>У вас нет Premium</b>",
+        "ref_menu_text": "🎁 <b>Реферальная программа!</b>\n\nПриглашайте друзей и получайте <b>бесплатный Premium</b>!\n\n🔗 <b>Ваша ссылка:</b>\n<code>{ref_link}</code>",
         "plan_1m": "1 месяц", "plan_3m": "3 месяца", "plan_6m": "6 месяцев", "plan_1y": "1 год",
-        "pay_info": "💳 <b>{name} Premium</b>\n\nЦена:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Для оплаты напишите оператору.\nПосле оплаты отправьте чек.\n\nАдмин: @kl_mub"
+        "pay_info": "💳 <b>{name} Premium</b>\n\nЦена:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Для оплаты напишите оператору.\nАдмин: @kl_mub",
+        "btn_legal": "📄 Юридическая информация",
+        "legal_text": "📄 <b>Юридические документы</b>\n\nОзнакомьтесь с официальными документами нашего сервиса:",
+        "policy": "Политика конфиденциальности", "terms": "Пользовательское соглашение"
     },
     "uz": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nEng tezkor va xavfsiz internetga ega bo'ling. To'lov qilish yoki ilovani yuklab olish uchun quyidagi tugmalardan foydalaning:",
@@ -413,6 +422,8 @@ def get_main_keyboard(lang):
         [InlineKeyboardButton(L["btn_referral"], callback_data='referral_menu')], 
 
         [InlineKeyboardButton(L["btn_how"], callback_data='how_1')], 
+
+        [InlineKeyboardButton(L["btn_legal"], callback_data='legal_menu')],
 
         [InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)]
 
@@ -586,6 +597,15 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ]
         await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
+    elif data == 'legal_menu':
+        L = STRINGS.get(lang, STRINGS['ru'])
+        kb = [
+            [InlineKeyboardButton(L["policy"], url="https://telegra.ph/Politika-konfidencialnosti-06-21-31")],
+            [InlineKeyboardButton(L["terms"], url="https://telegra.ph/Polzovatelskoe-soglashenie-04-01-19")],
+            [InlineKeyboardButton(L["back"], callback_data='main_menu')]
+        ]
+        await query.message.edit_text(L["legal_text"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
 
 
     elif data == 'my_vpn':
@@ -695,7 +715,7 @@ def get_dashboard_html(lang):
 
             'h1': 'mubVPN — Android үчүн тез жана коопсуз VPN',
 
-            'sub': '🚀 mubVPN — чектөөсүз интернетке коопсуз жол!\n\n✅ Блоктоолорду айланып өтөт\n✅ Маалыматтарди ишенимдүү шифрлейт\n✅ Бир таптоо менен туташуу\n✅ Жогорку ылдамдык\n\nАзыр жүктөп алып, эркиндиктен ырахат алыңыз! 👇',
+            'sub': '🚀 mubVPN — чектөөсүз интернетке коопсуз жол!\n\n✅ Маалыматтарди ишенимдүү шифрлейт\n✅ Бир таптоо менен туташуу\n✅ Жогорку ылдамдык\n\nАзыр жүктөп алып, эркиндиктен ырахат алыңыз! 👇',
 
             'btn_dl': 'Android үчүн жүктөө',
 
@@ -705,7 +725,7 @@ def get_dashboard_html(lang):
 
             'h1': 'mubVPN — Быстрый и безопасный VPN для Android',
 
-            'sub': '🚀 mubVPN — ваш безопасный доступ к любимым сервисам без ограничений!\n\n✅ Обходит любые блокировки\n✅ Надежно защищает ваши данные\n✅ Подключение в один тап\n✅ Высокая и стабильная скорость\n\nСкачай и пользуйся без ограничений уже сейчас! 👇',
+            'sub': '🚀 mubVPN — ваш безопасный доступ к любимым сервисам без ограничений!\n\n✅ Надежно защищает ваши данные\n✅ Подключение в один тап\n✅ Высокая и стабильная скорость\n\nСкачай и пользуйся без ограничений уже сейчас! 👇',
 
             'btn_dl': 'Скачать для Android',
 
