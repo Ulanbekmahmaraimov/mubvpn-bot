@@ -33,7 +33,7 @@ FIREBASE_DB_URL    = "https://mubvpn-8b892-default-rtdb.firebaseio.com"
 FIREBASE_DB_SECRET = "NgRNzmtQYdgUcFWXiDRPAHAsSURVni2WaIKTw9Re"
 
 
-# Platega Орнотуулары
+# Platega Орнотуулары (ТАКТАЛГАН ID)
 PLATEGA_MERCHANT_ID = "7daa1458-3248-4106-bc81-bfe7f33b742f"
 PLATEGA_API_KEY     = "Ia6n9MgN172IKWWOGAzkfQveSZ4ZIq2ktTpkt5hiBNpCfbtrX4V4XLozuKarEB2OzkNEEfHDsaTZadGJhZUJ6He7AtQFGS0U6Lud"
 
@@ -245,7 +245,7 @@ def create_platega_invoice(uid: str, plan_id: str, amount_rub: float) -> str:
         if resp.status_code == 200:
             return resp.json().get("payment_url")
         else:
-            log.error(f"Platega error: {resp.text}")
+            log.error(f"Platega error ({resp.status_code}): {resp.text}")
             return None
     except Exception as e:
         log.error(f"Error creating Platega invoice: {e}")
@@ -322,7 +322,7 @@ STRINGS = {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nEng tezkor va xavfsiz internetga ega bo'ling. To'lov qilish yoki ilovani yuklab olish uchun quyidagi tugmalardan foydalaning:",
         "btn_pay": "💳 Sotib olish", "btn_how": "📖 Qanday to'lash kerak?",
         "btn_download": "🚀 Ilovani yuklab olish",
-        "btn_support": "👨‍💻 Qo'llab-quvvatlash", "btn_share": "🤝 Ulashish",
+        "btn_support": "👨‍💻 Qo'llab-quvvatsh", "btn_share": "🤝 Ulashish",
         "pay_text": "💳 <b>Tarifni tanlang</b>\n\nTo'lovlar SBP va Kripto orqali avtomatik ravishda qabul qilinadi:",
         "pay_btn_link": "💳 To'lov havolasi", "back": "⬅️ Orqaga", "next": "Keyingi ➡️",
         "check_btn": "✅ To'ladim (Tekshirish)",
@@ -392,7 +392,7 @@ STRINGS = {
         "success": "🎉 <b>Premium белсендірілді!</b>\n\nҚосымшаны ашып, VPN-ді қолдана беріңиз!",
         "not_found": "⚠️ Төлем табылмады. Төлегеннен кейін 1-2 минут күте тұрыңыз.",
         "how_step_1": "🚀 <b>1-ҚАДАМ: Тариф таңдау</b>",
-        "how_step_2": "💳 <b>2-ҚАДАМ: Төлеу</b>",
+        "how_step_2": "💳 <b>2-ҚАДАМ: Төлөө</b>",
         "how_step_3": "✅ <b>3-ҚАДАМ: Белсендіру</b>",
         "menu_back": "Басты мәзір:",
         "share_msg": "🚀 mubVPN — Android үшін ең жылдам және қауіпсіз VPN!\n\nҚазір жүктеп ал! 👇",
@@ -461,7 +461,7 @@ STRINGS = {
         "share_title": "🤝 <b>Share:</b>", "btn_share_now": "📲 Share",
         "btn_referral": "🎁 Free Premium (Referral)",
         "btn_my_vpn": "🔑 My Link",
-        "my_vpn_text": "👤 <b>Your Subscription</b>\n\n• Status: {status}\n• Expiry: {expiry}\n\n🔑: <b>Your personal link:</b>\n<code>{vpn_link}</code>",
+        "my_vpn_text": "👤 <b>Your Subscription</b>\n\n• Status: {status}\n• Expiry: {expiry}\n\n🔑 <b>Your personal link:</b>\n<code>{vpn_link}</code>",
         "no_premium": "⚠️ <b>You don't have Premium</b>",
         "ref_menu_text": "🎁 <b>Referral Program!</b>\n\nInvite friends and get <b>free Premium</b>!\n\n🔗 <b>Your referral link:</b>\n<code>{ref_link}</code>",
         "plan_1m": "1 Month", "plan_3m": "3 Months", "plan_6m": "6 Months", "plan_1y": "1 Year",
