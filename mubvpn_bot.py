@@ -461,7 +461,7 @@ STRINGS = {
         "share_title": "🤝 <b>Share:</b>", "btn_share_now": "📲 Share",
         "btn_referral": "🎁 Free Premium (Referral)",
         "btn_my_vpn": "🔑 My Link",
-        "my_vpn_text": "👤 <b>Your Subscription</b>\n\n• Status: {status}\n• Expiry: {expiry}\n\n🔑 <b>Your personal link:</b>\n<code>{vpn_link}</code>",
+        "my_vpn_text": "👤 <b>Your Subscription</b>\n\n• Status: {status}\n• Expiry: {expiry}\n\n🔑: <b>Your personal link:</b>\n<code>{vpn_link}</code>",
         "no_premium": "⚠️ <b>You don't have Premium</b>",
         "ref_menu_text": "🎁 <b>Referral Program!</b>\n\nInvite friends and get <b>free Premium</b>!\n\n🔗 <b>Your referral link:</b>\n<code>{ref_link}</code>",
         "plan_1m": "1 Month", "plan_3m": "3 Months", "plan_6m": "6 Months", "plan_1y": "1 Year",
@@ -620,25 +620,29 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.HTML)
 
     elif data.startswith('plan:'):
-        L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
-        parts = data.split(':')
-        plan_id = parts[1]
-        plan = PLANS.get(plan_id)
+        try:
+            L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
+            parts = data.split(':')
+            plan_id = parts[1]
+            plan = PLANS.get(plan_id)
 
-        if plan:
-            plan_name = STRINGS[lang][plan['name_key']]
-            # Төлөм шилтемесин түзүү
-            payment_url = create_platega_invoice(str(uid), plan_id, plan['rub'])
+            if plan:
+                plan_name = STRINGS[lang][plan['name_key']]
+                # Төлөм шилтемесин түзүү
+                payment_url = create_platega_invoice(str(uid), plan_id, plan['rub'])
 
-            if payment_url:
-                text = L["pay_info"].format(name=plan_name, rub=plan['rub'])
-                keyboard = [
-                    [InlineKeyboardButton(L["pay_btn_link"], url=payment_url)],
-                    [InlineKeyboardButton(L["back"], callback_data='pay_menu')]
-                ]
-                await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.HTML)
-            else:
-                await query.message.edit_text("Төлөм шилтемесин түзүүдө ката кетти. Сураныч, колдоо бөлүмүнө кайрылыңыз.", reply_markup=get_main_keyboard(lang))
+                if payment_url:
+                    text = L["pay_info"].format(name=plan_name, rub=plan['rub'])
+                    keyboard = [
+                        [InlineKeyboardButton(L["pay_btn_link"], url=payment_url)],
+                        [InlineKeyboardButton(L["back"], callback_data='pay_menu')]
+                    ]
+                    await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.HTML)
+                else:
+                    await query.message.edit_text("Төлөм шилтемесин түзүүдө ката кетти. Сураныч, колдоо бөлүмүнө кайрылыңыз.", reply_markup=get_main_keyboard(lang))
+        except Exception as e:
+            log.error(f"Error in handle_callback (plan): {e}")
+            await query.message.edit_text("Кечиресиз, техникалык ката кетти.", reply_markup=get_main_keyboard(lang))
 
     elif data == 'check_payment':
         L = STRINGS.get(lang, STRINGS['ru'])
