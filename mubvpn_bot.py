@@ -901,7 +901,7 @@ def main():
 
     app.add_handler(CommandHandler("start", start))
 
-    app.add_handler(CallbackQueryHЖandler(handle_callback))
+    app.add_handler(CallbackQueryHandler(handle_callback))
 
     log.info("🤖 Bot is running...")
 
