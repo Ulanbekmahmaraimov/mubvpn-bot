@@ -421,7 +421,7 @@ STRINGS = {
         "check_btn": "✅ Ödedim (Kontrol Et)",
         "checking": "⏳ Ödeme kontrol ediliyor...",
         "success": "🎉 <b>Premium Aktif Edildi!</b>\n\nUygulamayı açın ve VPN'in tadını çıkarın!",
-        "not_found": "⚠️ Ödeme bulunamadы. Ödemeden sonra 1-2 dakika bekleyin.",
+        "not_found": "⚠️ Ödeme bulunamadы. Ödemeden после 1-2 dakika bekleyin.",
         "how_step_1": "🚀 <b>ADIM 1: Plan seçimi</b>",
         "how_step_2": "💳 <b>ADIM 2: Ödeme</b>",
         "how_step_3": "✅ <b>ADIM 3: Aktivasyon</b>",
