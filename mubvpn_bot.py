@@ -228,7 +228,7 @@ STRINGS = {
         "check_btn": "✅ Төлөдүм (Текшерүү)",
         "checking": "⏳ Төлөм текшерилүүдө...",
         "success": "🎉 <b>Premium активдешти!</b>\n\nТиркемени ачып, VPN'ди колдоно бериңиз!",
-        "not_found": "⚠️ Төлөм табылган жок. Операторга чек жибергениңизди текшериңиз.",
+        "not_found": "⚠️ Төлөм табылган жок. Операторго чек жибергениңизди текшериңиз.",
         "how_step_1": "🚀 <b>1-КАДАМ: План тандоо</b>\n\n'Сатып алуу' баскычын басып, мөөнөттү тандаңыз.",
         "how_step_2": "💬 <b>2-КАДАМ: Операторго жазуу</b>\n\n'Операторго жазуу' баскычын басып, чек жибериңиз.",
         "how_step_3": "✅ <b>3-КАДАМ: Активдештирүү</b>\n\nОператор төлөмдү текшергенден кийин Premium иштеп баштайт.",
@@ -273,6 +273,9 @@ STRINGS = {
         "ref_menu_text": "🎁 <b>Реферальная программа!</b>\n\nПриглашайте друзей и получайте <b>бесплатный Premium</b>!\n\n🔗 <b>Ваша ссылка:</b>\n<code>{ref_link}</code>",
         "plan_1m": "1 месяц", "plan_3m": "3 месяца", "plan_6m": "6 месяцев", "plan_1y": "1 год",
         "pay_info": "💳 <b>{name} Premium</b>\n\nЦена:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Для оплаты напишите оператору.\nАдмин: @kl_mub",
+        "dl_title": "🚀 <b>Выберите устройство</b>",
+        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
+        "dl_mobile_desc": "📱 <b>Мобильные приложения</b>",
         "btn_legal": "📄 Юридическая информация",
         "legal_text": "📄 <b>Юридические документы</b>\n\nОзнакомьтесь с официальными документами нашего сервиса:",
         "policy": "Политика конфиденциальности", "terms": "Пользовательское соглашение"
@@ -295,9 +298,18 @@ STRINGS = {
         "share_msg": "🚀 mubVPN — Android uchun eng tezkor va xavfsiz VPN!\n\nHozir yuklab ol! 👇",
         "share_title": "🤝 <b>Ulashish:</b>", "btn_share_now": "📲 Ulashish",
         "btn_referral": "🎁 Bepul Premium (Referal)",
+        "btn_my_vpn": "🔑 Mening havolam",
+        "my_vpn_text": "👤 <b>Sizning obunangiz</b>\n\n• Holat: {status}\n• Muddati: {expiry}\n\n🔑 <b>Sizning shaxsiy havolangiz:</b>\n<code>{vpn_link}</code>",
+        "no_premium": "⚠️ <b>Sizda Premium yo'q</b>",
         "ref_menu_text": "🎁 <b>Referal dasturi!</b>\n\nDo'tslaringizni taklif qiling va <b>bepul Premium</b> oling!\n\n🔗 <b>Sizning havolangiz:</b>\n<code>{ref_link}</code>",
         "plan_1m": "1 oy", "plan_3m": "3 oy", "plan_6m": "6 oy", "plan_1y": "1 yil",
-        "pay_info": "💳 <b>{name} Premium</b>\n\nNarxi:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ To'lov uchun operatorga yozing.\nTo'lovdan so'ng chek yuboring.\n\nAdmin: @kl_mub"
+        "pay_info": "💳 <b>{name} Premium</b>\n\nNarxi:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ To'lov uchun operatorga yozing.\nTo'lovdan so'ng chek yuboring.\n\nAdmin: @kl_mub",
+        "dl_title": "🚀 <b>Qurilmangizni tanlang</b>",
+        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
+        "dl_mobile_desc": "📱 <b>Mobil ilovalar</b>",
+        "btn_legal": "📄 Yuridik ma'lumotlar",
+        "legal_text": "📄 <b>Yuridik hujjatlar</b>",
+        "policy": "Maxfiylik siyosati", "terms": "Foydalanuvchi shartnomasi"
     },
     "tg": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nБа интернети зудтарин ва бехатар дастрасӣ пайдо кунед. Барои пардохт ё боргирии барнома аз тугмаҳои зерин истифода баред:",
@@ -317,16 +329,25 @@ STRINGS = {
         "share_msg": "🚀 mubVPN — VPN-и зудтарин ва бехатар барои Android!\n\nHоло боргирӣ кун! 👇",
         "share_title": "🤝 <b>Ирсол:</b>", "btn_share_now": "📲 Ирсол",
         "btn_referral": "🎁 Premium-и ройгон (Реферал)",
+        "btn_my_vpn": "🔑 Истиноди ман",
+        "my_vpn_text": "👤 <b>Обунаи шумо</b>\n\n• Статус: {status}\n• Мӯҳлат: {expiry}\n\n🔑 <b>Истиноди шахсии шумо:</b>\n<code>{vpn_link}</code>",
+        "no_premium": "⚠️ <b>Шумо Premium надоред</b>",
         "ref_menu_text": "🎁 <b>Барномаи рефералӣ!</b>\n\nДӯстони худро даъват кунед ва <b>Premium-и ройгон</b> гиред!\n\n🔗 <b>Истиноди шумо:</b>\n<code>{ref_link}</code>",
         "plan_1m": "1 моҳ", "plan_3m": "3 моҳ", "plan_6m": "6 моҳ", "plan_1y": "1 сол",
-        "pay_info": "💳 <b>{name} Premium</b>\n\nНарх:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Барои пардохт ба оператор нависед.\nБаъди пардохт чекы фиристед.\n\nАдмин: @kl_mub"
+        "pay_info": "💳 <b>{name} Premium</b>\n\nНарх:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Барои пардохт ба оператор нависед.\nБаъди пардохт чекы фиристед.\n\nАдмин: @kl_mub",
+        "dl_title": "🚀 <b>Дастгоҳи худро интихоб кунед</b>",
+        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
+        "dl_mobile_desc": "📱 <b>Барномаҳои мобилӣ</b>",
+        "btn_legal": "📄 Маълумоти ҳуқуқӣ",
+        "legal_text": "📄 <b>Ҳуҷҷатҳои ҳуқуқӣ</b>",
+        "policy": "Сиёсати махфият", "terms": "Шартномаи корбар"
     },
     "kk": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nЕң жылдам және қауіпсіз интернетке жол ашыңыз. Төлөм жасау немесе қосымшаны жүктеу үчүн төмендегі батырмаларды қолданыңыз:",
         "btn_pay": "💳 Сатып алу", "btn_how": "📖 Қалай төлеу керек?",
         "btn_download": "🚀 Қосымшаны жүктеу",
         "btn_support": "👨‍💻 Қолдау", "btn_share": "🤝 Бөлісу",
-        "pay_text": "💳 <b>Тарифті таңдаңыз</b>\n\nТөлем жасау үчүн операторға жазыңыз:",
+        "pay_text": "💳 <b>Тарифті таңдаңыз</b>\n\nТөлем жасау үшін операторға жазыңыз:",
         "pay_btn_link": "💳 Операторға жазу", "back": "⬅️ Артқа", "next": "Келесі ➡️",
         "check_btn": "✅ Төледім (Тексеру)",
         "checking": "⏳ Төлем тексерілуде...",
@@ -339,9 +360,18 @@ STRINGS = {
         "share_msg": "🚀 mubVPN — Android үшін ең жылдам және қауіпсіз VPN!\n\nҚазір жүктеп ал! 👇",
         "share_title": "🤝 <b>Бөлісу:</b>", "btn_share_now": "📲 Бөлісу",
         "btn_referral": "🎁 Тегін Premium (Реферал)",
+        "btn_my_vpn": "🔑 Менің сілтемем",
+        "my_vpn_text": "👤 <b>Сіздің жазылымыңыз</b>\n\n• Статус: {status}\n• Мерзімі: {expiry}\n\n🔑 <b>Жеке сілтемеңіз:</b>\n<code>{vpn_link}</code>",
+        "no_premium": "⚠️ <b>Сізде Premium жоқ</b>",
         "ref_menu_text": "🎁 <b>Рефералды бағдарлама!</b>\n\nДостарыңызды шақырып, <b>тегін Premium</b> алыңыз!\n\n🔗 <b>Сіздің сілтемеңіз:</b>\n<code>{ref_link}</code>",
         "plan_1m": "1 ай", "plan_3m": "3 ай", "plan_6m": "6 ай", "plan_1y": "1 жыл",
-        "pay_info": "💳 <b>{name} Premium</b>\n\nБағасы:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Төлем үчүн операторға жазыңыз.\nТөлемнен кейін чекті жіберіңіз.\n\nАдмин: @kl_mub"
+        "pay_info": "💳 <b>{name} Premium</b>\n\nБағасы:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Төлем үшін операторға жазыңыз.\nТөлемнен кейін чекті жіберіңіз.\n\nАдмин: @kl_mub",
+        "dl_title": "🚀 <b>Құрылғыңызды таңдаңыз</b>",
+        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
+        "dl_mobile_desc": "📱 <b>Мобильді қосымшалар</b>",
+        "btn_legal": "📄 Құқықтық ақпарат",
+        "legal_text": "📄 <b>Құқықтық құжаттар</b>",
+        "policy": "Құпиялылық саясаты", "terms": "Пайдаланушы келісімі"
     },
     "tr": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nEn hızlı ve en güvenli internetin keyfini çıkarın. Ödeme yapmak veya uygulamayı indirmek için aşağıdaki butonları kullanın:",
@@ -361,9 +391,18 @@ STRINGS = {
         "share_msg": "🚀 mubVPN — Android için en hızlı ve güvenli VPN!\n\nHemen indir! 👇",
         "share_title": "🤝 <b>Paylaş:</b>", "btn_share_now": "📲 Paylaş",
         "btn_referral": "🎁 Ücretsiz Premium (Referans)",
+        "btn_my_vpn": "🔑 Benim linkim",
+        "my_vpn_text": "👤 <b>Aboneliğiniz</b>\n\n• Durum: {status}\n• Bitiş Tarihi: {expiry}\n\n🔑 <b>Kişisel linkiniz:</b>\n<code>{vpn_link}</code>",
+        "no_premium": "⚠️ <b>Premium aboneliğiniz yok</b>",
         "ref_menu_text": "🎁 <b>Referans Programı!</b>\n\nArkadaşlarınızı davet edin ve <b>ücretsiz Premium</b> kazanın!\n\n🔗 <b>Referans linkiniz:</b>\n<code>{ref_link}</code>",
         "plan_1m": "1 Ay", "plan_3m": "3 Ay", "plan_6m": "6 Ay", "plan_1y": "1 Yıl",
-        "pay_info": "💳 <b>{name} Premium</b>\n\nFiyat:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Ödeme için operatöre yazın.\nÖdemeden sonra makbuz gönderin.\n\nAdmin: @kl_mub"
+        "pay_info": "💳 <b>{name} Premium</b>\n\nFiyat:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Ödeme için operatöre yazın.\nÖdemeden sonra makbuz gönderin.\n\nAdmin: @kl_mub",
+        "dl_title": "🚀 <b>Cihazınızı seçin</b>",
+        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
+        "dl_mobile_desc": "📱 <b>Mobil uygulamalar</b>",
+        "btn_legal": "📄 Yasal Bilgiler",
+        "legal_text": "📄 <b>Yasal belgeler</b>",
+        "policy": "Gizlilik Politikası", "terms": "Kullanıcı Sözleşmesi"
     },
     "en": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nUnlock the fastest and most secure internet access. Use the buttons below to pay or download the application:",
@@ -383,9 +422,18 @@ STRINGS = {
         "share_msg": "🚀 mubVPN — The fastest and safest VPN for Android!\n\nDownload now! 👇",
         "share_title": "🤝 <b>Share:</b>", "btn_share_now": "📲 Share",
         "btn_referral": "🎁 Free Premium (Referral)",
+        "btn_my_vpn": "🔑 My Link",
+        "my_vpn_text": "👤 <b>Your Subscription</b>\n\n• Status: {status}\n• Expiry: {expiry}\n\n🔑 <b>Your personal link:</b>\n<code>{vpn_link}</code>",
+        "no_premium": "⚠️ <b>You don't have Premium</b>",
         "ref_menu_text": "🎁 <b>Referral Program!</b>\n\nInvite friends and get <b>free Premium</b>!\n\n🔗 <b>Your referral link:</b>\n<code>{ref_link}</code>",
         "plan_1m": "1 Month", "plan_3m": "3 Months", "plan_6m": "6 Months", "plan_1y": "1 Year",
-        "pay_info": "💳 <b>{name} Premium</b>\n\nPrice:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Write to operator for payment.\nSend the receipt after payment.\n\nAdmin: @kl_mub"
+        "pay_info": "💳 <b>{name} Premium</b>\n\nPrice:\n🇷🇺 {rub} RUB\n🇰🇬 {kgs} KGS\n🌐 {usd} $\n\n⚠️ Write to operator for payment.\nSend the receipt after payment.\n\nAdmin: @kl_mub",
+        "dl_title": "🚀 <b>Choose your device</b>",
+        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
+        "dl_mobile_desc": "📱 <b>Mobile apps</b>",
+        "btn_legal": "📄 Legal Information",
+        "legal_text": "📄 <b>Legal documents</b>",
+        "policy": "Privacy Policy", "terms": "User Agreement"
     }
 }
 
