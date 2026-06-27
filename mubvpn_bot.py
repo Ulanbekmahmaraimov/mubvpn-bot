@@ -739,8 +739,25 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
     elif data == 'dl_linux':
-        L = STRINGS.get(lang, STRINGS['ky'])
-        text = "🐧 <b>Linux үчүн Clash Verge</b>\n\nОрнотуу буйругу:\n<code>sudo apt install ./Clash.Verge_2.5.1_amd64.deb</code>"
+        L = STRINGS.get(lang, STRINGS['ky'])        text = "🐧 <b>Linux үчүн Clash Verge</b>\n\nОрнотуу буйругу:\n<code>sudo apt install ./Clash.Verge_2.5.1_amd64.deb</code>"    elif data == 'my_vpn':
+        L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
+        try:
+            url_user = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
+            resp = requests.get(url_user)
+            user_data = resp.json() if resp.status_code == 200 else None
+
+            if user_data and user_data.get("isPremium"):
+                expiry = user_data.get("premium_expiry", "---")
+                app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
+                sub_link = f"{app_url}/sub/{uid}"
+                text = L["my_vpn_text"].format(status="✅ Активдүү", expiry=expiry.split('T')[0], vpn_link=sub_link)
+            else:
+                text = L["no_premium"]
+            kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+            await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+        except Exception as e:
+            log.error(f"Error in my_vpn: {e}")
+            await query.message.edit_text("Error loading data.", reply_markup=get_main_keyboard(lang))
         kb = [
             [InlineKeyboardButton("🐧 Linux x64 (DEB)", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_amd64.deb")],
             [InlineKeyboardButton("🐧 Linux ARM64 (DEB)", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_arm64.deb")],
@@ -818,33 +835,39 @@ class BotHandler(BaseHTTPRequestHandler):
     def send_telegram_notification(self, uid):
         """Төлөмдөн кийин Telegram аркылуу кабар жөнөтөт."""
         try:
-            # Алгач UID'ден Telegram ID табуу керек
-            url_map = f"{FIREBASE_DB_URL}/telegram_to_uid.json?auth={FIREBASE_DB_SECRET}"
-            resp = requests.get(url_map)
-            if resp.status_code == 200:
-                mapping = resp.json()
-                tg_id = None
-                if mapping:
-                    for tid, u in mapping.items():
-                        if u == uid:
-                            tg_id = tid; break
+            # Түздөн-түз Telegram ID же UID экенин текшерүү
+            tg_id = uid if str(uid).isdigit() else None
 
-                if tg_id:
-                    app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
-                    sub_link = f"{app_url}/sub/{uid}"
+            if not tg_id:
+                # Алгач UID'ден Telegram ID табуу керек
+                url_map = f"{FIREBASE_DB_URL}/telegram_to_uid.json?auth={FIREBASE_DB_SECRET}"
+                resp = requests.get(url_map)
+                if resp.status_code == 200:
+                    mapping = resp.json()
+                    if mapping:
+                        for tid, u in mapping.items():
+                            if str(u) == str(uid):
+                                tg_id = tid; break
 
-                    # Серверлердин тизмесин билдирүүгө кошуу
-                    server_list = "\n".join([f"📍 {srv['name']}" for srv in SERVERS])
+            if tg_id:
+                app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
+                sub_link = f"{app_url}/sub/{uid}"
 
-                    msg = (
-                        "🎉 <b>Төлөм кабыл алынды!</b>\n\n"
-                        "Premium активдешти. Төмөндө сиздин жеке жазылуу шилтемеңиз (VLESS / TCP / REALITY):\n\n"
-                        f"🌐 <b>Subscription Link:</b>\n<code>{sub_link}</code>\n\n"
-                        f"<b>Жеткиликтүү серверлер:</b>\n{server_list}\n\n"
-                        "<i>Бул шилтемени көчүрүп, тиркемеге (v2rayNG, Clash ж.б.) кошуңуз.</i>"
-                    )
-                    send_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-                    requests.post(send_url, data={"chat_id": tg_id, "text": msg, "parse_mode": "HTML"})
+                # Серверлердин тизмесин билдирүүгө кошуу
+                server_list = "\n".join([f"📍 {srv['name']}" for srv in SERVERS])
+
+                msg = (
+                    "🎉 <b>Төлөм кабыл алынды!</b>\n\n"
+                    "Premium активдешти. Төмөндө сиздин жеке жазылуу шилтемеңиз (VLESS / TCP / REALITY | JSON):\n\n"
+                    f"🌐 <b>Subscription Link:</b>\n<code>{sub_link}</code>\n\n"
+                    f"<b>Жеткиликтүү серверлер:</b>\n{server_list}\n\n"
+                    "<i>Бул шилтемени көчүрүп, тиркемеге (v2rayNG, Clash ж.б.) кошуңуз.</i>"
+                )
+                send_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+                log.info(f"Sending success notification to {tg_id}")
+                requests.post(send_url, data={"chat_id": tg_id, "text": msg, "parse_mode": "HTML"})
+            else:
+                log.error(f"Could not find Telegram ID for UID: {uid}")
         except Exception as e:
             log.error(f"Error sending Telegram notification: {e}")
 
