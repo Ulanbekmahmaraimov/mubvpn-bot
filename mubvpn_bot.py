@@ -226,23 +226,20 @@ def register_referral(new_user_tg_id: int, inviter_id: str) -> tuple[bool, str]:
 def create_platega_invoice(uid: str, plan_id: str, amount_rub: float) -> tuple[str, str]:
     """Platega аркылуу төлөм шилтемесин түзөт. Кайтарат: (URL, ErrorMessage)"""
     try:
-        # Негизги API дареги
-        url = "https://api.platega.io/v1/invoice"
+        # Негизги API дареги (Түзүлгөн: api.platega.io -> app.platega.io)
+        url = "https://app.platega.io/v2/transaction/process"
         headers = {
-            "Authorization": f"Bearer {PLATEGA_API_KEY}",
+            "X-MerchantId": PLATEGA_MERCHANT_ID,
+            "X-Secret": PLATEGA_API_KEY,
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
 
-        order_id = f"PAY_{int(time.time())}_{str(uid)[:8]}"
-
         data = {
-            "merchant_id": PLATEGA_MERCHANT_ID,
-            "amount": str(amount_rub),
-            "currency": "RUB",
-            "order_id": order_id,
+            "amount": float(amount_rub),
+            "currencyFrom": "RUB",
             "description": f"mubVPN Premium - {plan_id}",
-            "success_url": "https://t.me/mubvpn_pay_bot",
+            "returnUrl": "https://t.me/mubvpn_pay_bot",
             "metadata": {"uid": str(uid), "plan_id": str(plan_id)}
         }
 
@@ -250,7 +247,7 @@ def create_platega_invoice(uid: str, plan_id: str, amount_rub: float) -> tuple[s
         resp = requests.post(url, json=data, headers=headers, timeout=15)
 
         if resp.status_code == 200:
-            return resp.json().get("payment_url"), None
+            return resp.json().get("url"), None
         else:
             err_msg = f"API Катасы {resp.status_code}: {resp.text[:100]}"
             log.error(f"Platega API катасы: {err_msg}")
@@ -758,7 +755,8 @@ class BotHandler(BaseHTTPRequestHandler):
                 log.info(f"Platega Webhook received: {data}")
 
                 # Төлөм ийгиликтүү болсо
-                if data.get("status") == "paid":
+                status = str(data.get("status", "")).lower()
+                if status == "paid":
                     metadata = data.get("metadata", {})
                     uid = metadata.get("uid")
                     plan_id = metadata.get("plan_id")
