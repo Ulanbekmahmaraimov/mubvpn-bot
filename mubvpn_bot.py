@@ -226,17 +226,19 @@ def register_referral(new_user_tg_id: int, inviter_id: str) -> tuple[bool, str]:
 def create_platega_invoice(uid: str, plan_id: str, amount_rub: float) -> tuple[str, str]:
     """Platega аркылуу төлөм шилтемесин түзөт. Кайтарат: (URL, ErrorMessage)"""
     try:
+        # Негизги API дареги
         url = "https://api.platega.io/v1/invoice"
         headers = {
             "Authorization": f"Bearer {PLATEGA_API_KEY}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Accept": "application/json"
         }
-        # Order ID уникалдуу болушу керек
+
         order_id = f"PAY_{int(time.time())}_{str(uid)[:8]}"
 
         data = {
             "merchant_id": PLATEGA_MERCHANT_ID,
-            "amount": str(amount_rub), # Сумманы текст катары жөнөтөбүз
+            "amount": str(amount_rub),
             "currency": "RUB",
             "order_id": order_id,
             "description": f"mubVPN Premium - {plan_id}",
@@ -244,15 +246,21 @@ def create_platega_invoice(uid: str, plan_id: str, amount_rub: float) -> tuple[s
             "metadata": {"uid": str(uid), "plan_id": str(plan_id)}
         }
 
-        resp = requests.post(url, json=data, headers=headers)
+        log.info(f"Platega'га сурам жөнөтүлүүдө: {url}")
+        resp = requests.post(url, json=data, headers=headers, timeout=15)
+
         if resp.status_code == 200:
             return resp.json().get("payment_url"), None
         else:
-            err_msg = f"API Error {resp.status_code}: {resp.text[:100]}"
-            log.error(f"Platega error: {err_msg}")
+            err_msg = f"API Катасы {resp.status_code}: {resp.text[:100]}"
+            log.error(f"Platega API катасы: {err_msg}")
             return None, err_msg
+
+    except requests.exceptions.ConnectionError as ce:
+        log.error(f"Platega туташуу катасы (DNS маселеси болушу мүмкүн): {ce}")
+        return None, "Серверге туташуу мүмкүн эмес (DNS Error). Бир аздан кийин кайра аракет кылыңыз."
     except Exception as e:
-        log.error(f"Platega request exception: {e}")
+        log.error(f"Platega күтүлбөгөн ката: {e}")
         return None, str(e)
 
 
