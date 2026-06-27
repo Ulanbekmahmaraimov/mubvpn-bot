@@ -8,6 +8,7 @@ import html
 import asyncio
 import hashlib
 import urllib.parse
+import base64
 from datetime import datetime, timedelta
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -36,6 +37,14 @@ FIREBASE_DB_SECRET = "NgRNzmtQYdgUcFWXiDRPAHAsSURVni2WaIKTw9Re"
 # Platega Орнотуулары (ТАКТАЛГАН ID)
 PLATEGA_MERCHANT_ID = "7daa1458-3248-4106-bc81-bfe7f33b742f"
 PLATEGA_API_KEY     = "Ia6n9MgN172IKWWOGAzkfQveSZ4ZIq2ktTpkt5hiBNpCfbtrX4V4XLozuKarEB2OzkNEEfHDsaTZadGJhZUJ6He7AtQFGS0U6Lud"
+
+# --- СЕРВЕРЛЕР ---
+SERVERS = [
+    {"name": "Германия 🇩🇪", "host": "46.33.10.134"},
+    {"name": "Нидерланды 🇳🇱", "host": "45.143.93.125"},
+    {"name": "Финляндия 🇫🇮", "host": "95.216.148.163"},
+    {"name": "Казахстан 🇰🇿", "host": "185.120.77.203"}
+]
 
 
 
@@ -551,7 +560,6 @@ def get_main_keyboard(lang):
     keyboard = [
         [InlineKeyboardButton(L["btn_download"], callback_data='dl_platforms')],
         [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')],
-        [InlineKeyboardButton(L["btn_my_vpn"], callback_data='my_vpn')],
         [InlineKeyboardButton(L["btn_referral"], callback_data='referral_menu')],
         [InlineKeyboardButton(L["btn_how"], callback_data='how_1')],
         [InlineKeyboardButton(L["btn_legal"], callback_data='legal_menu')],
@@ -751,23 +759,6 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 
-    elif data == 'my_vpn':
-        L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
-        try:
-            url_user = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
-            resp = requests.get(url_user)
-            user_data = resp.json() if resp.status_code == 200 else None
-            if user_data and user_data.get("isPremium"):
-                expiry = user_data.get("premium_expiry", "---")
-                personal_link = f"vless://25ebd509-9479-483e-a1aa-8bc996424cea@46.33.10.134:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni=auto.quattro-tech.ru&fp=qq&pbk=10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc&sid=43dcff53849b81e6#mubVPN_{uid}"
-                text = L["my_vpn_text"].format(status="✅ Активдүү", expiry=expiry.split('T')[0], vpn_link=personal_link)
-            else:
-                text = L["no_premium"]
-            kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
-            await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
-        except Exception as e:
-            log.error(f"Error in my_vpn: {e}")
-            await query.message.edit_text("Error loading data.", reply_markup=get_main_keyboard(lang))
 
     elif data == 'referral_menu':
         L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
@@ -839,14 +830,18 @@ class BotHandler(BaseHTTPRequestHandler):
                             tg_id = tid; break
 
                 if tg_id:
-                    # Жеке VPN шилтемесин түзүү
-                    personal_link = f"vless://25ebd509-9479-483e-a1aa-8bc996424cea@46.33.10.134:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni=auto.quattro-tech.ru&fp=qq&pbk=10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc&sid=43dcff53849b81e6#mubVPN_{uid}"
+                    app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
+                    sub_link = f"{app_url}/sub/{uid}"
+
+                    # Серверлердин тизмесин билдирүүгө кошуу
+                    server_list = "\n".join([f"📍 {srv['name']}" for srv in SERVERS])
 
                     msg = (
                         "🎉 <b>Төлөм кабыл алынды!</b>\n\n"
-                        "Premium ийгиликтүү активдешти. VPN'ди колдоно берсеңиз болот! 🚀\n\n"
-                        f"🔑 <b>Сиздин жеке шилтемеңиз:</b>\n<code>{personal_link}</code>\n\n"
-                        "<i>Бул шилтемени тиркемеге кошуп, туташыңыз.</i>"
+                        "Premium активдешти. Төмөндө сиздин жеке жазылуу шилтемеңиз (VLESS / TCP / REALITY):\n\n"
+                        f"🌐 <b>Subscription Link:</b>\n<code>{sub_link}</code>\n\n"
+                        f"<b>Жеткиликтүү серверлер:</b>\n{server_list}\n\n"
+                        "<i>Бул шилтемени көчүрүп, тиркемеге (v2rayNG, Clash ж.б.) кошуңуз.</i>"
                     )
                     send_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
                     requests.post(send_url, data={"chat_id": tg_id, "text": msg, "parse_mode": "HTML"})
@@ -857,6 +852,32 @@ class BotHandler(BaseHTTPRequestHandler):
         if self.path == '/download':
             apk_url = 'https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk'
             self.send_response(302); self.send_header('Location', apk_url); self.end_headers(); return
+
+        if self.path.startswith('/sub/'):
+            uid = self.path.replace('/sub/', '')
+            # Premium текшерүү
+            url_user = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
+            resp = requests.get(url_user)
+            user_data = resp.json() if resp.status_code == 200 else None
+
+            if user_data and user_data.get("isPremium"):
+                configs = []
+                for srv in SERVERS:
+                    link = f"vless://25ebd509-9479-483e-a1aa-8bc996424cea@{srv['host']}:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni=auto.quattro-tech.ru&fp=qq&pbk=10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc&sid=43dcff53849b81e6#mubVPN_{srv['name']}"
+                    configs.append(link)
+
+                content = "\n".join(configs)
+                b64_content = base64.b64encode(content.encode()).decode()
+
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/plain; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(b64_content.encode())
+                return
+            else:
+                self.send_response(403); self.end_headers(); self.wfile.write(b"No Premium")
+                return
+
         self.send_response(200); self.end_headers(); self.wfile.write(b"mubVPN Bot is active!")
 
 
