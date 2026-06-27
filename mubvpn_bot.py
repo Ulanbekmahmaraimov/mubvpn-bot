@@ -839,7 +839,15 @@ class BotHandler(BaseHTTPRequestHandler):
                             tg_id = tid; break
 
                 if tg_id:
-                    msg = "🎉 <b>Төлөм кабыл алынды!</b>\n\nPremium ийгиликтүү активдешти. VPN'ди колдоно берсеңиз болот! 🚀"
+                    # Жеке VPN шилтемесин түзүү
+                    personal_link = f"vless://25ebd509-9479-483e-a1aa-8bc996424cea@46.33.10.134:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni=auto.quattro-tech.ru&fp=qq&pbk=10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc&sid=43dcff53849b81e6#mubVPN_{uid}"
+
+                    msg = (
+                        "🎉 <b>Төлөм кабыл алынды!</b>\n\n"
+                        "Premium ийгиликтүү активдешти. VPN'ди колдоно берсеңиз болот! 🚀\n\n"
+                        f"🔑 <b>Сиздин жеке шилтемеңиз:</b>\n<code>{personal_link}</code>\n\n"
+                        "<i>Бул шилтемени тиркемеге кошуп, туташыңыз.</i>"
+                    )
                     send_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
                     requests.post(send_url, data={"chat_id": tg_id, "text": msg, "parse_mode": "HTML"})
         except Exception as e:
