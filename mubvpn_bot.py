@@ -496,6 +496,30 @@ STRINGS = {
 
 # --- КЛАВИАТУРАЛАР ---
 
+def get_firebase_config():
+    """Firebase'ден жөндөөлөрдү алат."""
+    try:
+        url_sys = f"{FIREBASE_DB_URL}/system_config.json?auth={FIREBASE_DB_SECRET}"
+        url_set = f"{FIREBASE_DB_URL}/settings.json?auth={FIREBASE_DB_SECRET}"
+
+        sys_resp = requests.get(url_sys, timeout=5)
+        set_resp = requests.get(url_set, timeout=5)
+
+        sys_config = sys_resp.json() if sys_resp.status_code == 200 else {}
+        settings = set_resp.json() if set_resp.status_code == 200 else {}
+
+        # Эгер маалымат жок болсо (None), бош сөздүк колдонуу
+        if sys_config is None: sys_config = {}
+        if settings is None: settings = {}
+
+        return {
+            "show_external_payments": sys_config.get("show_external_payments", True),
+            "show_telegram": settings.get("show_telegram", True)
+        }
+    except Exception as e:
+        log.error(f"Error fetching firebase config: {e}")
+        return {"show_external_payments": True, "show_telegram": True}
+
 def get_lang_keyboard():
 
     return InlineKeyboardMarkup([
@@ -513,26 +537,28 @@ def get_lang_keyboard():
 
 
 def get_main_keyboard(lang):
-
     L = STRINGS.get(lang, STRINGS['ru'])
+    config = get_firebase_config()
 
-    return InlineKeyboardMarkup([
+    keyboard = []
+    # 1. Жүктөп алуу ар дайым бар
+    keyboard.append([InlineKeyboardButton(L["btn_download"], callback_data='dl_platforms')])
 
-        [InlineKeyboardButton(L["btn_download"], callback_data='dl_platforms')],
+    # 2. Сатып алуу (Эгер Firebase'де уруксат берилсе)
+    if config.get("show_external_payments"):
+        keyboard.append([InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')])
 
-        [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')], 
+    # 3. Башка баскычтар
+    keyboard.append([InlineKeyboardButton(L["btn_my_vpn"], callback_data='my_vpn')])
+    keyboard.append([InlineKeyboardButton(L["btn_referral"], callback_data='referral_menu')])
+    keyboard.append([InlineKeyboardButton(L["btn_how"], callback_data='how_1')])
+    keyboard.append([InlineKeyboardButton(L["btn_legal"], callback_data='legal_menu')])
 
-        [InlineKeyboardButton(L["btn_my_vpn"], callback_data='my_vpn')],
+    # 4. Колдоо (Эгер Firebase'де уруксат берилсе)
+    if config.get("show_telegram"):
+        keyboard.append([InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)])
 
-        [InlineKeyboardButton(L["btn_referral"], callback_data='referral_menu')], 
-
-        [InlineKeyboardButton(L["btn_how"], callback_data='how_1')], 
-
-        [InlineKeyboardButton(L["btn_legal"], callback_data='legal_menu')],
-
-        [InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)]
-
-    ])
+    return InlineKeyboardMarkup(keyboard)
 
 
 
