@@ -236,11 +236,15 @@ def create_platega_invoice(uid: str, plan_id: str, amount_rub: float) -> tuple[s
         }
 
         data = {
-            "amount": float(amount_rub),
-            "currencyFrom": "RUB",
+            "paymentMethod": 2,  # SBP (Система быстрых платежей)
+            "paymentDetails": {
+                "amount": float(amount_rub),
+                "currency": "RUB"
+            },
             "description": f"mubVPN Premium - {plan_id}",
-            "returnUrl": "https://t.me/mubvpn_pay_bot",
-            "metadata": {"uid": str(uid), "plan_id": str(plan_id)}
+            "return": "https://t.me/mubvpn_pay_bot",
+            "failedUrl": "https://t.me/mubvpn_pay_bot",
+            "payload": f"{uid}:{plan_id}"
         }
 
         log.info(f"Platega'га сурам жөнөтүлүүдө: {url}")
@@ -249,7 +253,13 @@ def create_platega_invoice(uid: str, plan_id: str, amount_rub: float) -> tuple[s
         if resp.status_code == 200:
             return resp.json().get("url"), None
         else:
-            err_msg = f"API Катасы {resp.status_code}: {resp.text[:100]}"
+            # Толук ката маалыматын алуу
+            try:
+                err_data = resp.json()
+                err_msg = f"API Катасы {resp.status_code}: {json.dumps(err_data, ensure_ascii=False)}"
+            except:
+                err_msg = f"API Катасы {resp.status_code}: {resp.text[:200]}"
+
             log.error(f"Platega API катасы: {err_msg}")
             return None, err_msg
 
@@ -755,11 +765,22 @@ class BotHandler(BaseHTTPRequestHandler):
                 log.info(f"Platega Webhook received: {data}")
 
                 # Төлөм ийгиликтүү болсо
-                status = str(data.get("status", "")).lower()
-                if status == "paid":
-                    metadata = data.get("metadata", {})
-                    uid = metadata.get("uid")
-                    plan_id = metadata.get("plan_id")
+                status = str(data.get("status", "")).upper()
+                if status == "CONFIRMED":
+                    # UID жана Plan ID'ни payload'дон алуу
+                    payload = data.get("payload", "")
+                    uid = None
+                    plan_id = None
+
+                    if ":" in payload:
+                        parts = payload.split(":")
+                        uid = parts[0]
+                        plan_id = parts[1]
+                    else:
+                        # Эски формат же ката болсо metadata'дан текшерүү
+                        metadata = data.get("metadata", {})
+                        uid = metadata.get("uid")
+                        plan_id = metadata.get("plan_id")
 
                     if uid and plan_id:
                         months = PLANS.get(plan_id, {}).get("months", 1)
@@ -768,7 +789,7 @@ class BotHandler(BaseHTTPRequestHandler):
                         if success:
                             # Колдонуучуга Telegram аркылуу билдирүү жөнөтүү
                             self.send_telegram_notification(uid)
-                            log.info(f"Premium activated for user {uid}")
+                            log.info(f"Premium activated for user {uid} via payload {payload}")
 
                 self.send_response(200); self.end_headers(); self.wfile.write(b"OK")
             except Exception as e:
