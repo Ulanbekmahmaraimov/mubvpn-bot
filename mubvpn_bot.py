@@ -223,8 +223,8 @@ def register_referral(new_user_tg_id: int, inviter_id: str) -> tuple[bool, str]:
 
 # --- PLATEGA API ---
 
-def create_platega_invoice(uid: str, plan_id: str, amount_rub: float) -> str:
-    """Platega аркылуу төлөм шилтемесин түзөт."""
+def create_platega_invoice(uid: str, plan_id: str, amount_rub: float) -> tuple[str, str]:
+    """Platega аркылуу төлөм шилтемесин түзөт. Кайтарат: (URL, ErrorMessage)"""
     try:
         url = "https://api.platega.io/v1/invoice"
         headers = {
@@ -232,11 +232,11 @@ def create_platega_invoice(uid: str, plan_id: str, amount_rub: float) -> str:
             "Content-Type": "application/json"
         }
         # Order ID уникалдуу болушу керек
-        order_id = f"{uid}_{plan_id}_{int(time.time())}"
+        order_id = f"PAY_{int(time.time())}_{str(uid)[:8]}"
 
         data = {
             "merchant_id": PLATEGA_MERCHANT_ID,
-            "amount": float(amount_rub),
+            "amount": str(amount_rub), # Сумманы текст катары жөнөтөбүз
             "currency": "RUB",
             "order_id": order_id,
             "description": f"mubVPN Premium - {plan_id}",
@@ -246,13 +246,14 @@ def create_platega_invoice(uid: str, plan_id: str, amount_rub: float) -> str:
 
         resp = requests.post(url, json=data, headers=headers)
         if resp.status_code == 200:
-            return resp.json().get("payment_url")
+            return resp.json().get("payment_url"), None
         else:
-            log.error(f"Platega API Error ({resp.status_code}): {resp.text}")
-            return None
+            err_msg = f"API Error {resp.status_code}: {resp.text[:100]}"
+            log.error(f"Platega error: {err_msg}")
+            return None, err_msg
     except Exception as e:
-        log.error(f"Platega Request Exception: {e}")
-        return None
+        log.error(f"Platega request exception: {e}")
+        return None, str(e)
 
 
 
@@ -299,7 +300,7 @@ STRINGS = {
         "pay_btn_link": "💳 Ссылка на оплату", "back": "⬅️ Назад", "next": "Далее ➡️",
         "check_btn": "✅ Проверить оплату",
         "checking": "⏳ Проверка...",
-        "success": "🎉 <b>Premium активирован!</b>\n\nОткрыйте приложение и наслаждайтесь VPN!",
+        "success": "🎉 <b>Premium активирован!</b>\n\nОткройте приложение и наслаждайтесь VPN!",
         "not_found": "⚠️ Платеж еще не подтвержден. Подождите 1-2 минуты.",
         "how_step_1": "🚀 <b>ШАГ 1: Выбор тарифа</b>",
         "how_step_2": "💳 <b>ШАГ 2: Оплата</b>",
@@ -633,7 +634,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if plan:
                 plan_name = STRINGS[lang][plan['name_key']]
                 # Төлөм шилтемесин түзүү
-                payment_url = create_platega_invoice(str(uid), plan_id, plan['rub'])
+                payment_url, error_info = create_platega_invoice(str(uid), plan_id, plan['rub'])
 
                 if payment_url:
                     text = L["pay_info"].format(name=plan_name, rub=plan['rub'])
@@ -643,10 +644,10 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     ]
                     await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.HTML)
                 else:
-                    await query.message.edit_text("Төлөм шилтемесин түзүүдө ката кетти. Сураныч, колдоо бөлүмүнө кайрылыңыз.", reply_markup=get_main_keyboard(lang))
+                    await query.message.edit_text(f"Төлөм шилтемесин түзүүдө ката кетти.\n\nКата маалыматы: {error_info}", reply_markup=get_main_keyboard(lang))
         except Exception as e:
             log.error(f"Error in handle_callback (plan): {e}")
-            await query.message.edit_text("Кечиресиз, техникалык ката кетти.", reply_markup=get_main_keyboard(lang))
+            await query.message.edit_text(f"Кечиресиз, техникалык ката кетти: {e}", reply_markup=get_main_keyboard(lang))
 
     elif data == 'check_payment':
         L = STRINGS.get(lang, STRINGS['ru'])
