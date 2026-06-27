@@ -545,25 +545,18 @@ def get_lang_keyboard():
 
 def get_main_keyboard(lang):
     L = STRINGS.get(lang, STRINGS['ru'])
-    config = get_firebase_config()
 
-    keyboard = []
-    # 1. Жүктөп алуу ар дайым бар
-    keyboard.append([InlineKeyboardButton(L["btn_download"], callback_data='dl_platforms')])
-
-    # 2. Сатып алуу (Эгер Firebase'де уруксат берилсе)
-    if config.get("show_external_payments"):
-        keyboard.append([InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')])
-
-    # 3. Башка баскычтар
-    keyboard.append([InlineKeyboardButton(L["btn_my_vpn"], callback_data='my_vpn')])
-    keyboard.append([InlineKeyboardButton(L["btn_referral"], callback_data='referral_menu')])
-    keyboard.append([InlineKeyboardButton(L["btn_how"], callback_data='how_1')])
-    keyboard.append([InlineKeyboardButton(L["btn_legal"], callback_data='legal_menu')])
-
-    # 4. Колдоо (Эгер Firebase'де уруксат берилсе)
-    if config.get("show_telegram"):
-        keyboard.append([InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)])
+    # Текшерүү үчүн Firebase жөндөөлөрүн убактылуу эске албай,
+    # баскычтарды ар дайым көрсөтөбүз.
+    keyboard = [
+        [InlineKeyboardButton(L["btn_download"], callback_data='dl_platforms')],
+        [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')],
+        [InlineKeyboardButton(L["btn_my_vpn"], callback_data='my_vpn')],
+        [InlineKeyboardButton(L["btn_referral"], callback_data='referral_menu')],
+        [InlineKeyboardButton(L["btn_how"], callback_data='how_1')],
+        [InlineKeyboardButton(L["btn_legal"], callback_data='legal_menu')],
+        [InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)]
+    ]
 
     return InlineKeyboardMarkup(keyboard)
 
