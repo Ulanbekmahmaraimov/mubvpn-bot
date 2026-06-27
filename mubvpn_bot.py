@@ -231,24 +231,27 @@ def create_platega_invoice(uid: str, plan_id: str, amount_rub: float) -> str:
             "Authorization": f"Bearer {PLATEGA_API_KEY}",
             "Content-Type": "application/json"
         }
+        # Order ID уникалдуу болушу керек
+        order_id = f"{uid}_{plan_id}_{int(time.time())}"
+
         data = {
             "merchant_id": PLATEGA_MERCHANT_ID,
-            "amount": amount_rub,
+            "amount": float(amount_rub),
             "currency": "RUB",
-            "order_id": f"{uid}_{plan_id}_{int(time.time())}",
+            "order_id": order_id,
             "description": f"mubVPN Premium - {plan_id}",
             "success_url": "https://t.me/mubvpn_pay_bot",
-            "metadata": {"uid": str(uid), "plan_id": plan_id}
+            "metadata": {"uid": str(uid), "plan_id": str(plan_id)}
         }
 
         resp = requests.post(url, json=data, headers=headers)
         if resp.status_code == 200:
             return resp.json().get("payment_url")
         else:
-            log.error(f"Platega error ({resp.status_code}): {resp.text}")
+            log.error(f"Platega API Error ({resp.status_code}): {resp.text}")
             return None
     except Exception as e:
-        log.error(f"Error creating Platega invoice: {e}")
+        log.error(f"Platega Request Exception: {e}")
         return None
 
 
@@ -621,9 +624,10 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data.startswith('plan:'):
         try:
-            L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
+            L = STRINGS.get(lang, STRINGS['ru']);
             parts = data.split(':')
             plan_id = parts[1]
+            uid = parts[2] if len(parts) > 2 else context.user_data.get('uid', query.from_user.id)
             plan = PLANS.get(plan_id)
 
             if plan:
