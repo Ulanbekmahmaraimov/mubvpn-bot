@@ -512,12 +512,19 @@ def get_firebase_config():
         if sys_config is None: sys_config = {}
         if settings is None: settings = {}
 
+        show_pay = sys_config.get("show_external_payments", True)
+        show_tg = settings.get("show_telegram", True)
+
+        # Консолдон маалыматты текшерүү үчүн
+        log.info(f"Firebase Config - Payments: {show_pay}, Telegram: {show_tg}")
+
         return {
-            "show_external_payments": sys_config.get("show_external_payments", True),
-            "show_telegram": settings.get("show_telegram", True)
+            "show_external_payments": show_pay,
+            "show_telegram": show_tg
         }
     except Exception as e:
         log.error(f"Error fetching firebase config: {e}")
+        # Ката болсо баскычтарды жашырбайбыз
         return {"show_external_payments": True, "show_telegram": True}
 
 def get_lang_keyboard():
