@@ -10,6 +10,7 @@ import hashlib
 import urllib.parse
 import base64
 import uuid
+import yaml
 from datetime import datetime, timedelta
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -896,19 +897,187 @@ class BotHandler(BaseHTTPRequestHandler):
             self.send_response(302); self.send_header('Location', apk_url); self.end_headers(); return
 
         if self.path.startswith('/sub/') or self.path.startswith('/s/'):
-            uid = self.path.replace('/sub/', '').replace('/s/', '')
+            uid = self.path.split('?')[0].replace('/sub/', '').replace('/s/', '')
+            query = urllib.parse.urlparse(self.path).query
+            params = urllib.parse.parse_qs(query)
+
+            user_agent = self.headers.get('User-Agent', '').lower()
+
+            # Текшерүү: VPN тиркемесиби же Браузерби?
+            is_vpn_client = any(x in user_agent for x in ['clash', 'v2ray', 'shadowrocket', 'streisand', 'foxray', 'surge', 'stash', 'v2box'])
+            is_clash = 'clash' in user_agent or 'clash' in params or 'stash' in user_agent
+
             # Premium текшерүү
             url_user = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
             resp = requests.get(url_user)
             user_data = resp.json() if resp.status_code == 200 else None
 
-            if user_data and user_data.get("isPremium"):
-                configs = []
-                v_uuid = user_data.get("vpn_uuid", "25ebd509-9479-483e-a1aa-8bc996424cea")
-                expiry_date = user_data.get("premium_expiry", "---").split('T')[0]
+            if not user_data or not user_data.get("isPremium"):
+                self.send_response(403); self.end_headers(); self.wfile.write(b"No Premium Access")
+                return
 
+            v_uuid = user_data.get("vpn_uuid", "25ebd509-9479-483e-a1aa-8bc996424cea")
+            expiry_date = user_data.get("premium_expiry", "---").split('T')[0]
+
+            # Эгер браузерден ачса (адам болсо), кооз баракча көрсөтөбүз
+            if not is_vpn_client and 'mozilla' in user_agent:
+                app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
+                sub_link = f"{app_url}/s/{uid}"
+
+                html_content = f"""
+                <!DOCTYPE html>
+                <html lang="ky">
+                html_content = f"""
+                <!DOCTYPE html>
+                <html lang="ky">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>mubVPN Subscription</title>
+                    <style>
+                        :root {{ --primary: #4facfe; --bg: #0b0e14; --card: #161b22; --text: #f0f6fc; --gray: #8b949e; }}
+                        body {{ background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; margin: 0; padding: 20px; }}
+                        .container {{ max-width: 450px; width: 100%; }}
+                        .header {{ margin-bottom: 30px; margin-top: 20px; }}
+                        .header h1 {{ font-size: 28px; margin: 0; background: linear-gradient(45deg, #00f2fe, #4facfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }}
+                        .card {{ background: var(--card); border-radius: 24px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); border: 1px solid #30363d; margin-bottom: 20px; position: relative; overflow: hidden; }}
+                        .status-badge {{ position: absolute; top: 15px; right: 15px; background: rgba(35, 134, 54, 0.2); color: #3fb950; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid rgba(63, 185, 80, 0.3); }}
+                        .info-row {{ display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #21262d; padding-bottom: 10px; }}
+                        .info-row:last-child {{ border: 0; margin: 0; padding: 0; }}
+                        .label {{ color: var(--gray); font-size: 14px; }}
+                        .value {{ font-weight: 600; font-size: 15px; }}
+                        .qr-section {{ background: white; padding: 10px; border-radius: 16px; margin: 20px 0; display: inline-block; }}
+                        .qr-section img {{ width: 180px; height: 180px; display: block; }}
+                        .link-section {{ background: #0d1117; border-radius: 12px; padding: 12px; margin-top: 20px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #30363d; }}
+                        .link-text {{ font-family: monospace; font-size: 11px; color: var(--primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 10px; }}
+                        .copy-btn {{ background: #21262d; border: 1px solid #363b42; color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; transition: 0.2s; }}
+                        .copy-btn:hover {{ background: #30363d; }}
+                        .btn-group {{ display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 20px; }}
+                        .btn {{ display: flex; align-items: center; justify-content: center; text-decoration: none; padding: 14px; border-radius: 14px; font-weight: bold; font-size: 15px; transition: transform 0.2s, box-shadow 0.2s; }}
+                        .btn:active {{ transform: scale(0.98); }}
+                        .btn-primary {{ background: linear-gradient(45deg, #00f2fe, #4facfe); color: #000; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3); }}
+                        .btn-clash {{ background: #6b4c9a; color: white; }}
+                        .btn-sr {{ background: #3d8af7; color: white; }}
+                        .footer {{ margin-top: 40px; font-size: 13px; color: var(--gray); }}
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1>mubVPN Premium</h1>
+                            <p style="color:var(--gray)">Жеке жазылууңузду башкаруу баракчасы</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="status-badge">Активдүү</div>
+                            <div class="info-row">
+                                <span class="label">Статус</span>
+                                <span class="value" style="color:#3fb950">Active</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Аяктоо мөөнөтү</span>
+                                <span class="value">{expiry_date}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Серверлер</span>
+                                <span class="value">Германия, Финляндия +2</span>
+                            </div>
+
+                            <div class="qr-section">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={urllib.parse.quote(sub_link)}" alt="QR Code">
+                            </div>
+
+                            <div class="link-section">
+                                <div class="link-text" id="subLink">{sub_link}</div>
+                                <button class="copy-btn" onclick="copyLink()">Көчүрүү</button>
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <a href="v2rayng://install-config?url={sub_link}" class="btn btn-primary">🚀 v2rayNG (Android)</a>
+                            <a href="clash://install-config?url={sub_link}" class="btn btn-clash">🐱 Clash / Stash</a>
+                            <a href="shadowrocket://add/sub://{base64.b64encode(sub_link.encode()).decode()}" class="btn btn-sr">🚀 Shadowrocket (iOS)</a>
+                        </div>
+
+                        <div class="footer">
+                            © 2024 mubVPN Core. Бардык укуктар корголгон.
+                        </div>
+                    </div>
+
+                    <script>
+                        function copyLink() {{
+                            const link = document.getElementById('subLink').innerText;
+                            navigator.clipboard.writeText(link).then(() => {{
+                                const btn = document.querySelector('.copy-btn');
+                                btn.innerText = 'Көчүрүлдү!';
+                                btn.style.color = '#3fb950';
+                                setTimeout(() => {{
+                                    btn.innerText = 'Көчүрүү';
+                                    btn.style.color = 'white';
+                                }}, 2000);
+                            }});
+                        }}
+                    </script>
+                </body>
+                </html>
+                """
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/html; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(html_content.encode())
+                return
+
+            if is_clash:
+                # Clash YAML форматы
+                clash_proxies = []
+                proxy_names = []
                 for srv in SERVERS:
-                    # Шилтемеге мөөнөтүн жана сервердин атын кошобуз
+                    p_name = f"{srv['name']} [{expiry_date}]"
+                    proxy_names.append(p_name)
+                    clash_proxies.append({
+                        "name": p_name,
+                        "type": "vless",
+                        "server": srv['host'],
+                        "port": 8443,
+                        "uuid": v_uuid,
+                        "udp": True,
+                        "tls": True,
+                        "flow": "xtls-rprx-vision",
+                        "servername": "auto.quattro-tech.ru",
+                        "network": "tcp",
+                        "reality-opts": {
+                            "public-key": "10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc",
+                            "short-id": "43dcff53849b81e6"
+                        },
+                        "client-fingerprint": "qq"
+                    })
+
+                import yaml
+                config = {
+                    "port": 7890,
+                    "socks-port": 7891,
+                    "allow-lan": True,
+                    "mode": "rule",
+                    "log-level": "info",
+                    "proxies": clash_proxies,
+                    "proxy-groups": [
+                        {
+                            "name": "mubVPN",
+                            "type": "select",
+                            "proxies": proxy_names
+                        }
+                    ],
+                    "rules": ["MATCH,mubVPN"]
+                }
+                content = yaml.dump(config, allow_unicode=True)
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/yaml; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(content.encode())
+            else:
+                # Стандарттык Base64 (v2rayNG ж.б. үчүн)
+                configs = []
+                for srv in SERVERS:
                     link = f"vless://{v_uuid}@{srv['host']}:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni=auto.quattro-tech.ru&fp=qq&pbk=10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc&sid=43dcff53849b81e6#mubVPN_{srv['name']}_{expiry_date}"
                     configs.append(link)
 
@@ -919,10 +1088,7 @@ class BotHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-Type', 'text/plain; charset=utf-8')
                 self.end_headers()
                 self.wfile.write(b64_content.encode())
-                return
-            else:
-                self.send_response(403); self.end_headers(); self.wfile.write(b"No Premium")
-                return
+            return
 
         if self.path.startswith('/share/'):
             # Универсалдуу бөлүшүү баракчасы
