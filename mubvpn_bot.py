@@ -939,7 +939,7 @@ class BotHandler(BaseHTTPRequestHandler):
                 # Боттун атын алуу үчүн API колдонобуз
                 bot_username = "mubvpn_pay_bot"
                 ref_link = f"https://t.me/{bot_username}?start=ref_{uid_part}"
-                share_msg = "🚀 mubVPN — Android үчүн эң тез жана коопсуз VPN!\n\nАзыр жүктөп ал! 👇"
+                share_msg = "🚀 mubVPN — Android үчүн эң тез жана коопсуз VPN! Азыр жүктөп ал! 👇"
 
                 html_content = f"""
                 <!DOCTYPE html>
@@ -947,17 +947,18 @@ class BotHandler(BaseHTTPRequestHandler):
                 <head>
                     <meta charset="utf-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <title>Share mubVPN</title>
+                    <title>Sharing link</title>
+                    <script src="https://telegram.org/js/telegram-web-app.js"></script>
                     <style>
                         body {{ background-color: #000; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif; }}
                         .btn {{ background: linear-gradient(45deg, #00f2fe 0%, #4facfe 100%); border: none; padding: 15px 30px; border-radius: 10px; color: black; font-weight: bold; font-size: 18px; cursor: pointer; }}
                     </style>
                 </head>
                 <body>
-                    <button class="btn" onclick="share()">📲 Бөлүшүү / Поделиться</button>
-                    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+                    <button class="btn" onclick="share()">📲 Sharing link</button>
                     <script>
                         const tg = window.Telegram.WebApp;
+                        tg.ready();
                         tg.expand();
                         function share() {{
                             if (navigator.share) {{
@@ -966,13 +967,23 @@ class BotHandler(BaseHTTPRequestHandler):
                                     text: `{share_msg}`,
                                     url: '{ref_link}'
                                 }}).then(() => tg.close())
-                                  .catch(() => {{}});
+                                  .catch((err) => {{
+                                      if(err.name !== 'AbortError') tg.close();
+                                  }});
                             }} else {{
-                                alert('Бул түзмөктө бөлүшүү мүмкүн эмес. Шилтемени көчүрүп алыңыз.');
+                                // Fallback: көчүрүп алуу
+                                const el = document.createElement('textarea');
+                                el.value = '{ref_link}';
+                                document.body.appendChild(el);
+                                el.select();
+                                document.execCommand('copy');
+                                document.body.removeChild(el);
+                                alert('Шилтеме көчүрүлдү!');
+                                tg.close();
                             }}
                         }}
                         // Дароо чакырууга аракет кылабыз
-                        setTimeout(share, 100);
+                        setTimeout(share, 200);
                     </script>
                 </body>
                 </html>
