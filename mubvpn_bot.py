@@ -69,54 +69,60 @@ PLANS = {
 
 # --- ФУНКЦИЯЛАР ---
 
-def firebase_set_premium(uid: str, months: int) -> bool:
-
+def firebase_set_premium(uid: str, months: int) -> str:
+    """Premium статусун орнотот жана жаңы UID (шилтеме) кайтарат."""
     try:
+        url_old = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
+        resp = requests.get(url_old)
 
-        url = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
+        if resp.status_code != 200 or not resp.json():
+            log.error(f"User {uid} not found for premium set")
+            return None
 
-        resp = requests.get(url)
-
+        user_data = resp.json()
         start_date = datetime.now()
 
-        if resp.status_code == 200 and resp.json():
-
-            current_expiry_str = resp.json().get("premium_expiry")
-
-            if current_expiry_str:
-
-                try:
-
-                    current_expiry = datetime.fromisoformat(current_expiry_str)
-
-                    if current_expiry > start_date:
-
-                        start_date = current_expiry
-
-                except Exception as ex:
-
-                    log.error(f"Error parsing existing premium_expiry: {ex}")
+        current_expiry_str = user_data.get("premium_expiry")
+        if current_expiry_str:
+            try:
+                current_expiry = datetime.fromisoformat(current_expiry_str)
+                if current_expiry > start_date:
+                    start_date = current_expiry
+            except: pass
 
         expiry = (start_date + timedelta(days=months * 30)).isoformat()
 
-        # Ар бир сатып алууда жаңы уникалдуу номер (UUID) түзөбүз
-        new_vpn_uuid = str(uuid.uuid4())
+        # Жаңы токен (UID) түзүү
+        import secrets
+        new_uid = secrets.token_urlsafe(12).replace('-', '').replace('_', '')[:16]
 
-        resp_patch = requests.patch(url, json={
+        # Маалыматтарды жаңылоо
+        user_data.update({
             "premium_expiry": expiry,
             "is_paid": True,
             "isPremium": True,
-            "vpn_uuid": new_vpn_uuid,
+            "vpn_uuid": str(uuid.uuid4()),
             "last_payment_date": datetime.now().isoformat()
         })
 
-        return resp_patch.status_code == 200
+        # Жаңы жерге сактоо
+        url_new = f"{FIREBASE_DB_URL}/users/{new_uid}.json?auth={FIREBASE_DB_SECRET}"
+        requests.put(url_new, json=user_data)
+
+        # Telegram mapping'ди жаңылоо
+        tg_id = user_data.get("telegram_id")
+        if tg_id:
+            url_map = f"{FIREBASE_DB_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_DB_SECRET}"
+            requests.put(url_map, json=new_uid)
+
+        # Эскини өчүрүү
+        requests.delete(url_old)
+
+        return new_uid
 
     except Exception as e:
-
-        log.error(f"Firebase error: {e}")
-
-        return False
+        log.error(f"Firebase premium error: {e}")
+        return None
 
 
 
@@ -845,12 +851,12 @@ class BotHandler(BaseHTTPRequestHandler):
 
                     if uid and plan_id:
                         months = PLANS.get(plan_id, {}).get("months", 1)
-                        success = firebase_set_premium(uid, months)
+                        new_uid = firebase_set_premium(uid, months)
 
-                        if success:
-                            # Колдонуучуга Telegram аркылуу билдирүү жөнөтүү
-                            self.send_telegram_notification(uid)
-                            log.info(f"Premium activated for user {uid} via payload {payload}")
+                        if new_uid:
+                            # Колдонуучуга жаңы UID менен билдирүү жөнөтүү
+                            self.send_telegram_notification(new_uid)
+                            log.info(f"Premium activated and URL CHANGED for user. Old: {uid}, New: {new_uid}")
 
                 self.send_response(200); self.end_headers(); self.wfile.write(b"OK")
             except Exception as e:
