@@ -591,6 +591,7 @@ def get_main_keyboard(lang):
         [InlineKeyboardButton(L["btn_download"], callback_data='dl_platforms')],
         [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')],
         [InlineKeyboardButton(L["btn_referral"], callback_data='referral_menu')],
+        [InlineKeyboardButton(L["btn_share"], callback_data='share_menu')],
         [InlineKeyboardButton(L["btn_how"], callback_data='how_1')],
         [InlineKeyboardButton(L["btn_legal"], callback_data='legal_menu')],
         [InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)]
@@ -799,8 +800,27 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
         bot_info = await context.bot.get_me()
         ref_link = f"https://t.me/{bot_info.username}?start=ref_{uid}"
+
+        share_url = f"https://t.me/share/url?url={urllib.parse.quote(ref_link)}&text={urllib.parse.quote(L['share_msg'])}"
+
         text = L["ref_menu_text"].format(ref_link=ref_link)
-        kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+        kb = [
+            [InlineKeyboardButton(L["btn_share_now"], url=share_url)],
+            [InlineKeyboardButton(L["back"], callback_data='main_menu')]
+        ]
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
+    elif data == 'share_menu':
+        L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
+        bot_info = await context.bot.get_me()
+        ref_link = f"https://t.me/{bot_info.username}?start=ref_{uid}"
+        share_url = f"https://t.me/share/url?url={urllib.parse.quote(ref_link)}&text={urllib.parse.quote(L['share_msg'])}"
+
+        text = L["share_title"]
+        kb = [
+            [InlineKeyboardButton(L["btn_share_now"], url=share_url)],
+            [InlineKeyboardButton(L["back"], callback_data='main_menu')]
+        ]
         await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
 
