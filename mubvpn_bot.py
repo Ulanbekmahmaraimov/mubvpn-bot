@@ -924,10 +924,7 @@ class BotHandler(BaseHTTPRequestHandler):
                 app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
                 sub_link = f"{app_url}/s/{uid}"
 
-                html_content = f"""
-                <!DOCTYPE html>
-                <html lang="ky">
-                html_content = f"""
+                html_template = """
                 <!DOCTYPE html>
                 <html lang="ky">
                 <head>
@@ -984,7 +981,7 @@ class BotHandler(BaseHTTPRequestHandler):
                             </div>
 
                             <div class="qr-section">
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={urllib.parse.quote(sub_link)}" alt="QR Code">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={qr_data}" alt="QR Code">
                             </div>
 
                             <div class="link-section">
@@ -996,7 +993,7 @@ class BotHandler(BaseHTTPRequestHandler):
                         <div class="btn-group">
                             <a href="v2rayng://install-config?url={sub_link}" class="btn btn-primary">🚀 v2rayNG (Android)</a>
                             <a href="clash://install-config?url={sub_link}" class="btn btn-clash">🐱 Clash / Stash</a>
-                            <a href="shadowrocket://add/sub://{base64.b64encode(sub_link.encode()).decode()}" class="btn btn-sr">🚀 Shadowrocket (iOS)</a>
+                            <a href="shadowrocket://add/sub://{sr_link}" class="btn btn-sr">🚀 Shadowrocket (iOS)</a>
                         </div>
 
                         <div class="footer">
@@ -1021,6 +1018,15 @@ class BotHandler(BaseHTTPRequestHandler):
                 </body>
                 </html>
                 """
+                sr_link = base64.b64encode(sub_link.encode()).decode()
+                qr_data = urllib.parse.quote(sub_link)
+
+                html_content = html_template.format(
+                    expiry_date=expiry_date,
+                    sub_link=sub_link,
+                    sr_link=sr_link,
+                    qr_data=qr_data
+                )
                 self.send_response(200)
                 self.send_header('Content-Type', 'text/html; charset=utf-8')
                 self.end_headers()
