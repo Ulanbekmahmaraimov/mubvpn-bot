@@ -883,9 +883,19 @@ class BotHandler(BaseHTTPRequestHandler):
                     f"<b>Жеткиликтүү серверлер:</b>\n{server_list}\n\n"
                     "❓ <i>Кантип колдонууну билбей жатсаңыз, боттогу '📖 Кантип төлөйм?' бөлүмүн караңыз.</i>"
                 )
+                kb = {
+                    "inline_keyboard": [
+                        [{"text": "🌐 Жазылуу баракчасын ачуу", "url": sub_link}]
+                    ]
+                }
                 send_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
                 log.info(f"Sending success notification to {tg_id}")
-                requests.post(send_url, data={"chat_id": tg_id, "text": msg, "parse_mode": "HTML"})
+                requests.post(send_url, data={
+                    "chat_id": tg_id,
+                    "text": msg,
+                    "parse_mode": "HTML",
+                    "reply_markup": json.dumps(kb)
+                })
             else:
                 log.error(f"Could not find Telegram ID for UID: {uid}")
         except Exception as e:
@@ -933,28 +943,55 @@ class BotHandler(BaseHTTPRequestHandler):
                     <title>mubVPN Subscription</title>
                     <style>
                         :root {{ --primary: #4facfe; --bg: #0b0e14; --card: #161b22; --text: #f0f6fc; --gray: #8b949e; }}
-                        body {{ background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; margin: 0; padding: 20px; }}
-                        .container {{ max-width: 450px; width: 100%; }}
+                        body {{ background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; margin: 0; padding: 20px; overflow-x: hidden; }}
+
+                        /* Анимацияланган фон */
+                        body::before {{ content: ""; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(79, 172, 254, 0.05) 0%, transparent 70%); animation: rotateBg 20s linear infinite; z-index: -1; }}
+                        @keyframes rotateBg {{ from {{ transform: rotate(0deg); }} to {{ transform: rotate(360deg); }} }}
+
+                        .container {{ max-width: 450px; width: 100%; animation: fadeIn 0.8s ease-out; }}
+                        @keyframes fadeIn {{ from {{ opacity: 0; transform: translateY(20px); }} to {{ opacity: 1; transform: translateY(0); }} }}
+
                         .header {{ margin-bottom: 30px; margin-top: 20px; }}
-                        .header h1 {{ font-size: 28px; margin: 0; background: linear-gradient(45deg, #00f2fe, #4facfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }}
-                        .card {{ background: var(--card); border-radius: 24px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); border: 1px solid #30363d; margin-bottom: 20px; position: relative; overflow: hidden; }}
-                        .status-badge {{ position: absolute; top: 15px; right: 15px; background: rgba(35, 134, 54, 0.2); color: #3fb950; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid rgba(63, 185, 80, 0.3); }}
-                        .info-row {{ display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #21262d; padding-bottom: 10px; }}
-                        .info-row:last-child {{ border: 0; margin: 0; padding: 0; }}
+                        .header h1 {{ font-size: 32px; margin: 0; background: linear-gradient(45deg, #00f2fe, #4facfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(79, 172, 254, 0.3)); }}
+
+                        .card {{ background: var(--card); border-radius: 24px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); border: 1px solid #30363d; margin-bottom: 20px; position: relative; overflow: hidden; transition: transform 0.3s; }}
+                        .card:hover {{ transform: scale(1.02); }}
+
+                        .status-badge {{ position: absolute; top: 15px; right: 15px; background: rgba(35, 134, 54, 0.2); color: #3fb950; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid rgba(63, 185, 80, 0.3); animation: pulse 2s infinite; }}
+                        @keyframes pulse {{ 0% {{ opacity: 1; }} 50% {{ opacity: 0.6; }} 100% {{ opacity: 1; }} }}
+
+                        .info-row {{ display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #21262d; padding-bottom: 10px; transition: 0.3s; }}
+                        .info-row:hover {{ border-bottom-color: var(--primary); }}
                         .label {{ color: var(--gray); font-size: 14px; }}
                         .value {{ font-weight: 600; font-size: 15px; }}
-                        .qr-section {{ background: white; padding: 10px; border-radius: 16px; margin: 20px 0; display: inline-block; }}
+
+                        .qr-section {{ background: white; padding: 10px; border-radius: 16px; margin: 20px 0; display: inline-block; transition: 0.3s; box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); }}
+                        .qr-section:hover {{ transform: rotate(2deg) scale(1.05); box-shadow: 0 0 30px rgba(79, 172, 254, 0.4); }}
                         .qr-section img {{ width: 180px; height: 180px; display: block; }}
+
                         .link-section {{ background: #0d1117; border-radius: 12px; padding: 12px; margin-top: 20px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #30363d; }}
                         .link-text {{ font-family: monospace; font-size: 11px; color: var(--primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 10px; }}
-                        .copy-btn {{ background: #21262d; border: 1px solid #363b42; color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; transition: 0.2s; }}
-                        .copy-btn:hover {{ background: #30363d; }}
+
+                        .copy-btn {{ background: #21262d; border: 1px solid #363b42; color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }}
+                        .copy-btn::after {{ content: ""; position: absolute; top: 50%; left: 50%; width: 0; height: 0; background: rgba(255, 255, 255, 0.1); border-radius: 50%; transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s; }}
+                        .copy-btn:active::after {{ width: 100px; height: 100px; }}
+
                         .btn-group {{ display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 20px; }}
-                        .btn {{ display: flex; align-items: center; justify-content: center; text-decoration: none; padding: 14px; border-radius: 14px; font-weight: bold; font-size: 15px; transition: transform 0.2s, box-shadow 0.2s; }}
-                        .btn:active {{ transform: scale(0.98); }}
+                        .btn {{ display: flex; align-items: center; justify-content: center; text-decoration: none; padding: 14px; border-radius: 14px; font-weight: bold; font-size: 15px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }}
+                        .btn:hover {{ transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }}
+                        .btn:active {{ transform: scale(0.95); }}
+
                         .btn-primary {{ background: linear-gradient(45deg, #00f2fe, #4facfe); color: #000; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3); }}
+                        .btn-primary:hover {{ box-shadow: 0 0 20px rgba(79, 172, 254, 0.6); }}
+
                         .btn-clash {{ background: #6b4c9a; color: white; }}
                         .btn-sr {{ background: #3d8af7; color: white; }}
+
+                        .apps-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }}
+                        .btn-outline {{ background: #21262d; border: 1px solid #363b42; color: white; font-size: 13px; padding: 10px; }}
+                        .btn-outline:hover {{ background: #30363d; border-color: var(--primary); }}
+
                         .footer {{ margin-top: 40px; font-size: 13px; color: var(--gray); }}
                     </style>
                 </head>
@@ -991,9 +1028,18 @@ class BotHandler(BaseHTTPRequestHandler):
                         </div>
 
                         <div class="btn-group">
-                            <a href="v2rayng://install-config?url={sub_link}" class="btn btn-primary">🚀 v2rayNG (Android)</a>
+                            <a href="https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk" class="btn btn-primary" style="margin-bottom:10px;">🤖 mubVPN (Android APK)</a>
+                            <a href="v2rayng://install-config?url={sub_link}" class="btn btn-primary">🚀 Import to mubVPN</a>
                             <a href="clash://install-config?url={sub_link}" class="btn btn-clash">🐱 Clash / Stash</a>
                             <a href="shadowrocket://add/sub://{sr_link}" class="btn btn-sr">🚀 Shadowrocket (iOS)</a>
+                        </div>
+
+                        <div style="margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px;">
+                            <p style="color:var(--gray); font-size: 13px; margin-bottom: 15px;">Башка түзмөктөр үчүн тиркемелер:</p>
+                            <div class="apps-grid">
+                                <a href="https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973" class="btn btn-outline">🍎 App Store</a>
+                                <a href="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe" class="btn btn-outline">💻 Windows PC</a>
+                            </div>
                         </div>
 
                         <div class="footer">
