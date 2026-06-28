@@ -102,7 +102,8 @@ def firebase_set_premium(uid: str, months: int) -> bool:
             "premium_expiry": expiry,
             "is_paid": True,
             "isPremium": True,
-            "vpn_uuid": new_vpn_uuid
+            "vpn_uuid": new_vpn_uuid,
+            "last_payment_date": datetime.now().isoformat()
         })
 
         return resp_patch.status_code == 200
@@ -129,18 +130,13 @@ def register_referral(new_user_tg_id: int, inviter_id: str) -> tuple[bool, str]:
 
         inviter_uid = None
 
-        if len(str(inviter_id)) == 28:
-
+        # Эгер inviter_id сан эмес болсо, демек бул биздин UID (токен) же Firebase UID
+        if not str(inviter_id).isdigit() or len(str(inviter_id)) == 28:
             inviter_uid = inviter_id
-
         else:
-
             map_url = f"{FIREBASE_DB_URL}/telegram_to_uid/{inviter_id}.json?auth={FIREBASE_DB_SECRET}"
-
             resp_map = requests.get(map_url)
-
             if resp_map.status_code == 200 and resp_map.json():
-
                 inviter_uid = resp_map.json()
 
         if not inviter_uid:
@@ -647,13 +643,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if resp_map.status_code == 200 and resp_map.json():
             uid = resp_map.json()
         else:
-            uid = f"tg_{tg_id}"
+            # Жаңы колдонуучу үчүн "кооз" UID (токен) түзөбүз
+            import secrets
+            uid = secrets.token_urlsafe(12).replace('-', '').replace('_', '')[:16]
             try:
                 requests.put(map_url, json=uid)
                 requests.patch(f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}", json={
                     "telegram_id": tg_id,
                     "is_paid": False,
-                    "isPremium": False
+                    "isPremium": False,
+                    "created_at": datetime.now().isoformat()
                 })
             except: pass
 
@@ -687,7 +686,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if context.user_data.get('just_registered'):
             uid = context.user_data.get('uid')
             app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
-            sub_link = f"{app_url}/sub/{uid}"
+            sub_link = f"{app_url}/s/{uid}"
 
             trial_text = L.get("trial_msg", "🎁 Trial activated!") + f"\n\n<code>{sub_link}</code>"
             await context.bot.send_message(chat_id=query.from_user.id, text=trial_text, parse_mode=ParseMode.HTML)
@@ -864,28 +863,24 @@ class BotHandler(BaseHTTPRequestHandler):
 
             if not tg_id:
                 # Алгач UID'ден Telegram ID табуу керек
-                url_map = f"{FIREBASE_DB_URL}/telegram_to_uid.json?auth={FIREBASE_DB_SECRET}"
-                resp = requests.get(url_map)
-                if resp.status_code == 200:
-                    mapping = resp.json()
-                    if mapping:
-                        for tid, u in mapping.items():
-                            if str(u) == str(uid):
-                                tg_id = tid; break
+                url_user = f"{FIREBASE_DB_URL}/users/{uid}/telegram_id.json?auth={FIREBASE_DB_SECRET}"
+                resp = requests.get(url_user)
+                if resp.status_code == 200 and resp.json():
+                    tg_id = resp.json()
 
             if tg_id:
                 app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
-                sub_link = f"{app_url}/sub/{uid}"
+                sub_link = f"{app_url}/s/{uid}"
 
                 # Серверлердин тизмесин билдирүүгө кошуу
                 server_list = "\n".join([f"📍 {srv['name']}" for srv in SERVERS])
 
                 msg = (
-                    "🎉 <b>Төлөм кабыл алынды!</b>\n\n"
-                    "Premium активдешти. Төмөндө сиздин жеке жазылуу шилтемеңиз (VLESS / TCP / REALITY | JSON):\n\n"
-                    f"🌐 <b>Subscription Link:</b>\n<code>{sub_link}</code>\n\n"
+                    "💎 <b>mubVPN Premium Core — Активдешти!</b>\n\n"
+                    "Сиздин жеке жазылуу шилтемеңиз даяр. Аны көчүрүп, тиркемеге кошуңуз:\n\n"
+                    f"🔗 <b>Subscription Link:</b>\n<code>{sub_link}</code>\n\n"
                     f"<b>Жеткиликтүү серверлер:</b>\n{server_list}\n\n"
-                    "<i>Бул шилтемени көчүрүп, тиркемеге (v2rayNG, Clash ж.б.) кошуңуз.</i>"
+                    "❓ <i>Кантип колдонууну билбей жатсаңыз, боттогу '📖 Кантип төлөйм?' бөлүмүн караңыз.</i>"
                 )
                 send_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
                 log.info(f"Sending success notification to {tg_id}")
@@ -900,8 +895,8 @@ class BotHandler(BaseHTTPRequestHandler):
             apk_url = 'https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk'
             self.send_response(302); self.send_header('Location', apk_url); self.end_headers(); return
 
-        if self.path.startswith('/sub/'):
-            uid = self.path.replace('/sub/', '')
+        if self.path.startswith('/sub/') or self.path.startswith('/s/'):
+            uid = self.path.replace('/sub/', '').replace('/s/', '')
             # Premium текшерүү
             url_user = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
             resp = requests.get(url_user)
