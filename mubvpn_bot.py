@@ -322,7 +322,7 @@ def create_platega_invoice(uid: str, plan_id: str, amount_rub: float) -> tuple[s
 
 STRINGS = {
     "ky": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nЭң тез жана коопсуз интернетке жол ачыңыз. Төлөм жүргүзүү же тиркемени жүктөө үчүн төмөнкү баскычтарды колдонуңуз:",
+        "welcome": "🚀 <b>mubVPN — Эң тез жана коопсуз VPN!</b>\n\n🌍 Чектөөсүз интернетке жол ачыңыз.\n⚡️ Жогорку ылдамдык (1 Гбит/с чейин).\n🛡 Толук купуялык жана коопсуздук.\n\nТөлөм жүргүзүү же тиркемени жүктөө үчүн төмөнкү баскычтарды колдонуңуз:",
         "btn_pay": "💳 Сатып алуу", "btn_how": "📖 Кантип төлөйм?",
         "btn_download": "🚀 Жүктөп алуу", "btn_support": "👨‍💻 Колдоо", "btn_share": "🤝 Бөлүшүү",
         "pay_text": "💳 <b>Планды тандаңыз</b>\n\nТөлөмдөр SBP жана Крипто аркылуу автоматтык түрдө кабыл алынат:",
@@ -334,7 +334,7 @@ STRINGS = {
         "how_step_2": "💳 <b>2-КАДАМ: Төлөө</b>\n\nТөлөм шилтемесине өтүп, SBP же Крипто менен төлөңүз.",
         "how_step_3": "✅ <b>3-КАДАМ: Активдештирүү</b>\n\nТөлөмдөн кийин Premium автоматтык түрдө иштеп баштайт.",
         "menu_back": "Башкы меню:",
-        "share_msg": "🚀 mubVPN — Android үчүн эң тез жана коопсуз VPN!\n\nАзыр жүктөп ал! 👇",
+        "share_msg": "🚀 mubVPN — Эң тез жана коопсуз VPN!\n\nАзыр жүктөп ал! 👇\n\n🤖 Android: https://play.google.com/store/apps/details?id=com.happproxy\n🍎 iOS: https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973\n💻 PC: https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe\n🚀 APK: https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk",
         "share_title": "🤝 <b>Бөлүшүү:</b>", "btn_share_now": "📲 Sharing link",
         "btn_referral": "🎁 Акысыз Premium (Рефералы)",
         "btn_my_vpn": "🔑 Менин шилтемем",
@@ -352,7 +352,7 @@ STRINGS = {
         "trial_msg": "🎁 <b>Сизге 3 күндүк акысыз Premium берилди!</b>\n\nБул биздин VPN'ди сынап көрүү үчүн белек. Төмөндө сиздин шилтемеңиз:"
     },
     "ru": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nОткройте доступ к быстрому и безопасному интернету. Используйте кнопки ниже для оплаты или загрузки приложения:",
+        "welcome": "🚀 <b>mubVPN — Самый быстрый и безопасный VPN!</b>\n\n🌍 Откройте доступ к свободному интернету.\n⚡️ Высокая скорость (до 1 Гбит/с).\n🛡 Полная конфиденциальность и защита.\n\nИспользуйте кнопки ниже для оплаты или загрузки приложения:",
         "btn_pay": "💳 Купить", "btn_how": "📖 Как оплатить?",
         "btn_download": "🚀 Скачать приложение", "btn_support": "👨‍💻 Поддержка", "btn_share": "🤝 Поделиться",
         "pay_text": "💳 <b>Выберите тариф</b>\n\nОплата принимается через СБП и Крипто автоматически:",
@@ -364,7 +364,7 @@ STRINGS = {
         "how_step_2": "💳 <b>ШАГ 2: Оплата</b>\n\nПерейдите по ссылке и оплатите через СБП или Крипто.",
         "how_step_3": "✅ <b>ШАГ 3: Активация</b>\n\nПосле оплаты Premium активируется автоматически.",
         "menu_back": "Главное меню:",
-        "share_msg": "🚀 mubVPN — Самый быстрый и безопасный VPN для Android!\n\nСкачай сейчас! 👇",
+        "share_msg": "🚀 mubVPN — Самый быстрый и безопасный VPN!\n\nСкачай сейчас! 👇\n\n🤖 Android: https://play.google.com/store/apps/details?id=com.happproxy\n🍎 iOS: https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973\n💻 PC: https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe\n🚀 APK: https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk",
         "share_title": "🤝 <b>Поделиться:</b>", "btn_share_now": "📲 Sharing link",
         "btn_referral": "🎁 Бесплатный Premium (Рефералы)",
         "btn_my_vpn": "🔑 Моя ссылка",
@@ -382,7 +382,7 @@ STRINGS = {
         "trial_msg": "🎁 <b>Вам начислено 3 дня бесплатного Premium!</b>\n\nЭто подарок, чтобы вы могли попробовать наш VPN. Ниже ваша ссылка:"
     },
     "en": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nUnlock fast and secure internet. Use the buttons below to pay or download the app:",
+        "welcome": "🚀 <b>mubVPN — The Fastest & Safest VPN!</b>\n\n🌍 Unlock the open internet.\n⚡️ High-speed connection (up to 1 Gbps).\n🛡 Total privacy and security.\n\nUse the buttons below to pay or download the app:",
         "btn_pay": "💳 Buy Premium", "btn_how": "📖 How to pay?",
         "btn_download": "🚀 Download App", "btn_support": "👨‍💻 Support", "btn_share": "🤝 Share",
         "pay_text": "💳 <b>Choose a plan</b>\n\nPayments are accepted via Crypto and local methods automatically:",
@@ -394,7 +394,7 @@ STRINGS = {
         "how_step_2": "💳 <b>STEP 2: Payment</b>\n\nFollow the link and complete the payment.",
         "how_step_3": "✅ <b>STEP 3: Activation</b>\n\nPremium will be activated automatically after payment.",
         "menu_back": "Main Menu:",
-        "share_msg": "🚀 mubVPN — The fastest and safest VPN for Android!\n\nDownload now! 👇",
+        "share_msg": "🚀 mubVPN — The Fastest & Safest VPN!\n\nDownload now! 👇\n\n🤖 Android: https://play.google.com/store/apps/details?id=com.happproxy\n🍎 iOS: https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973\n💻 PC: https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe\n🚀 APK: https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk",
         "share_title": "🤝 <b>Share:</b>", "btn_share_now": "📲 Sharing link",
         "btn_referral": "🎁 Free Premium (Referral)",
         "btn_my_vpn": "🔑 My Link",
@@ -412,9 +412,9 @@ STRINGS = {
         "trial_msg": "🎁 <b>You've been granted 3 days of free Premium!</b>\n\nTry our VPN for free. Here is your link:"
     },
     "uz": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nTezkor va xavfsiz internetga yo'l oching. To'lov qilish yoki ilovani yuklab olish uchun quyidagi tugmalardan foydalaning:",
+        "welcome": "🚀 <b>mubVPN — Eng tezkor va xavfsiz VPN!</b>\n\n🌍 Cheklovsiz internetga yo'l oching.\n⚡️ Yuqori tezlik (1 Gbit/s gacha).\n🛡 To'liq maxfiylik va xavfsizlik.\n\nTo'lov qilish yoki ilovani yuklab olish uchun quyidagi tugmalardan foydalaning:",
         "btn_pay": "💳 Sotib olish", "btn_how": "📖 Qanday to'layman?",
-        "btn_download": "🚀 Yuklab olish", "btn_support": "👨‍💻 Qo'llab-quvvatlash", "btn_share": "🤝 Ulashish",
+        "btn_download": "🚀 Yuklab olish", "btn_support": "👨+💻 Qo'llab-quvvatlash", "btn_share": "🤝 Ulashish",
         "pay_text": "💳 <b>Tarifni tanlang</b>\n\nTo'lovlar avtomatik ravishda qabul qilinadi:",
         "pay_btn_link": "💳 To'lov havolasi", "back": "⬅️ Orqaga", "next": "Keyingi ➡️",
         "check_btn": "✅ To'ladim (Tekshirish)", "checking": "⏳ To'lov tekshirilmoqda...",
@@ -424,7 +424,7 @@ STRINGS = {
         "how_step_2": "💳 <b>2-QADAM: To'lov</b>",
         "how_step_3": "✅ <b>3-QADAM: Faollashtirish</b>",
         "menu_back": "Asosiy menyu:",
-        "share_msg": "🚀 mubVPN — Android uchun eng tezkor va xavfsiz VPN!\n\nHozir yuklab ol! 👇",
+        "share_msg": "🚀 mubVPN — Eng tezkor va xavfsiz VPN!\n\nHozir yuklab ol! 👇\n\n🤖 Android: https://play.google.com/store/apps/details?id=com.happproxy\n🍎 iOS: https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973\n💻 PC: https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe\n🚀 APK: https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk",
         "share_title": "🤝 <b>Ulashish:</b>", "btn_share_now": "📲 Sharing link",
         "btn_referral": "🎁 Bepul Premium (Referal)",
         "btn_my_vpn": "🔑 Mening havolam",
@@ -442,9 +442,9 @@ STRINGS = {
         "trial_msg": "🎁 <b>Sizga 3 kunlik bepul Premium berildi!</b>\n\nVPN-ni sinab ko'ring. Mana sizning havolangiz:"
     },
     "kk": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nЕң жылдам және қауіпсіз интернетке жол ашыңыз. Төлем жасау немесе қолданбаны жүктеу үшін төмендегі батырмаларды қолданыңыз:",
+        "welcome": "🚀 <b>mubVPN — Ең жылдам және қауіпсіз VPN!</b>\n\n🌍 Шектеусіз интернетке жол ашыңыз.\n⚡️ Жоғары жылдамдық (1 Гбит/с дейін).\n🛡 Толық құпиялылық пен қауіпсіздік.\n\nТөлем жасау немесе қолданбаны жүктеу үшін төмендегі батырмаларды қолданыңыз:",
         "btn_pay": "💳 Сатып алу", "btn_how": "📖 Қалай төлеймін?",
-        "btn_download": "🚀 Жүктеу", "btn_support": "👨‍💻 Қолдау", "btn_share": "🤝 Бөлісу",
+        "btn_download": "🚀 Жүктеу", "btn_support": "👨+💻 Қолдау", "btn_share": "🤝 Бөлісу",
         "pay_text": "💳 <b>Тарифті таңдаңыз</b>\n\nТөлемдер автоматты түрде қабылданады:",
         "pay_btn_link": "💳 Төлем сілтемесі", "back": "⬅️ Артқа", "next": "Келесі ➡️",
         "check_btn": "✅ Төледім (Тексеру)", "checking": "⏳ Төлем тексерілуде...",
@@ -454,7 +454,7 @@ STRINGS = {
         "how_step_2": "💳 <b>2-ҚАДАМ: Төлеу</b>",
         "how_step_3": "✅ <b>3-ҚАДАМ: Белсендіру</b>",
         "menu_back": "Басты мәзір:",
-        "share_msg": "🚀 mubVPN — Android үшін ең жылдам және қауіпсіз VPN!\n\nҚазір жүктеп ал! 👇",
+        "share_msg": "🚀 mubVPN — Ең жылдам және қауіпсіз VPN!\n\nҚазір жүктеп ал! 👇\n\n🤖 Android: https://play.google.com/store/apps/details?id=com.happproxy\n🍎 iOS: https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973\n💻 PC: https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe\n🚀 APK: https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk",
         "share_title": "🤝 <b>Бөлісу:</b>", "btn_share_now": "📲 Бөлісу",
         "btn_referral": "🎁 Тегін Premium (Реферал)",
         "btn_my_vpn": "🔑 Менің сілтемем",
@@ -472,7 +472,7 @@ STRINGS = {
         "trial_msg": "🎁 <b>Сізге 3 күндік тегін Premium берілді!</b>\n\nБұл біздің VPN-ді сынап көруге арналған сыйлық. Сіздің сілтемеңіз:"
     },
     "tg": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nБа интернети зудтарин ва бехатар дастрасӣ пайдо кунед. Барои пардохт ё боргирии барнома аз тугмаҳои зерин истифода баред:",
+        "welcome": "🚀 <b>mubVPN — VPN-и зудтарин ва бехатар!</b>\n\n🌍 Ба интернети озод дастрасӣ пайдо кунед.\n⚡️ Суръати баланд (то 1 Гбит/с).\n🛡 Махфияти комил ва амният.\n\nБарои пардохт ё боргирии барнома аз тугмаҳои зерин истифода баред:",
         "btn_pay": "💳 Харидан", "btn_how": "📖 Чӣ тавр пардохт кунам?",
         "btn_download": "🚀 Боргирӣ", "btn_support": "👨‍💻 Дастгирӣ", "btn_share": "🤝 Фиристодан",
         "pay_text": "💳 <b>Тарифро интихоб кунед</b>\n\nПардохтҳо ба таври худкор қабул мешаванд:",
@@ -484,7 +484,7 @@ STRINGS = {
         "how_step_2": "💳 <b>ҚАДАМИ 2: Пардохт</b>",
         "how_step_3": "✅ <b>ҚАДАМИ 3: Фаъолсозӣ</b>",
         "menu_back": "Менюи асосӣ:",
-        "share_msg": "🚀 mubVPN — VPN-и зудтарин ва бехатар барои Android!\n\nHоло боргирӣ кун! 👇",
+        "share_msg": "🚀 mubVPN — VPN-и зудтарин ва бехатар!\n\nHоло боргирӣ кун! 👇\n\n🤖 Android: https://play.google.com/store/apps/details?id=com.happproxy\n🍎 iOS: https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973\n💻 PC: https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_arm64-setup.exe\n🚀 APK: https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk",
         "share_title": "🤝 <b>Ирсол:</b>", "btn_share_now": "📲 Sharing link",
         "btn_referral": "🎁 Premium-и ройгон (Реферал)",
         "btn_my_vpn": "🔑 Истиноди ман",
@@ -502,7 +502,7 @@ STRINGS = {
         "trial_msg": "🎁 <b>Ба шумо 3 рӯз Premium-и ройгон дода шуд!</b>\n\nИн туҳфа барои санҷиши VPN-и мост. Истиноди шумо:"
     },
     "tr": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nEn hızlı ve en güvenli internetin keyfini çıkarın. Ödeme yapmak veya uygulamayı indirmek için aşağıdaki butonları kullanın:",
+        "welcome": "🚀 <b>mubVPN — En Hızlı ve En Güvenli VPN!</b>\n\n🌍 Özgür internete kapı açın.\n⚡️ Yüksek hız (1 Gbps'e kadar).\n🛡 Tam gizlilik ve güvenlik.\n\nÖdeme yapmak veya uygulamayı indirmek için aşağıdaki butonları kullanın:",
         "btn_pay": "💳 Satın Al", "btn_how": "📖 Nasıl ödenir?",
         "btn_download": "🚀 İndir", "btn_support": "👨‍💻 Destek", "btn_share": "🤝 Paylaş",
         "pay_text": "💳 <b>Plan seçin</b>\n\nÖdemeler otomatik olarak alınır:",
@@ -514,7 +514,7 @@ STRINGS = {
         "how_step_2": "💳 <b>ADIM 2: Ödeme</b>",
         "how_step_3": "✅ <b>ADIM 3: Aktivasyon</b>",
         "menu_back": "Ana Menü:",
-        "share_msg": "🚀 mubVPN — Android için en hızlı ve güvenli VPN!\n\nHemen indir! 👇",
+        "share_msg": "🚀 mubVPN — En Hızlı ve En Güvenli VPN!\n\nHemen indir! 👇\n\n🤖 Android: https://play.google.com/store/apps/details?id=com.happproxy\n🍎 iOS: https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973\n💻 PC: https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe\n🚀 APK: https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk",
         "share_title": "🤝 <b>Paylaş:</b>", "btn_share_now": "📲 Sharing link",
         "btn_referral": "🎁 Ücretsiz Premium (Referans)",
         "btn_my_vpn": "🔑 Benim linkim",
