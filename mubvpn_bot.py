@@ -591,7 +591,6 @@ def get_main_keyboard(lang):
         [InlineKeyboardButton(L["btn_download"], callback_data='dl_platforms')],
         [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')],
         [InlineKeyboardButton(L["btn_referral"], callback_data='referral_menu')],
-        [InlineKeyboardButton(L["btn_share"], callback_data='share_menu')],
         [InlineKeyboardButton(L["btn_how"], callback_data='how_1')],
         [InlineKeyboardButton(L["btn_legal"], callback_data='legal_menu')],
         [InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)]
@@ -801,17 +800,12 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         bot_info = await context.bot.get_me()
         ref_link = f"https://t.me/{bot_info.username}?start=ref_{uid}"
 
-        # Шилтемелерди даярдоо
-        encoded_link = urllib.parse.quote(ref_link)
-        encoded_msg = urllib.parse.quote(L['share_msg'])
-
-        tg_share_url = f"https://t.me/share/url?url={encoded_link}&text={encoded_msg}"
-        wa_share_url = f"https://api.whatsapp.com/send?text={encoded_msg}%20{encoded_link}"
+        app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
+        share_page_url = f"{app_url}/share/{uid}?lang={lang}"
 
         text = L["ref_menu_text"].format(ref_link=ref_link)
         kb = [
-            [InlineKeyboardButton("🔵 Telegram'да бөлүшүү", url=tg_share_url)],
-            [InlineKeyboardButton("🟢 WhatsApp'та бөлүшүү", url=wa_share_url)],
+            [InlineKeyboardButton(L["btn_share_now"], web_app=WebAppInfo(url=share_page_url))],
             [InlineKeyboardButton(L["back"], callback_data='main_menu')]
         ]
         await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
@@ -935,6 +929,61 @@ class BotHandler(BaseHTTPRequestHandler):
             else:
                 self.send_response(403); self.end_headers(); self.wfile.write(b"No Premium")
                 return
+
+        if self.path.startswith('/share/'):
+            # Универсалдуу бөлүшүү баракчасы
+            try:
+                parts = self.path.split('/')
+                uid_part = parts[2].split('?')[0]
+
+                # Боттун атын алуу үчүн API колдонобуз
+                bot_username = "mubvpn_pay_bot"
+                ref_link = f"https://t.me/{bot_username}?start=ref_{uid_part}"
+                share_msg = "🚀 mubVPN — Android үчүн эң тез жана коопсуз VPN!\n\nАзыр жүктөп ал! 👇"
+
+                html_content = f"""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <title>Share mubVPN</title>
+                    <style>
+                        body {{ background-color: #000; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif; }}
+                        .btn {{ background: linear-gradient(45deg, #00f2fe 0%, #4facfe 100%); border: none; padding: 15px 30px; border-radius: 10px; color: black; font-weight: bold; font-size: 18px; cursor: pointer; }}
+                    </style>
+                </head>
+                <body>
+                    <button class="btn" onclick="share()">📲 Бөлүшүү / Поделиться</button>
+                    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+                    <script>
+                        const tg = window.Telegram.WebApp;
+                        tg.expand();
+                        function share() {{
+                            if (navigator.share) {{
+                                navigator.share({{
+                                    title: 'mubVPN',
+                                    text: `{share_msg}`,
+                                    url: '{ref_link}'
+                                }}).then(() => tg.close())
+                                  .catch(() => {{}});
+                            }} else {{
+                                alert('Бул түзмөктө бөлүшүү мүмкүн эмес. Шилтемени көчүрүп алыңыз.');
+                            }}
+                        }}
+                        // Дароо чакырууга аракет кылабыз
+                        setTimeout(share, 100);
+                    </script>
+                </body>
+                </html>
+                """
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/html; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(html_content.encode())
+                return
+            except:
+                self.send_response(500); self.end_headers(); return
 
         self.send_response(200); self.end_headers(); self.wfile.write(b"mubVPN Bot is active!")
 
