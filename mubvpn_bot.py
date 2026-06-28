@@ -800,12 +800,11 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         bot_info = await context.bot.get_me()
         ref_link = f"https://t.me/{bot_info.username}?start=ref_{uid}"
 
-        app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
-        share_page_url = f"{app_url}/share/{uid}?lang={lang}"
+        share_url = f"https://t.me/share/url?url={urllib.parse.quote(ref_link)}&text={urllib.parse.quote(L['share_msg'])}"
 
         text = L["ref_menu_text"].format(ref_link=ref_link)
         kb = [
-            [InlineKeyboardButton(L["btn_share_now"], web_app=WebAppInfo(url=share_page_url))],
+            [InlineKeyboardButton(L["btn_share_now"], url=share_url)],
             [InlineKeyboardButton(L["back"], callback_data='main_menu')]
         ]
         await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
