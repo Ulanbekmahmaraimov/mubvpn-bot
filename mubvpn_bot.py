@@ -532,38 +532,6 @@ STRINGS = {
         "trial_msg": "🎁 <b>Size 3 günlük ücretsiz Premium verildi!</b>\n\nVPN'imizi denemeniz için bir hediye. İşte linkiniz:"
     }
 }
-    "en": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nUnlock the fastest and most secure internet access. Use the buttons below to pay or download the application:",
-        "btn_pay": "💳 Buy", "btn_how": "📖 How to pay?",
-        "btn_download": "🚀 Download App",
-        "btn_support": "👨‍💻 Support", "btn_share": "🤝 Share",
-        "pay_text": "💳 <b>Choose a plan</b>\n\nPayments are accepted via SBP жана Крипто automatically:",
-        "pay_btn_link": "💳 Payment Link", "back": "⬅️ Back", "next": "Next ➡️",
-        "check_btn": "✅ I have paid (Check)",
-        "checking": "⏳ Checking payment...",
-        "success": "🎉 <b>Premium activated!</b>\n\nOpen the app and enjoy your VPN!",
-        "not_found": "⚠️ Payment not found. Wait 1-2 minutes after payment.",
-        "how_step_1": "🚀 <b>STEP 1: Choose plan</b>",
-        "how_step_2": "💳 <b>STEP 2: Payment</b>",
-        "how_step_3": "✅ <b>STEP 3: Activation</b>",
-        "menu_back": "Main Menu:",
-        "share_msg": "🚀 mubVPN — The fastest and safest VPN for Android!\n\nDownload now! 👇",
-        "share_title": "🤝 <b>Share:</b>", "btn_share_now": "📲 Share",
-        "btn_referral": "🎁 Free Premium (Referral)",
-        "btn_my_vpn": "🔑 My Link",
-        "my_vpn_text": "👤 <b>Your Subscription</b>\n\n• Status: {status}\n• Expiry: {expiry}\n\n🔑 <b>Your personal link:</b>\n<code>{vpn_link}</code>\n\n⚠️ <i>Бул шилтеме бир гана түзүлүш үчүн! Башкаларга бербеңиз.</i>",
-        "no_premium": "⚠️ <b>Сизде Premium жок</b>",
-        "ref_menu_text": "🎁 <b>Рефераалдык программа!</b>\n\nДосторуңузду чакырып, <b>бекер Premium</b> алыңыз!\n\n• Ар бир чакырылган дос үчүн: <b>+10 күн акысыз Premium</b>.\n\n🔗 <b>Сиздин шилтемеңиз:</b>\n<code>{ref_link}</code>",
-        "plan_1m": "1 ай", "plan_3m": "3 ай", "plan_6m": "6 ай", "plan_1y": "1 жыл",
-        "pay_info": "💳 <b>{name} Premium</b>\n\nБаасы: {rub} RUB\n\nТөлөө үчүн төмөнкү баскычты басыңыз. Төлөмдөн кийин Premium автоматтык түрдө берилет.",
-        "dl_title": "🚀 <b>Түзмөгүңүздү тандаңыз</b>",
-        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
-        "dl_mobile_desc": "📱 <b>Мобилдик тиркемелер</b>",
-        "btn_legal": "📄 Юридикалык маалымат",
-        "legal_text": "📄 <b>Юридикалык документтер</b>",
-        "policy": "Купуялык саясаты", "terms": "Колдонуучу келишими"
-    }
-}
 
 # --- КЛАВИАТУРАЛАР ---
 
