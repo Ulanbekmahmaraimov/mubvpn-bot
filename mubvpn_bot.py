@@ -1294,7 +1294,7 @@ def main():
 
     log.info("🤖 Bot is running...")
 
-    app.run_polling(drop_pending_updates=True)
+    app.run_polling(drop_pending_updates=True, allowed_updates=Update.ALL_TYPES)
 
 
 
