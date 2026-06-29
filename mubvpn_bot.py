@@ -20,6 +20,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppI
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 from telegram.constants import ParseMode
+from telegram.error import Conflict
 
 
 
@@ -1278,9 +1279,15 @@ def main():
 
     app = Application.builder().token(BOT_TOKEN).request(request).build()
 
-    app.add_handler(CommandHandler("start", start))
+    async def error_handler(update, context):
+        if isinstance(context.error, Conflict):
+            log.warning("409 Conflict (normal during deploy, retrying...)")
+            return
+        log.error(f"Bot error: {context.error}")
 
+    app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(handle_callback))
+    app.add_error_handler(error_handler)
 
     log.info("🤖 Bot is running...")
 
