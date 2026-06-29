@@ -20,7 +20,6 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppI
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 from telegram.constants import ParseMode
-from telegram.error import Conflict
 
 
 
@@ -597,7 +596,6 @@ def get_main_keyboard(lang):
     keyboard = [
         [InlineKeyboardButton(L["btn_download"], callback_data='dl_platforms')],
         [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')],
-        [InlineKeyboardButton(L["btn_my_vpn"], callback_data='my_vpn')],
         [InlineKeyboardButton(L["btn_referral"], callback_data='referral_menu')],
         [InlineKeyboardButton(L["btn_how"], callback_data='how_1')],
         [InlineKeyboardButton(L["btn_legal"], callback_data='legal_menu')],
@@ -680,51 +678,57 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    data = query.data
-    log.info(f">>> CALLBACK: data={data}, user={query.from_user.id}")
-    await query.answer()
-    lang = context.user_data.get('lang', 'ru')
 
-    try:
-        if data.startswith('set_lang_'):
-            lang = data.replace('set_lang_', '')
-            context.user_data['lang'] = lang
-            L = STRINGS.get(lang, STRINGS['ru'])
-            log.info(f"Language set to: {lang}")
+    query = update.callback_query; await query.answer()
 
-            await query.message.edit_text(L["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+    data = query.data; lang = context.user_data.get('lang', 'ru')
 
-            if context.user_data.get('just_registered'):
-                uid = context.user_data.get('uid')
-                app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
-                sub_link = f"{app_url}/s/{uid}"
 
-                trial_text = L.get("trial_msg", "🎁 Trial activated!") + f"\n\n<code>{sub_link}</code>"
-                await context.bot.send_message(chat_id=query.from_user.id, text=trial_text, parse_mode=ParseMode.HTML)
-                context.user_data['just_registered'] = False
 
-        elif data == 'pay_menu':
-            L = STRINGS.get(lang, STRINGS['ru'])
-            uid = context.user_data.get('uid', query.from_user.id)
-            keyboard = [
-                [InlineKeyboardButton(f"{STRINGS[lang][PLANS['1m']['name_key']]}  — {PLANS['1m']['rub']} RUB", callback_data=f"plan:1m:{uid}")],
-                [InlineKeyboardButton(f"{STRINGS[lang][PLANS['3m']['name_key']]}  — {PLANS['3m']['rub']} RUB", callback_data=f"plan:3m:{uid}")],
-                [InlineKeyboardButton(f"{STRINGS[lang][PLANS['6m']['name_key']]}  — {PLANS['6m']['rub']} RUB", callback_data=f"plan:6m:{uid}")],
-                [InlineKeyboardButton(f"{STRINGS[lang][PLANS['1y']['name_key']]} — {PLANS['1y']['rub']} RUB", callback_data=f"plan:1y:{uid}")],
-                [InlineKeyboardButton(L["back"], callback_data='main_menu')]
-            ]
-            await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.HTML)
+    if data.startswith('set_lang_'):
 
-        elif data.startswith('plan:'):
-            L = STRINGS.get(lang, STRINGS['ru'])
+        lang = data.split('_')[2]; context.user_data['lang'] = lang
+        L = STRINGS.get(lang, STRINGS['ru'])
+
+        await query.message.edit_text(L["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+
+        # Эгер жаңы катталган болсо, сыноо билдирүүсүн жөнөтүү
+        if context.user_data.get('just_registered'):
+            uid = context.user_data.get('uid')
+            app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
+            sub_link = f"{app_url}/s/{uid}"
+
+            trial_text = L.get("trial_msg", "🎁 Trial activated!") + f"\n\n<code>{sub_link}</code>"
+            await context.bot.send_message(chat_id=query.from_user.id, text=trial_text, parse_mode=ParseMode.HTML)
+            context.user_data['just_registered'] = False
+
+
+
+    elif data == 'pay_menu':
+        L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
+
+        keyboard = [
+            [InlineKeyboardButton(f"{STRINGS[lang][PLANS['1m']['name_key']]}  — {PLANS['1m']['rub']} RUB", callback_data=f"plan:1m:{uid}")],
+            [InlineKeyboardButton(f"{STRINGS[lang][PLANS['3m']['name_key']]}  — {PLANS['3m']['rub']} RUB", callback_data=f"plan:3m:{uid}")],
+            [InlineKeyboardButton(f"{STRINGS[lang][PLANS['6m']['name_key']]}  — {PLANS['6m']['rub']} RUB", callback_data=f"plan:6m:{uid}")],
+            [InlineKeyboardButton(f"{STRINGS[lang][PLANS['1y']['name_key']]} — {PLANS['1y']['rub']} RUB", callback_data=f"plan:1y:{uid}")],
+            [InlineKeyboardButton(L["back"], callback_data='main_menu')]
+        ]
+        await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.HTML)
+
+    elif data.startswith('plan:'):
+        try:
+            L = STRINGS.get(lang, STRINGS['ru']);
             parts = data.split(':')
             plan_id = parts[1]
             uid = parts[2] if len(parts) > 2 else context.user_data.get('uid', query.from_user.id)
             plan = PLANS.get(plan_id)
+
             if plan:
                 plan_name = STRINGS[lang][plan['name_key']]
+                # Төлөм шилтемесин түзүү
                 payment_url, error_info = create_platega_invoice(str(uid), plan_id, plan['rub'])
+
                 if payment_url:
                     text = L["pay_info"].format(name=plan_name, rub=plan['rub'])
                     keyboard = [
@@ -733,124 +737,86 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     ]
                     await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.HTML)
                 else:
-                    await query.message.edit_text(f"Төлөм шилтемесин түзүүдө ката кетти.\n\n{error_info}", reply_markup=get_main_keyboard(lang))
+                    await query.message.edit_text(f"Төлөм шилтемесин түзүүдө ката кетти.\n\nКата маалыматы: {error_info}", reply_markup=get_main_keyboard(lang))
+        except Exception as e:
+            log.error(f"Error in handle_callback (plan): {e}")
+            await query.message.edit_text(f"Кечиресиз, техникалык ката кетти: {e}", reply_markup=get_main_keyboard(lang))
 
-        elif data == 'check_payment':
-            L = STRINGS.get(lang, STRINGS['ru'])
-            await query.message.edit_text(L["checking"], reply_markup=get_main_keyboard(lang))
+    elif data == 'check_payment':
+        L = STRINGS.get(lang, STRINGS['ru'])
+        await query.message.edit_text(L["checking"], reply_markup=get_main_keyboard(lang))
 
-        elif data == 'main_menu':
-            await query.message.edit_text(STRINGS.get(lang, STRINGS['ru'])["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+    elif data == 'main_menu':
+        await query.message.edit_text(STRINGS.get(lang, STRINGS['ru'])["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
 
-        elif data == 'dl_platforms':
-            L = STRINGS.get(lang, STRINGS['ky'])
-            text = L.get("dl_title", "🚀 <b>Түзмөгүңүздү тандаңыз</b>")
-            kb = [
-                [InlineKeyboardButton("📱 Android (APK)", url="https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk")],
-                [InlineKeyboardButton("🤖 Google Play", url="https://play.google.com/store/apps/details?id=com.happproxy"),
-                 InlineKeyboardButton("🍎 App Store", url="https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973")],
-                [InlineKeyboardButton("💻 Windows", callback_data="dl_win"), InlineKeyboardButton("🖥 macOS", callback_data="dl_mac")],
-                [InlineKeyboardButton("🐧 Linux", callback_data="dl_linux")],
-                [InlineKeyboardButton(L["back"], callback_data='main_menu')]
-            ]
-            await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+    elif data == 'dl_platforms':
+        L = STRINGS.get(lang, STRINGS['ky'])
+        text = L.get("dl_title", "🚀 <b>Түзмөгүңүздү тандаңыз</b>")
+        kb = [
+            [InlineKeyboardButton("📱 Android (APK)", url="https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk")],
+            [InlineKeyboardButton("🤖 Google Play", url="https://play.google.com/store/apps/details?id=com.happproxy"),
+             InlineKeyboardButton("🍎 App Store", url="https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973")],
+            [InlineKeyboardButton("💻 Windows", callback_data="dl_win"), InlineKeyboardButton("🖥 macOS", callback_data="dl_mac")],
+            [InlineKeyboardButton("🐧 Linux", callback_data="dl_linux")],
+            [InlineKeyboardButton(L["back"], callback_data='main_menu')]
+        ]
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
-        elif data == 'dl_win':
-            L = STRINGS.get(lang, STRINGS['ky'])
-            text = L.get("dl_pc_desc", "💻 <b>Clash Verge Rev (v2.5.1)</b>")
-            kb = [
-                [InlineKeyboardButton("🪟 Windows x64 (EXE)", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe")],
-                [InlineKeyboardButton("🪟 Windows ARM64", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_arm64-setup.exe")],
-                [InlineKeyboardButton(L["back"], callback_data='dl_platforms')]
-            ]
-            await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+    elif data == 'dl_win':
+        L = STRINGS.get(lang, STRINGS['ky'])
+        text = L.get("dl_pc_desc", "💻 <b>Clash Verge Rev (v2.5.1)</b>")
+        kb = [
+            [InlineKeyboardButton("🪟 Windows x64 (EXE)", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe")],
+            [InlineKeyboardButton("🪟 Windows ARM64", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_arm64-setup.exe")],
+            [InlineKeyboardButton(L["back"], callback_data='dl_platforms')]
+        ]
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
-        elif data == 'dl_mac':
-            L = STRINGS.get(lang, STRINGS['ky'])
-            text = L.get("dl_pc_desc", "💻 <b>Clash Verge Rev (v2.5.1)</b>")
-            kb = [
-                [InlineKeyboardButton("🍎 Mac M-series (M1/M2/M3)", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_aarch64.dmg")],
-                [InlineKeyboardButton("🍎 Mac Intel Chip", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64.dmg")],
-                [InlineKeyboardButton(L["back"], callback_data='dl_platforms')]
-            ]
-            await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+    elif data == 'dl_mac':
+        L = STRINGS.get(lang, STRINGS['ky'])
+        text = L.get("dl_pc_desc", "💻 <b>Clash Verge Rev (v2.5.1)</b>")
+        kb = [
+            [InlineKeyboardButton("🍎 Mac M-series (M1/M2/M3)", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_aarch64.dmg")],
+            [InlineKeyboardButton("🍎 Mac Intel Chip", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64.dmg")],
+            [InlineKeyboardButton(L["back"], callback_data='dl_platforms')]
+        ]
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
-        elif data == 'dl_linux':
-            L = STRINGS.get(lang, STRINGS['ky'])
-            text = "🐧 <b>Linux үчүн Clash Verge</b>\n\nОрнотуу буйругу:\n<code>sudo apt install ./Clash.Verge_2.5.1_amd64.deb</code>"
-            kb = [
-                [InlineKeyboardButton("🐧 Linux x64 (DEB)", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_amd64.deb")],
-                [InlineKeyboardButton("🐧 Linux ARM64 (DEB)", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_arm64.deb")],
-                [InlineKeyboardButton(L["back"], callback_data='dl_platforms')]
-            ]
-            await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+    elif data == 'dl_linux':
+        L = STRINGS.get(lang, STRINGS['ky'])
+        text = "🐧 <b>Linux үчүн Clash Verge</b>\n\nОрнотуу буйругу:\n<code>sudo apt install ./Clash.Verge_2.5.1_amd64.deb</code>"
+        kb = [
+            [InlineKeyboardButton("🐧 Linux x64 (DEB)", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_amd64.deb")],
+            [InlineKeyboardButton("🐧 Linux ARM64 (DEB)", url="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_arm64.deb")],
+            [InlineKeyboardButton(L["back"], callback_data='dl_platforms')]
+        ]
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
-        elif data == 'legal_menu':
-            L = STRINGS.get(lang, STRINGS['ru'])
-            kb = [
-                [InlineKeyboardButton(L["policy"], url="https://telegra.ph/Politika-konfidencialnosti-06-21-31")],
-                [InlineKeyboardButton(L["terms"], url="https://telegra.ph/Polzovatelskoe-soglashenie-04-01-19")],
-                [InlineKeyboardButton(L["back"], callback_data='main_menu')]
-            ]
-            await query.message.edit_text(L["legal_text"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+    elif data == 'legal_menu':
+        L = STRINGS.get(lang, STRINGS['ru'])
+        kb = [
+            [InlineKeyboardButton(L["policy"], url="https://telegra.ph/Politika-konfidencialnosti-06-21-31")],
+            [InlineKeyboardButton(L["terms"], url="https://telegra.ph/Polzovatelskoe-soglashenie-04-01-19")],
+            [InlineKeyboardButton(L["back"], callback_data='main_menu')]
+        ]
+        await query.message.edit_text(L["legal_text"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
-        elif data == 'my_vpn':
-            L = STRINGS.get(lang, STRINGS['ru'])
-            uid = context.user_data.get('uid', query.from_user.id)
-            tg_id = query.from_user.id
-            url_user = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
-            resp = requests.get(url_user)
-            user_data = resp.json() if resp.status_code == 200 else None
-            if user_data and user_data.get("isPremium"):
-                if str(user_data.get("telegram_id")) != str(tg_id):
-                    text = "🚫 <b>Бул URL башка колдонуучуга тиешелүү!</b>\n\nАр бир URL 1 адамга гана берилет."
-                    kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
-                    await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
-                    return
-                app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
-                sub_link = f"{app_url}/s/{uid}"
-                expiry = user_data.get("premium_expiry", "---")
-                text = L["my_vpn_text"].format(status="✅ Активдүү", expiry=expiry.split('T')[0], vpn_link=sub_link)
-            else:
-                text = L["no_premium"]
-            kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
-            await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
-        elif data == 'referral_menu' or data == 'share_menu':
-            L = STRINGS.get(lang, STRINGS['ru'])
-            uid = context.user_data.get('uid', query.from_user.id)
-            bot_info = await context.bot.get_me()
-            ref_link = f"https://t.me/{bot_info.username}?start=ref_{uid}"
-            share_url = f"https://t.me/share/url?url={urllib.parse.quote(ref_link)}&text={urllib.parse.quote(L['share_msg'])}"
-            text = L["ref_menu_text"].format(ref_link=ref_link)
-            kb = [
-                [InlineKeyboardButton(L["btn_share_now"], url=share_url)],
-                [InlineKeyboardButton(L["back"], callback_data='main_menu')]
-            ]
-            await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
-        elif data == 'how_1':
-            L = STRINGS.get(lang, STRINGS['ru'])
-            kb = [[InlineKeyboardButton(L["next"], callback_data='how_2')], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
-            await query.message.edit_text(L["how_step_1"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
-        elif data == 'how_2':
-            L = STRINGS.get(lang, STRINGS['ru'])
-            kb = [[InlineKeyboardButton(L["next"], callback_data='how_3')], [InlineKeyboardButton(L["back"], callback_data='how_1')]]
-            await query.message.edit_text(L["how_step_2"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+    elif data == 'referral_menu' or data == 'share_menu':
+        L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
+        bot_info = await context.bot.get_me()
+        ref_link = f"https://t.me/{bot_info.username}?start=ref_{uid}"
 
-        elif data == 'how_3':
-            L = STRINGS.get(lang, STRINGS['ru'])
-            kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
-            await query.message.edit_text(L["how_step_3"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+        share_url = f"https://t.me/share/url?url={urllib.parse.quote(ref_link)}&text={urllib.parse.quote(L['share_msg'])}"
 
-    except Exception as e:
-        import traceback
-        log.error(f"Callback error [{data}]: {e}\n{traceback.format_exc()}")
-        try:
-            await query.message.edit_text(f"Ката кетти: {e}\n/start басыңыз.", reply_markup=get_main_keyboard(lang))
-        except Exception as e2:
-            log.error(f"Error sending error message: {e2}")
+        text = L["ref_menu_text"].format(ref_link=ref_link)
+        kb = [
+            [InlineKeyboardButton(L["btn_share_now"], url=share_url)],
+            [InlineKeyboardButton(L["back"], callback_data='main_menu')]
+        ]
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
 
 
@@ -1253,8 +1219,7 @@ class BotHandler(BaseHTTPRequestHandler):
 
         self.send_response(200); self.end_headers(); self.wfile.write(b"mubVPN Bot is active!")
 
-    def do_HEAD(self):
-        self.send_response(200); self.end_headers()
+
 
 def run_server():
     port = int(os.environ.get('PORT', 8080))
@@ -1282,19 +1247,13 @@ def main():
 
     app = Application.builder().token(BOT_TOKEN).request(request).build()
 
-    async def error_handler(update, context):
-        if isinstance(context.error, Conflict):
-            log.warning("409 Conflict (normal during deploy, retrying...)")
-            return
-        log.error(f"Bot error: {context.error}")
-
     app.add_handler(CommandHandler("start", start))
+
     app.add_handler(CallbackQueryHandler(handle_callback))
-    app.add_error_handler(error_handler)
 
     log.info("🤖 Bot is running...")
 
-    app.run_polling(drop_pending_updates=True, allowed_updates=Update.ALL_TYPES)
+    app.run_polling(drop_pending_updates=True)
 
 
 
