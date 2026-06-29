@@ -42,7 +42,13 @@ PLATEGA_API_KEY     = "Ia6n9MgN172IKWWOGAzkfQveSZ4ZIq2ktTpkt5hiBNpCfbtrX4V4XLozu
 
 # --- СЕРВЕРЛЕР ---
 SERVERS = [
-    {"name": "Германия 🇩🇪", "host": "167.235.22.54"},
+    {
+        "name": "Германия 🇩🇪",
+        "host": "167.235.22.54",
+        "pbk": "0CIqFJJXUoImvhH9fBIBBsW0G798Q9WpwWDdhbdw93M",
+        "sid": "7682624ec01fe9",
+        "sni": "www.sony.com"
+    },
     {"name": "Нидерланды 🇳🇱", "host": "45.143.93.125"},
     {"name": "Финляндия 🇫🇮", "host": "95.216.148.163"},
     {"name": "Казахстан 🇰🇿", "host": "185.120.77.203"},
@@ -1095,6 +1101,12 @@ class BotHandler(BaseHTTPRequestHandler):
                 for srv in SERVERS:
                     p_name = f"{srv['name']} [{expiry_date}]"
                     proxy_names.append(p_name)
+
+                    # Ар бир сервердин өзүнүн ачкычтарын колдонуу
+                    pbk = srv.get("pbk", "10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc")
+                    sid = srv.get("sid", "43dcff53849b81e6")
+                    sni = srv.get("sni", "auto.quattro-tech.ru")
+
                     clash_proxies.append({
                         "name": p_name,
                         "type": "vless",
@@ -1104,13 +1116,13 @@ class BotHandler(BaseHTTPRequestHandler):
                         "udp": True,
                         "tls": True,
                         "flow": "xtls-rprx-vision",
-                        "servername": "auto.quattro-tech.ru",
+                        "servername": sni,
                         "network": "tcp",
                         "reality-opts": {
-                            "public-key": "10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc",
-                            "short-id": "43dcff53849b81e6"
+                            "public-key": pbk,
+                            "short-id": sid
                         },
-                        "client-fingerprint": "qq"
+                        "client-fingerprint": "chrome"
                     })
 
                 import yaml
@@ -1139,7 +1151,11 @@ class BotHandler(BaseHTTPRequestHandler):
                 # Стандарттык Base64 (v2rayNG ж.б. үчүн)
                 configs = []
                 for srv in SERVERS:
-                    link = f"vless://{v_uuid}@{srv['host']}:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni=auto.quattro-tech.ru&fp=qq&pbk=10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc&sid=43dcff53849b81e6#mubVPN_{srv['name']}_{expiry_date}"
+                    pbk = srv.get("pbk", "10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc")
+                    sid = srv.get("sid", "43dcff53849b81e6")
+                    sni = srv.get("sni", "auto.quattro-tech.ru")
+
+                    link = f"vless://{v_uuid}@{srv['host']}:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni={sni}&fp=chrome&pbk={pbk}&sid={sid}#mubVPN_{srv['name']}_{expiry_date}"
                     configs.append(link)
 
                 content = "\n".join(configs)
