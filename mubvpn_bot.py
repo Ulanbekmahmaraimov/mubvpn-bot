@@ -686,10 +686,12 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = context.user_data.get('lang', 'ru')
 
     try:
+        log.info(f"Callback received: data={data}, from={query.from_user.id}")
         if data.startswith('set_lang_'):
             lang = data.replace('set_lang_', '')
             context.user_data['lang'] = lang
             L = STRINGS.get(lang, STRINGS['ru'])
+            log.info(f"Language set to: {lang}")
 
             await query.message.edit_text(L["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
 
@@ -843,11 +845,12 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await query.message.edit_text(L["how_step_3"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
     except Exception as e:
-        log.error(f"Callback error [{data}]: {e}")
+        import traceback
+        log.error(f"Callback error [{data}]: {e}\n{traceback.format_exc()}")
         try:
-            await query.message.edit_text("Ката кетти. /start басыңыз.", reply_markup=get_main_keyboard(lang))
-        except:
-            pass
+            await query.message.edit_text(f"Ката кетти: {e}\n/start басыңыз.", reply_markup=get_main_keyboard(lang))
+        except Exception as e2:
+            log.error(f"Error sending error message: {e2}")
 
 
 
