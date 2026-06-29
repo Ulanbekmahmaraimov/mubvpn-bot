@@ -681,12 +681,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-    await query.answer()
     data = query.data
+    log.info(f">>> CALLBACK: data={data}, user={query.from_user.id}")
+    await query.answer()
     lang = context.user_data.get('lang', 'ru')
 
     try:
-        log.info(f"Callback received: data={data}, from={query.from_user.id}")
         if data.startswith('set_lang_'):
             lang = data.replace('set_lang_', '')
             context.user_data['lang'] = lang
