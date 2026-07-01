@@ -618,6 +618,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     tg_id = update.effective_user.id
     uid = None
 
+    # Адегенде базада бар-жогун текшеребиз
+    map_url = f"{FIREBASE_DB_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_DB_SECRET}"
+    resp_map = requests.get(map_url)
+    if resp_map.status_code == 200 and resp_map.json():
+        uid = resp_map.json()
+
     if context.args:
         arg = context.args[0]
         if arg.startswith('ref_'):
@@ -626,54 +632,43 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if success:
                 try:
                     inviter_tg_id = None
-                    if len(str(inviter_id)) != 28:
+                    # Эгер inviter_id сан болсо (TG ID), анда түз колдонобуз
+                    if str(inviter_id).isdigit():
                         inviter_tg_id = int(inviter_id)
                     else:
+                        # Болбосо UID аркылуу TG ID табабыз
                         inv_url = f"{FIREBASE_DB_URL}/users/{inviter_id}/telegram_id.json?auth={FIREBASE_DB_SECRET}"
                         resp_inv = requests.get(inv_url)
                         if resp_inv.status_code == 200 and resp_inv.json():
                             inviter_tg_id = int(resp_inv.json())
+
                     if inviter_tg_id:
                         msg = "🎁 Досуңуз чакырууну кабыл алды! Сизге **+10 күн акысыз Premium** берилди! 🎉"
                         await context.bot.send_message(chat_id=inviter_tg_id, text=msg, parse_mode=ParseMode.MARKDOWN)
                 except Exception as ex:
                     log.error(f"Error sending referral notification: {ex}")
-
-            # Реферал аркылуу келген колдонуучуну да каттайбыз
-            uid = f"tg_{tg_id}"
-        else:
+        elif not uid:
+            # Эгер бул реферал эмес, бирок UID болсо (колдонмодон келсе)
             uid = arg
-            context.user_data['uid'] = uid
-            try:
-                url_user = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
-                requests.patch(url_user, json={"telegram_id": tg_id})
-                url_map = f"{FIREBASE_DB_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_DB_SECRET}"
-                requests.put(url_map, json=uid)
-            except Exception as ex:
-                log.error(f"Error saving telegram_id mapping: {ex}")
 
-    # Эгер UID жок болсо (түз Телеграмдан кирсе)
+    # Эгер дагы эле UID жок болсо, жаңысын түзөбүз
     if not uid:
-        map_url = f"{FIREBASE_DB_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_DB_SECRET}"
-        resp_map = requests.get(map_url)
-        if resp_map.status_code == 200 and resp_map.json():
-            uid = resp_map.json()
-        else:
-            # Жаңы колдонуучу үчүн "кооз" UID (токен) түзөбүз
-            import secrets
-            uid = secrets.token_urlsafe(12).replace('-', '').replace('_', '')[:16]
-            try:
-                requests.put(map_url, json=uid)
-                requests.patch(f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}", json={
-                    "telegram_id": tg_id,
-                    "is_paid": False,
-                    "isPremium": False,
-                    "created_at": datetime.now().isoformat()
-                })
-            except: pass
+        import secrets
+        uid = secrets.token_urlsafe(12).replace('-', '').replace('_', '')[:16]
+        try:
+            requests.put(map_url, json=uid)
+            requests.patch(f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}", json={
+                "telegram_id": tg_id,
+                "is_paid": False,
+                "isPremium": False,
+                "created_at": datetime.now().isoformat()
+            })
+        except Exception as e:
+            log.error(f"Error creating new user: {e}")
 
     if uid:
         context.user_data['uid'] = uid
+        # Сыноо мөөнөтүн берүү (эгер бериле элек болсо)
         if firebase_give_trial(uid):
             context.user_data['just_registered'] = True
 
@@ -929,7 +924,8 @@ class BotHandler(BaseHTTPRequestHandler):
             user_agent = self.headers.get('User-Agent', '').lower()
 
             # Текшерүү: VPN тиркемесиби же Браузерби?
-            is_vpn_client = any(x in user_agent for x in ['clash', 'v2ray', 'shadowrocket', 'streisand', 'foxray', 'surge', 'stash', 'v2box'])
+            # 'happ', 'utility', 'okhttp', 'dart' - бул Happ Proxy жана башка мобилдик колдонмолор үчүн
+            is_vpn_client = any(x in user_agent for x in ['clash', 'v2ray', 'shadowrocket', 'streisand', 'foxray', 'surge', 'stash', 'v2box', 'happ', 'utility', 'okhttp', 'dart'])
             is_clash = 'clash' in user_agent or 'clash' in params or 'stash' in user_agent
 
             # Premium текшерүү
