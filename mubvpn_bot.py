@@ -45,9 +45,11 @@ SERVERS = [
     {
         "name": "Германия 🇩🇪",
         "host": "167.235.22.54",
+        "uuid": "2e922e6a-65db-4767-8216-a4b6b501b3b8",  # Сиздин панелдеги чыныгы UUID
         "pbk": "0CIqFJJXUoImvhH9fBIBBsW0G798Q9WpwWDdhbdw93M",
         "sid": "7682624ec01fe9",
-        "sni": "www.sony.com"
+        "sni": "www.sony.com",
+        "spx": "/YQV0cMA4bZQ77uu"
     },
     {"name": "Нидерланды 🇳🇱", "host": "45.143.93.125"},
     {"name": "Финляндия 🇫🇮", "host": "95.216.148.163"},
@@ -1090,36 +1092,37 @@ class BotHandler(BaseHTTPRequestHandler):
                 self.wfile.write(html_content.encode())
                 return
 
-            if is_clash:
-                # Clash YAML форматы
-                clash_proxies = []
-                proxy_names = []
-                for srv in SERVERS:
-                    p_name = f"{srv['name']} [{expiry_date}]"
-                    proxy_names.append(p_name)
+                if is_clash:
+                    # Clash YAML форматы
+                    clash_proxies = []
+                    proxy_names = []
+                    for srv in SERVERS:
+                        p_name = f"{srv['name']} [{expiry_date}]"
+                        proxy_names.append(p_name)
 
-                    # Ар бир сервердин өзүнүн ачкычтарын колдонуу
-                    pbk = srv.get("pbk", "10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc")
-                    sid = srv.get("sid", "43dcff53849b81e6")
-                    sni = srv.get("sni", "auto.quattro-tech.ru")
+                        # Сервердин өзүнүн UUID'ин же колдонуучунукун колдонуу
+                        curr_uuid = srv.get("uuid", v_uuid)
+                        pbk = srv.get("pbk", "10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc")
+                        sid = srv.get("sid", "43dcff53849b81e6")
+                        sni = srv.get("sni", "auto.quattro-tech.ru")
 
-                    clash_proxies.append({
-                        "name": p_name,
-                        "type": "vless",
-                        "server": srv['host'],
-                        "port": 8443,
-                        "uuid": v_uuid,
-                        "udp": True,
-                        "tls": True,
-                        "flow": "xtls-rprx-vision",
-                        "servername": sni,
-                        "network": "tcp",
-                        "reality-opts": {
-                            "public-key": pbk,
-                            "short-id": sid
-                        },
-                        "client-fingerprint": "chrome"
-                    })
+                        clash_proxies.append({
+                            "name": p_name,
+                            "type": "vless",
+                            "server": srv['host'],
+                            "port": 8443,
+                            "uuid": curr_uuid,
+                            "udp": True,
+                            "tls": True,
+                            "flow": "xtls-rprx-vision",
+                            "servername": sni,
+                            "network": "tcp",
+                            "reality-opts": {
+                                "public-key": pbk,
+                                "short-id": sid
+                            },
+                            "client-fingerprint": "chrome"
+                        })
 
                 import yaml
                 config = {
@@ -1144,14 +1147,17 @@ class BotHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(content.encode())
             else:
-                # Стандарттык Base64 (v2rayNG ж.б. үчүн)
+                # Стандарттык Base64 (v2rayNG, Shadowrocket, Happ Proxy ж.б. үчүн)
                 configs = []
                 for srv in SERVERS:
+                    curr_uuid = srv.get("uuid", v_uuid)
                     pbk = srv.get("pbk", "10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc")
                     sid = srv.get("sid", "43dcff53849b81e6")
                     sni = srv.get("sni", "auto.quattro-tech.ru")
+                    spx = srv.get("spx", "")
 
-                    link = f"vless://{v_uuid}@{srv['host']}:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni={sni}&fp=chrome&pbk={pbk}&sid={sid}#mubVPN_{srv['name']}_{expiry_date}"
+                    spx_str = f"&spx={urllib.parse.quote(spx)}" if spx else ""
+                    link = f"vless://{curr_uuid}@{srv['host']}:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni={sni}&fp=chrome&pbk={pbk}&sid={sid}{spx_str}#mubVPN_{srv['name']}_{expiry_date}"
                     configs.append(link)
 
                 content = "\n".join(configs)
