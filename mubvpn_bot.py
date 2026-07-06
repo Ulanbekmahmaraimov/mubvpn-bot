@@ -148,10 +148,10 @@ def register_referral(new_user_tg_id: int, inviter_id: str) -> tuple[bool, str]:
 
         inviter_uid = None
 
-        # Эгер inviter_id сан эмес болсо, демек бул биздин UID (токен) же Firebase UID
-        if not str(inviter_id).isdigit() or len(str(inviter_id)) == 28:
+        # Эгер inviter_id 16 же 28 символ болсо, бул UID. Болбосо TG ID катары текшеребиз.
+        if len(str(inviter_id)) == 16 or len(str(inviter_id)) == 28:
             inviter_uid = inviter_id
-        else:
+        elif str(inviter_id).isdigit():
             map_url = f"{FIREBASE_DB_URL}/telegram_to_uid/{inviter_id}.json?auth={FIREBASE_DB_SECRET}"
             resp_map = requests.get(map_url)
             if resp_map.status_code == 200 and resp_map.json():
@@ -177,68 +177,32 @@ def register_referral(new_user_tg_id: int, inviter_id: str) -> tuple[bool, str]:
 
             return False, "inviter_not_found"
 
-        current_days = inviter_data.get("referral_days_granted", 0)
+        # Мөөнөттү узартуу логикасы
+        start_date = datetime.now()
+        current_expiry_str = inviter_data.get("premium_expiry")
+        if current_expiry_str:
+            try:
+                current_expiry = datetime.fromisoformat(current_expiry_str)
+                if current_expiry > start_date:
+                    start_date = current_expiry
+            except: pass
 
-        max_days = 365
-
-        if current_days >= max_days:
-
-            days_to_add = 0
-
-        else:
-
-            days_to_add = min(10, max_days - current_days)
-
-        new_days = current_days + days_to_add
-
+        new_expiry = (start_date + timedelta(days=10)).isoformat()
         new_count = inviter_data.get("referral_count", 0) + 1
 
-        start_date = datetime.now()
-
-        current_expiry_str = inviter_data.get("premium_expiry")
-
-        if current_expiry_str:
-
-            try:
-
-                current_expiry = datetime.fromisoformat(current_expiry_str)
-
-                if current_expiry > start_date:
-
-                    start_date = current_expiry
-
-            except:
-
-                pass
-
         updates = {
-
-            "referral_days_granted": new_days,
-
-            "referral_count": new_count
-
+            "premium_expiry": new_expiry,
+            "referral_count": new_count,
+            "isPremium": True,
+            "is_paid": True
         }
-
-        if days_to_add > 0:
-
-            new_expiry = (start_date + timedelta(days=days_to_add)).isoformat()
-
-            updates["premium_expiry"] = new_expiry
-
-            updates["is_paid"] = True
-
-            updates["isPremium"] = True
 
         requests.patch(inviter_url, json=updates)
 
         ref_data = {
-
             "inviter_uid": inviter_uid,
-
             "timestamp": datetime.now().isoformat(),
-
-            "days_granted": days_to_add
-
+            "days_granted": 10
         }
 
         requests.put(ref_check_url, json=ref_data)
@@ -455,6 +419,21 @@ STRINGS = {
         "policy": "Maxfiylik siyosati", "terms": "Foydalanuvchi shartnomasi",
         "trial_msg": "🎁 <b>Sizga 3 kunlik bepul Premium berildi!</b>\n\nVPN-ni sinab ko'ring. Mana sizning havolangiz:"
     },
+        "btn_referral": "🎁 Bepul Premium (Referal)",
+        "btn_my_vpn": "🔑 Mening havolam",
+        "my_vpn_text": "👤 <b>Sizning obunangiz</b>\n\n• Holat: {status}\n• Muddati: {expiry}\n\n🔑 <b>Sizning shaxsiy havolangiz:</b>\n<code>{vpn_link}</code>",
+        "no_premium": "⚠️ <b>Sizda Premium yo'q</b>",
+        "ref_menu_text": "🎁 <b>Referal dasturi!</b>\n\nDo'stlarni taklif qiling va <b>bepul Premium</b> oling!\n\n• Har bir do'st uchun: <b>+10 kun bepul Premium</b>.\n\n🔗 <b>Sizning havolangiz:</b>\n<code>{ref_link}</code>",
+        "plan_1m": "1 oy", "plan_3m": "3 oy", "plan_6m": "6 oy", "plan_1y": "1 yil",
+        "pay_info": "💳 <b>{name} Premium</b>\n\nNarxi: {rub} RUB\n\nTo'lov uchun tugmani bosing. Premium avtomatik faollashadi.",
+        "dl_title": "🚀 <b>Qurilmangizni tanlang</b>",
+        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
+        "dl_mobile_desc": "📱 <b>Mobil ilovalar</b>",
+        "btn_legal": "📄 Yuridik ma'lumotlar",
+        "legal_text": "📄 <b>Yuridik hujjatlar</b>",
+        "policy": "Maxfiylik siyosati", "terms": "Foydalanuvchi shartnomasi",
+        "trial_msg": "🎁 <b>Sizga 3 kunlik bepul Premium berildi!</b>\n\nVPN-ni sinab ko'ring. Mana sizning havolangiz:"
+    },
     "kk": {
         "welcome": "🚀 <b>mubVPN — Ең жылдам және қауіпсіз VPN!</b>\n\n🌍 Шектеусіз интернетке жол ашыңыз.\n⚡️ Жоғары жылдамдық (1 Гбит/с дейін).\n🛡 Толық құпиялылық пен қауіпсіздік.\n\nТөлем жасау немесе қолданбаны жүктеу үшін төмендегі батырмаларды қолданыңыз:",
         "btn_pay": "💳 Сатып алу", "btn_how": "📖 Қалай төлеймін?",
@@ -470,6 +449,21 @@ STRINGS = {
         "menu_back": "Басты мәзір:",
         "share_msg": "🚀 mubVPN — Ең жылдам және қауіпсіз VPN!\n\nҚазір жүктеп ал! 👇\n\n🤖 Android: https://play.google.com/store/apps/details?id=com.happproxy\n🍎 iOS: https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973\n💻 PC: https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe\n🚀 APK: https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk",
         "share_title": "🤝 <b>Бөлісу:</b>", "btn_share_now": "📲 Бөлісу",
+        "btn_referral": "🎁 Тегін Premium (Реферал)",
+        "btn_my_vpn": "🔑 Менің сілтемем",
+        "my_vpn_text": "👤 <b>Сіздің жазылымыңыз</b>\n\n• Статус: {status}\n• Мерзімі: {expiry}\n\n🔑 <b>Жеке сілтемеңіз:</b>\n<code>{vpn_link}</code>",
+        "no_premium": "⚠️ <b>Сізде Premium жоқ</b>",
+        "ref_menu_text": "🎁 <b>Рефералды бағдарлама!</b>\n\nДостарды шақырып, <b>тегін Premium</b> алыңыз!\n\n• Әр дос үшін: <b>+10 күн тегін Premium</b>.\n\n🔗 <b>Сіздің сілтемеңіз:</b>\n<code>{ref_link}</code>",
+        "plan_1m": "1 ай", "plan_3m": "3 ай", "plan_6m": "6 ай", "plan_1y": "1 жыл",
+        "pay_info": "💳 <b>{name} Premium</b>\n\nБағасы: {rub} RUB\n\nТөлеу үшін батырманы басыңыз. Premium автоматты түрде қосылады.",
+        "dl_title": "🚀 <b>Құрылғыңызды таңдаңыз</b>",
+        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
+        "dl_mobile_desc": "📱 <b>Мобильді қолданбалар</b>",
+        "btn_legal": "📄 Құқықтық ақпарат",
+        "legal_text": "📄 <b>Құқықтық құжаттар</b>",
+        "policy": "Құпиялылық саясаты", "terms": "Пайдаланушы келісімі",
+        "trial_msg": "🎁 <b>Сізге 3 күндік тегін Premium берілді!</b>\n\nБұл біздің VPN-ді сынап көруге арналған сыйлық. Сіздің сілтемеңіз:"
+    },
         "btn_referral": "🎁 Тегін Premium (Реферал)",
         "btn_my_vpn": "🔑 Менің сілтемем",
         "my_vpn_text": "👤 <b>Сіздің жазылымыңыз</b>\n\n• Статус: {status}\n• Мерзімі: {expiry}\n\n🔑 <b>Жеке сілтемеңіз:</b>\n<code>{vpn_link}</code>",
@@ -515,6 +509,21 @@ STRINGS = {
         "policy": "Сиёсати махфият", "terms": "Шартномаи корбар",
         "trial_msg": "🎁 <b>Ба шумо 3 рӯз Premium-и ройгон дода шуд!</b>\n\nИн туҳфа барои санҷиши VPN-и мост. Истиноди шумо:"
     },
+        "btn_referral": "🎁 Premium-и ройгон (Реферал)",
+        "btn_my_vpn": "🔑 Истиноди ман",
+        "my_vpn_text": "👤 <b>Обунаи шумо</b>\n\n• Статус: {status}\n• Мӯҳлат: {expiry}\n\n🔑 <b>Истиноди шахсии шумо:</b>\n<code>{vpn_link}</code>",
+        "no_premium": "⚠️ <b>Шумо Premium надоред</b>",
+        "ref_menu_text": "🎁 <b>Барномаи рефералӣ!</b>\n\nДӯстонро даъват кунед ва <b>Premium-и ройгон</b> гиред!\n\n• Барои ҳар як дӯст: <b>+10 рӯз Premium-и ройгон</b>.\n\n🔗 <b>Истиноди шумо:</b>\n<code>{ref_link}</code>",
+        "plan_1m": "1 моҳ", "plan_3m": "3 моҳ", "plan_6m": "6 моҳ", "plan_1y": "1 сол",
+        "pay_info": "💳 <b>{name} Premium</b>\n\nНарх: {rub} RUB\n\nБарои пардохт тугмаро пахш кунед. Premium ба таври худкор фаъол мешавад.",
+        "dl_title": "🚀 <b>Дастгоҳи худро интихоб кунед</b>",
+        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
+        "dl_mobile_desc": "📱 <b>Барномаҳои мобилӣ</b>",
+        "btn_legal": "📄 Маълумоти ҳуқуқӣ",
+        "legal_text": "📄 <b>Ҳуҷҷатҳои ҳуқуқӣ</b>",
+        "policy": "Сиёсати махфият", "terms": "Шартномаи корбар",
+        "trial_msg": "🎁 <b>Ба шумо 3 рӯз Premium-и ройгон дода шуд!</b>\n\nИн туҳфа барои санҷиши VPN-и мост. Истиноди шумо:"
+    },
     "tr": {
         "welcome": "🚀 <b>mubVPN — En Hızlı ve En Güvenli VPN!</b>\n\n🌍 Özgür internete kapı açın.\n⚡️ Yüksek hız (1 Gbps'e kadar).\n🛡 Tam gizlilik ve güvenlik.\n\nÖdeme yapmak veya uygulamayı indirmek için aşağıdaki butonları kullanın:",
         "btn_pay": "💳 Satın Al", "btn_how": "📖 Nasıl ödenir?",
@@ -530,6 +539,21 @@ STRINGS = {
         "menu_back": "Ana Menü:",
         "share_msg": "🚀 mubVPN — En Hızlı ve En Güvenli VPN!\n\nHemen indir! 👇\n\n🤖 Android: https://play.google.com/store/apps/details?id=com.happproxy\n🍎 iOS: https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973\n💻 PC: https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe\n🚀 APK: https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk",
         "share_title": "🤝 <b>Paylaş:</b>", "btn_share_now": "📲 Sharing link",
+        "btn_referral": "🎁 Ücretsiz Premium (Referans)",
+        "btn_my_vpn": "🔑 Benim linkim",
+        "my_vpn_text": "👤 <b>Aboneliğiniz</b>\n\n• Durum: {status}\n• Bitiş Tarihi: {expiry}\n\n🔑 <b>Kişisel linkiniz:</b>\n<code>{vpn_link}</code>",
+        "no_premium": "⚠️ <b>Premium aboneliğiniz yok</b>",
+        "ref_menu_text": "🎁 <b>Referans Programı!</b>\n\nArkadaşlarınızı davet edin ve <b>ücretsiz Premium</b> kazanın!\n\n• Her arkadaş için: <b>+10 gün ücretsiz Premium</b>.\n\n🔗 <b>Referans linkiniz:</b>\n<code>{ref_link}</code>",
+        "plan_1m": "1 Ay", "plan_3m": "3 Ay", "plan_6m": "6 Ay", "plan_1y": "1 Yıl",
+        "pay_info": "💳 <b>{name} Premium</b>\n\nFiyat: {rub} RUB\n\nÖdemek için butona tıklayın. Premium otomatik olarak aktif edilir.",
+        "dl_title": "🚀 <b>Cihazınızı seçin</b>",
+        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
+        "dl_mobile_desc": "📱 <b>Mobil uygulamalar</b>",
+        "btn_legal": "📄 Yasal Bilgiler",
+        "legal_text": "📄 <b>Yasal belgeler</b>",
+        "policy": "Gizlilik Politikası", "terms": "Kullanıcı Sözleşmesi",
+        "trial_msg": "🎁 <b>Size 3 günlük ücretsiz Premium verildi!</b>\n\nVPN'imizi denemeniz için bir hediye. İşte linkiniz:"
+    }
         "btn_referral": "🎁 Ücretsiz Premium (Referans)",
         "btn_my_vpn": "🔑 Benim linkim",
         "my_vpn_text": "👤 <b>Aboneliğiniz</b>\n\n• Durum: {status}\n• Bitiş Tarihi: {expiry}\n\n🔑 <b>Kişisel linkiniz:</b>\n<code>{vpn_link}</code>",
