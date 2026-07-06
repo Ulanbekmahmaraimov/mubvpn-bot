@@ -339,7 +339,7 @@ STRINGS = {
         "success": "🎉 <b>Premium активирован!</b>\n\nОткройте приложение и наслаждайтесь VPN!",
         "not_found": "⚠️ Платеж не найден. Подождите 1-2 минуты после оплаты.",
         "how_step_1": "🚀 <b>ШАГ 1: Выбор тарифа</b>\n\nНажмите 'Купить' и выберите срок подписки.",
-        "how_step_2": "💳 <b>ШАГ 2: Оплата</b>\n\nПерейдите по ссылке и оплатите через СБП или Крипто.",
+        "how_step_2": "💳 <b>ШАГ 2: Оплата</b>\n\nПерейте по ссылке и оплатите через СБП или Крипто.",
         "how_step_3": "✅ <b>ШАГ 3: Активация</b>\n\nПосле оплаты Premium активируется автоматически.",
         "menu_back": "Главное меню:",
         "share_msg": "🚀 mubVPN — Самый быстрый и безопасный VPN!\n\nСкачай сейчас! 👇\n\n🤖 Android: https://play.google.com/store/apps/details?id=com.happproxy\n🍎 iOS: https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973\n💻 PC: https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe\n🚀 APK: https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk",
