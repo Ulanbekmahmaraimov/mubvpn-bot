@@ -419,21 +419,6 @@ STRINGS = {
         "policy": "Maxfiylik siyosati", "terms": "Foydalanuvchi shartnomasi",
         "trial_msg": "🎁 <b>Sizga 3 kunlik bepul Premium berildi!</b>\n\nVPN-ni sinab ko'ring. Mana sizning havolangiz:"
     },
-        "btn_referral": "🎁 Bepul Premium (Referal)",
-        "btn_my_vpn": "🔑 Mening havolam",
-        "my_vpn_text": "👤 <b>Sizning obunangiz</b>\n\n• Holat: {status}\n• Muddati: {expiry}\n\n🔑 <b>Sizning shaxsiy havolangiz:</b>\n<code>{vpn_link}</code>",
-        "no_premium": "⚠️ <b>Sizda Premium yo'q</b>",
-        "ref_menu_text": "🎁 <b>Referal dasturi!</b>\n\nDo'stlarni taklif qiling va <b>bepul Premium</b> oling!\n\n• Har bir do'st uchun: <b>+10 kun bepul Premium</b>.\n\n🔗 <b>Sizning havolangiz:</b>\n<code>{ref_link}</code>",
-        "plan_1m": "1 oy", "plan_3m": "3 oy", "plan_6m": "6 oy", "plan_1y": "1 yil",
-        "pay_info": "💳 <b>{name} Premium</b>\n\nNarxi: {rub} RUB\n\nTo'lov uchun tugmani bosing. Premium avtomatik faollashadi.",
-        "dl_title": "🚀 <b>Qurilmangizni tanlang</b>",
-        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
-        "dl_mobile_desc": "📱 <b>Mobil ilovalar</b>",
-        "btn_legal": "📄 Yuridik ma'lumotlar",
-        "legal_text": "📄 <b>Yuridik hujjatlar</b>",
-        "policy": "Maxfiylik siyosati", "terms": "Foydalanuvchi shartnomasi",
-        "trial_msg": "🎁 <b>Sizga 3 kunlik bepul Premium berildi!</b>\n\nVPN-ni sinab ko'ring. Mana sizning havolangiz:"
-    },
     "kk": {
         "welcome": "🚀 <b>mubVPN — Ең жылдам және қауіпсіз VPN!</b>\n\n🌍 Шектеусіз интернетке жол ашыңыз.\n⚡️ Жоғары жылдамдық (1 Гбит/с дейін).\n🛡 Толық құпиялылық пен қауіпсіздік.\n\nТөлем жасау немесе қолданбаны жүктеу үшін төмендегі батырмаларды қолданыңыз:",
         "btn_pay": "💳 Сатып алу", "btn_how": "📖 Қалай төлеймін?",
@@ -453,24 +438,9 @@ STRINGS = {
         "btn_my_vpn": "🔑 Менің сілтемем",
         "my_vpn_text": "👤 <b>Сіздің жазылымыңыз</b>\n\n• Статус: {status}\n• Мерзімі: {expiry}\n\n🔑 <b>Жеке сілтемеңіз:</b>\n<code>{vpn_link}</code>",
         "no_premium": "⚠️ <b>Сізде Premium жоқ</b>",
-        "ref_menu_text": "🎁 <b>Рефералды бағдарлама!</b>\n\nДостарды шақырып, <b>тегін Premium</b> алыңыз!\n\n• Әр дос үшін: <b>+10 күн тегін Premium</b>.\n\n🔗 <b>Сіздің сілтемеңіз:</b>\n<code>{ref_link}</code>",
+        "ref_menu_text": "🎁 <b>Рефералды бағдарлама!</b>\n\nДостарды шақырып, <b>тегін Premium</b> алыңыз!\n\n• Әр дос үчүн: <b>+10 күн тегін Premium</b>.\n\n🔗 <b>Сіздің сілтемеңіз:</b>\n<code>{ref_link}</code>",
         "plan_1m": "1 ай", "plan_3m": "3 ай", "plan_6m": "6 ай", "plan_1y": "1 жыл",
-        "pay_info": "💳 <b>{name} Premium</b>\n\nБағасы: {rub} RUB\n\nТөлеу үшін батырманы басыңыз. Premium автоматты түрде қосылады.",
-        "dl_title": "🚀 <b>Құрылғыңызды таңдаңыз</b>",
-        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
-        "dl_mobile_desc": "📱 <b>Мобильді қолданбалар</b>",
-        "btn_legal": "📄 Құқықтық ақпарат",
-        "legal_text": "📄 <b>Құқықтық құжаттар</b>",
-        "policy": "Құпиялылық саясаты", "terms": "Пайдаланушы келісімі",
-        "trial_msg": "🎁 <b>Сізге 3 күндік тегін Premium берілді!</b>\n\nБұл біздің VPN-ді сынап көруге арналған сыйлық. Сіздің сілтемеңіз:"
-    },
-        "btn_referral": "🎁 Тегін Premium (Реферал)",
-        "btn_my_vpn": "🔑 Менің сілтемем",
-        "my_vpn_text": "👤 <b>Сіздің жазылымыңыз</b>\n\n• Статус: {status}\n• Мерзімі: {expiry}\n\n🔑 <b>Жеке сілтемеңіз:</b>\n<code>{vpn_link}</code>",
-        "no_premium": "⚠️ <b>Сізде Premium жоқ</b>",
-        "ref_menu_text": "🎁 <b>Рефералды бағдарлама!</b>\n\nДостарды шақырып, <b>тегін Premium</b> алыңыз!\n\n• Әр дос үшін: <b>+10 күн тегін Premium</b>.\n\n🔗 <b>Сіздің сілтемеңіз:</b>\n<code>{ref_link}</code>",
-        "plan_1m": "1 ай", "plan_3m": "3 ай", "plan_6m": "6 ай", "plan_1y": "1 жыл",
-        "pay_info": "💳 <b>{name} Premium</b>\n\nБағасы: {rub} RUB\n\nТөлеу үшін батырманы басыңыз. Premium автоматты түрде қосылады.",
+        "pay_info": "💳 <b>{name} Premium</b>\n\nБағасы: {rub} RUB\n\nТөлеу үчүн батырманы басыңыз. Premium автоматты түрде қосылады.",
         "dl_title": "🚀 <b>Құрылғыңызды таңдаңыз</b>",
         "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
         "dl_mobile_desc": "📱 <b>Мобильді қолданбалар</b>",
@@ -509,23 +479,8 @@ STRINGS = {
         "policy": "Сиёсати махфият", "terms": "Шартномаи корбар",
         "trial_msg": "🎁 <b>Ба шумо 3 рӯз Premium-и ройгон дода шуд!</b>\n\nИн туҳфа барои санҷиши VPN-и мост. Истиноди шумо:"
     },
-        "btn_referral": "🎁 Premium-и ройгон (Реферал)",
-        "btn_my_vpn": "🔑 Истиноди ман",
-        "my_vpn_text": "👤 <b>Обунаи шумо</b>\n\n• Статус: {status}\n• Мӯҳлат: {expiry}\n\n🔑 <b>Истиноди шахсии шумо:</b>\n<code>{vpn_link}</code>",
-        "no_premium": "⚠️ <b>Шумо Premium надоред</b>",
-        "ref_menu_text": "🎁 <b>Барномаи рефералӣ!</b>\n\nДӯстонро даъват кунед ва <b>Premium-и ройгон</b> гиред!\n\n• Барои ҳар як дӯст: <b>+10 рӯз Premium-и ройгон</b>.\n\n🔗 <b>Истиноди шумо:</b>\n<code>{ref_link}</code>",
-        "plan_1m": "1 моҳ", "plan_3m": "3 моҳ", "plan_6m": "6 моҳ", "plan_1y": "1 сол",
-        "pay_info": "💳 <b>{name} Premium</b>\n\nНарх: {rub} RUB\n\nБарои пардохт тугмаро пахш кунед. Premium ба таври худкор фаъол мешавад.",
-        "dl_title": "🚀 <b>Дастгоҳи худро интихоб кунед</b>",
-        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
-        "dl_mobile_desc": "📱 <b>Барномаҳои мобилӣ</b>",
-        "btn_legal": "📄 Маълумоти ҳуқуқӣ",
-        "legal_text": "📄 <b>Ҳуҷҷатҳои ҳуқуқӣ</b>",
-        "policy": "Сиёсати махфият", "terms": "Шартномаи корбар",
-        "trial_msg": "🎁 <b>Ба шумо 3 рӯз Premium-и ройгон дода шуд!</b>\n\nИн туҳфа барои санҷиши VPN-и мост. Истиноди шумо:"
-    },
     "tr": {
-        "welcome": "🚀 <b>mubVPN — En Hızlı ve En Güvenli VPN!</b>\n\n🌍 Özgür internete kapı açın.\n⚡️ Yüksek hız (1 Gbps'e kadar).\n🛡 Tam gizlilik ve güvenlik.\n\nÖdeme yapmak veya uygulamayı indirmek için aşağıdaki butonları kullanın:",
+        "welcome": "🚀 <b>mubVPN — En Hızlı ve En Güvenli VPN!</b>\n\n🌍 Özgür internete kapı açın.\n⚡️ Yüksek hız (1 Gbps'e kadar).\n🛡 Tam gizlilik ve güvenlik.\n\nÖdeme yapmak sau uygulamayı indirmek için aşağıdaki butonları kullanın:",
         "btn_pay": "💳 Satın Al", "btn_how": "📖 Nasıl ödenir?",
         "btn_download": "🚀 İndir", "btn_support": "👨‍💻 Destek", "btn_share": "🤝 Paylaş",
         "pay_text": "💳 <b>Plan seçin</b>\n\nÖdemeler otomatik olarak alınır:",
@@ -534,7 +489,7 @@ STRINGS = {
         "success": "🎉 <b>Premium Aktif Edildi!</b>\n\nUygulamayı açın ve VPN'in tadını çıkarın!",
         "not_found": "⚠️ Ödeme bulunamadı. Ödemeden sonra 1-2 dakika bekleyin.",
         "how_step_1": "🚀 <b>ADIM 1: Plan seçimi</b>",
-        "how_step_2": "💳 <b>ADIM 2: Ödeme</b>",
+        "how_step_2": "💳 <b>ADIM 2: Оdeme</b>",
         "how_step_3": "✅ <b>ADIM 3: Aktivasyon</b>",
         "menu_back": "Ana Menü:",
         "share_msg": "🚀 mubVPN — En Hızlı ve En Güvenli VPN!\n\nHemen indir! 👇\n\n🤖 Android: https://play.google.com/store/apps/details?id=com.happproxy\n🍎 iOS: https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973\n💻 PC: https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe\n🚀 APK: https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk",
@@ -543,24 +498,9 @@ STRINGS = {
         "btn_my_vpn": "🔑 Benim linkim",
         "my_vpn_text": "👤 <b>Aboneliğiniz</b>\n\n• Durum: {status}\n• Bitiş Tarihi: {expiry}\n\n🔑 <b>Kişisel linkiniz:</b>\n<code>{vpn_link}</code>",
         "no_premium": "⚠️ <b>Premium aboneliğiniz yok</b>",
-        "ref_menu_text": "🎁 <b>Referans Programı!</b>\n\nArkadaşlarınızı davet edin ve <b>ücretsiz Premium</b> kazanın!\n\n• Her arkadaş için: <b>+10 gün ücretsiz Premium</b>.\n\n🔗 <b>Referans linkiniz:</b>\n<code>{ref_link}</code>",
+        "ref_menu_text": "🎁 <b>Referans Programı!</b>\n\nArkadaşlarınızı davet edin ve <b>ücretsiz Premium</b> kazanın!\n\n• Her arkadaş үчүн: <b>+10 gün ücretsiz Premium</b>.\n\n🔗 <b>Referans linkiniz:</b>\n<code>{ref_link}</code>",
         "plan_1m": "1 Ay", "plan_3m": "3 Ay", "plan_6m": "6 Ay", "plan_1y": "1 Yıl",
-        "pay_info": "💳 <b>{name} Premium</b>\n\nFiyat: {rub} RUB\n\nÖdemek için butona tıklayın. Premium otomatik olarak aktif edilir.",
-        "dl_title": "🚀 <b>Cihazınızı seçin</b>",
-        "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
-        "dl_mobile_desc": "📱 <b>Mobil uygulamalar</b>",
-        "btn_legal": "📄 Yasal Bilgiler",
-        "legal_text": "📄 <b>Yasal belgeler</b>",
-        "policy": "Gizlilik Politikası", "terms": "Kullanıcı Sözleşmesi",
-        "trial_msg": "🎁 <b>Size 3 günlük ücretsiz Premium verildi!</b>\n\nVPN'imizi denemeniz için bir hediye. İşte linkiniz:"
-    }
-        "btn_referral": "🎁 Ücretsiz Premium (Referans)",
-        "btn_my_vpn": "🔑 Benim linkim",
-        "my_vpn_text": "👤 <b>Aboneliğiniz</b>\n\n• Durum: {status}\n• Bitiş Tarihi: {expiry}\n\n🔑 <b>Kişisel linkiniz:</b>\n<code>{vpn_link}</code>",
-        "no_premium": "⚠️ <b>Premium aboneliğiniz yok</b>",
-        "ref_menu_text": "🎁 <b>Referans Programı!</b>\n\nArkadaşlarınızı davet edin ve <b>ücretsiz Premium</b> kazanın!\n\n• Her arkadaş için: <b>+10 gün ücretsiz Premium</b>.\n\n🔗 <b>Referans linkiniz:</b>\n<code>{ref_link}</code>",
-        "plan_1m": "1 Ay", "plan_3m": "3 Ay", "plan_6m": "6 Ay", "plan_1y": "1 Yıl",
-        "pay_info": "💳 <b>{name} Premium</b>\n\nFiyat: {rub} RUB\n\nÖdemek için butona tıklayın. Premium otomatik olarak aktif edilir.",
+        "pay_info": "💳 <b>{name} Premium</b>\n\nFiyat: {rub} RUB\n\nÖdemek үчүн butona tıklayın. Premium otomatik olarak aktif edilir.",
         "dl_title": "🚀 <b>Cihazınızı seçin</b>",
         "dl_pc_desc": "💻 <b>Clash Verge Rev (v2.5.1)</b>",
         "dl_mobile_desc": "📱 <b>Mobil uygulamalar</b>",
@@ -627,6 +567,7 @@ def get_main_keyboard(lang):
     # баскычтарды ар дайым көрсөтөбүз.
     keyboard = [
         [InlineKeyboardButton(L["btn_download"], callback_data='dl_platforms')],
+        [InlineKeyboardButton(L["btn_my_vpn"], callback_data='my_vpn')],
         [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')],
         [InlineKeyboardButton(L["btn_referral"], callback_data='referral_menu')],
         [InlineKeyboardButton(L["btn_how"], callback_data='how_1')],
@@ -775,6 +716,37 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data == 'main_menu':
         await query.message.edit_text(STRINGS.get(lang, STRINGS['ru'])["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+
+    elif data == 'my_vpn':
+        L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid')
+        if not uid:
+            tg_id = query.from_user.id
+            map_url = f"{FIREBASE_DB_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_DB_SECRET}"
+            resp_map = requests.get(map_url)
+            if resp_map.status_code == 200 and resp_map.json():
+                uid = resp_map.json(); context.user_data['uid'] = uid
+
+        if uid:
+            url_user = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
+            resp = requests.get(url_user)
+            user_data = resp.json() if resp.status_code == 200 else None
+
+            if user_data and user_data.get("isPremium"):
+                expiry = user_data.get("premium_expiry", "---").split('T')[0]
+                status = "Premium 💎" if user_data.get("is_paid") else "Trial 🎁"
+                app_url = os.environ.get('APP_URL') or os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
+                sub_link = f"{app_url}/s/{uid}"
+
+                text = L["my_vpn_text"].format(status=status, expiry=expiry, vpn_link=sub_link)
+                kb = [
+                    [InlineKeyboardButton("🌐 Жазылуу баракчасын ачуу", url=sub_link)],
+                    [InlineKeyboardButton(L["back"], callback_data='main_menu')]
+                ]
+                await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+            else:
+                await query.message.edit_text(L["no_premium"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+        else:
+            await query.message.edit_text("Ката кетти. Сураныч, /start командасын кайра басыңыз.", reply_markup=get_main_keyboard(lang))
 
     elif data == 'dl_platforms':
         L = STRINGS.get(lang, STRINGS['ky'])
@@ -1126,9 +1098,9 @@ class BotHandler(BaseHTTPRequestHandler):
 
                         # Сервердин өзүнүн UUID'ин же колдонуучунукун колдонуу
                         curr_uuid = srv.get("uuid", v_uuid)
-                        pbk = srv.get("pbk", "10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc")
-                        sid = srv.get("sid", "43dcff53849b81e6")
-                        sni = srv.get("sni", "auto.quattro-tech.ru")
+                        pbk = srv.get("pbk", "0CIqFJJXUoImvhH9fBIBBsW0G798Q9WpwWDdhbdw93M")
+                        sid = srv.get("sid", "7682624ec01fe9")
+                        sni = srv.get("sni", "www.sony.com")
 
                         clash_proxies.append({
                             "name": p_name,
@@ -1175,9 +1147,9 @@ class BotHandler(BaseHTTPRequestHandler):
                 configs = []
                 for srv in SERVERS:
                     curr_uuid = srv.get("uuid", v_uuid)
-                    pbk = srv.get("pbk", "10rVZPoOUP1TlQviIAsQ_jAROX0fRQxH0C92nq_zGQc")
-                    sid = srv.get("sid", "43dcff53849b81e6")
-                    sni = srv.get("sni", "auto.quattro-tech.ru")
+                    pbk = srv.get("pbk", "0CIqFJJXUoImvhH9fBIBBsW0G798Q9WpwWDdhbdw93M")
+                    sid = srv.get("sid", "7682624ec01fe9")
+                    sni = srv.get("sni", "www.sony.com")
                     spx = srv.get("spx", "")
 
                     spx_str = f"&spx={urllib.parse.quote(spx)}" if spx else ""
