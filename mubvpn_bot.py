@@ -63,7 +63,7 @@ PLANS = {
 def firebase_set_premium(uid: str, months: int) -> str:
     try:
         url_old = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
-        resp = requests.get(url_old)
+        resp = requests.get(url_old, timeout=10)
         if resp.status_code != 200 or not resp.json(): return None
         user_data = resp.json()
         start_date = datetime.now()
@@ -74,24 +74,25 @@ def firebase_set_premium(uid: str, months: int) -> str:
                 if dt_exp > start_date: start_date = dt_exp
             except: pass
         expiry = (start_date + timedelta(days=months * 30)).isoformat()
-        import secrets
         new_uid = secrets.token_urlsafe(12).replace('-', '').replace('_', '')[:16]
         user_data.update({"premium_expiry": expiry, "is_paid": True, "isPremium": True, "vpn_uuid": "2e922e6a-65db-4767-8216-a4b6b501b3b8", "last_payment_date": datetime.now().isoformat()})
-        requests.put(f"{FIREBASE_DB_URL}/users/{new_uid}.json?auth={FIREBASE_DB_SECRET}", json=user_data)
+        requests.put(f"{FIREBASE_DB_URL}/users/{new_uid}.json?auth={FIREBASE_DB_SECRET}", json=user_data, timeout=10)
         tg_id = user_data.get("telegram_id")
-        if tg_id: requests.put(f"{FIREBASE_DB_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_DB_SECRET}", json=new_uid)
-        requests.delete(url_old)
+        if tg_id: requests.put(f"{FIREBASE_DB_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_DB_SECRET}", json=new_uid, timeout=10)
+        requests.delete(url_old, timeout=10)
         return new_uid
-    except: return None
+    except Exception as e:
+        log.error(f"Error in firebase_set_premium: {e}")
+        return None
 
 def register_referral(new_tg_id: int, inviter_id: str) -> tuple[bool, str]:
     try:
         ref_url = f"{FIREBASE_DB_URL}/referrals/{new_tg_id}.json?auth={FIREBASE_DB_SECRET}"
-        if requests.get(ref_url).json(): return False, "already"
-        inv_uid = inviter_id if (len(str(inviter_id)) == 16 or len(str(inviter_id)) == 28) else requests.get(f"{FIREBASE_DB_URL}/telegram_to_uid/{inviter_id}.json?auth={FIREBASE_DB_SECRET}").json()
+        if requests.get(ref_url, timeout=10).json(): return False, "already"
+        inv_uid = inviter_id if (len(str(inviter_id)) == 16 or len(str(inviter_id)) == 28) else requests.get(f"{FIREBASE_DB_URL}/telegram_to_uid/{inviter_id}.json?auth={FIREBASE_DB_SECRET}", timeout=10).json()
         if not inv_uid: return False, "not_found"
         inv_url = f"{FIREBASE_DB_URL}/users/{inv_uid}.json?auth={FIREBASE_DB_SECRET}"
-        inv_data = requests.get(inv_url).json()
+        inv_data = requests.get(inv_url, timeout=10).json()
         if not inv_data or str(inv_data.get("telegram_id")) == str(new_tg_id): return False, "invalid"
         start_dt = datetime.now()
         cur_exp = inv_data.get("premium_expiry")
@@ -101,20 +102,24 @@ def register_referral(new_tg_id: int, inviter_id: str) -> tuple[bool, str]:
                 if dt_exp > start_dt: start_dt = dt_exp
             except: pass
         new_exp = (start_dt + timedelta(days=10)).isoformat()
-        requests.patch(inv_url, json={"premium_expiry": new_exp, "referral_count": inv_data.get("referral_count", 0) + 1, "isPremium": True})
-        requests.put(ref_url, json={"inviter_uid": inv_uid, "timestamp": datetime.now().isoformat()})
+        requests.patch(inv_url, json={"premium_expiry": new_exp, "referral_count": inv_data.get("referral_count", 0) + 1, "isPremium": True}, timeout=10)
+        requests.put(ref_url, json={"inviter_uid": inv_uid, "timestamp": datetime.now().isoformat()}, timeout=10)
         return True, "success"
-    except: return False, "error"
+    except Exception as e:
+        log.error(f"Error in register_referral: {e}")
+        return False, "error"
 
 def firebase_give_trial(uid: str) -> bool:
     try:
         url = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
-        user_data = requests.get(url).json() or {}
+        user_data = requests.get(url, timeout=10).json() or {}
         if user_data.get("trial_given") or user_data.get("isPremium"): return False
         expiry = (datetime.now() + timedelta(days=3)).isoformat()
-        requests.patch(url, json={"premium_expiry": expiry, "isPremium": True, "trial_given": True, "vpn_uuid": "2e922e6a-65db-4767-8216-a4b6b501b3b8"})
+        requests.patch(url, json={"premium_expiry": expiry, "isPremium": True, "trial_given": True, "vpn_uuid": "2e922e6a-65db-4767-8216-a4b6b501b3b8"}, timeout=10)
         return True
-    except: return False
+    except Exception as e:
+        log.error(f"Error in firebase_give_trial: {e}")
+        return False
 
 def create_platega_invoice(uid, plan_id, amount) -> tuple[str, str]:
     try:
@@ -167,7 +172,7 @@ STRINGS = {
         "welcome": "🚀 <b>mubVPN — Ең жылдам және қауіпсіз!</b>\n\n🌍 Шектеусіз интернетке жол ашыңыз.\n⚡️ Жоғары жылдамдық.\n🛡 Құпиялылық.",
         "btn_pay": "💳 Сатып алу", "btn_how": "📖 Қалай?", "btn_download": "🚀 Жүктеу", "btn_support": "👨+💻 Қолдау", "btn_share": "🤝 Бөлісу",
         "btn_my_vpn": "🔑 Менің сілтемем", "btn_referral": "🎁 Тегін Premium", "back": "⬅️ Артқа", "pay_text": "💳 Тарифті таңдаңыз:",
-        "trial_msg": "🎁 Сізге 3 күндік тегін Premium берілді!\nСілтемеңіз:", "no_premium": "⚠️ Premium жоқ",
+        "trial_msg": "🎁 Сізге 3 күндік тегін Premium берілді!\nСілтемеңиз:", "no_premium": "⚠️ Premium жоқ",
         "my_vpn_text": "👤 Мәртебесі: {status}\n⌛ Мерзімі: {expiry}\n\n🔗 Сілтеме:\n<code>{vpn_link}</code>",
         "ref_menu_text": "🎁 Достарды шақырып, +10 күн алыңыз!\nСілтемеңіз:\n<code>{ref_link}</code>",
         "plan_1m": "1 ай", "plan_3m": "3 ай", "plan_6m": "6 ай", "plan_1y": "1 жыл", "pay_info": "💳 {name} — {rub} RUB", "pay_btn_link": "💳 Төлем сілтемесі", "share_msg": "🚀 mubVPN — Ең жылдам және қауіпсіз VPN!"
@@ -203,88 +208,103 @@ def get_main_keyboard(lang):
     ])
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    tg_id = update.effective_user.id
-    uid = requests.get(f"{FIREBASE_DB_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_DB_SECRET}").json()
-    if context.args and context.args[0].startswith('ref_'):
-        success, _ = register_referral(tg_id, context.args[0].replace('ref_', ''))
-        if success: await context.bot.send_message(chat_id=tg_id, text="🎁 Сиз чакырууну кабыл алдыңыз!")
-    if not uid:
-        uid = secrets.token_urlsafe(12).replace('-', '').replace('_', '')[:16]
-        requests.put(f"{FIREBASE_DB_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_DB_SECRET}", json=uid)
-        requests.patch(f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}", json={"telegram_id": tg_id, "isPremium": False, "created_at": datetime.now().isoformat()})
-    context.user_data['uid'] = uid
-    if firebase_give_trial(uid): context.user_data['just_registered'] = True
-    kb = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🇰🇬 Кыргызча", callback_data='set_lang_ky'), InlineKeyboardButton("🇷🇺 Русский", callback_data='set_lang_ru')],
-        [InlineKeyboardButton("🇺🇸 English", callback_data='set_lang_en'), InlineKeyboardButton("🇺🇿 O'zbekcha", callback_data='set_lang_uz')],
-        [InlineKeyboardButton("🇰🇿 Қазақша", callback_data='set_lang_kk'), InlineKeyboardButton("🇹🇯 Тоҷикӣ", callback_data='set_lang_tg')],
-        [InlineKeyboardButton("🇹🇷 Türkçe", callback_data='set_lang_tr')]
-    ])
-    await update.message.reply_text("Выберите язык / Тилди тандаңыз / Choose language:", reply_markup=kb)
+    try:
+        tg_id = update.effective_user.id
+        resp = requests.get(f"{FIREBASE_DB_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_DB_SECRET}", timeout=10)
+        uid = resp.json() if resp.status_code == 200 else None
+
+        if context.args and context.args[0].startswith('ref_'):
+            success, _ = register_referral(tg_id, context.args[0].replace('ref_', ''))
+            if success: await context.bot.send_message(chat_id=tg_id, text="🎁 Сиз чакырууну кабыл алдыңыз!")
+
+        if not uid:
+            uid = secrets.token_urlsafe(12).replace('-', '').replace('_', '')[:16]
+            requests.put(f"{FIREBASE_DB_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_DB_SECRET}", json=uid, timeout=10)
+            requests.patch(f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}", json={"telegram_id": tg_id, "isPremium": False, "created_at": datetime.now().isoformat()}, timeout=10)
+
+        context.user_data['uid'] = uid
+        if firebase_give_trial(uid): context.user_data['just_registered'] = True
+
+        kb = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🇰🇬 Кыргызча", callback_data='set_lang_ky'), InlineKeyboardButton("🇷🇺 Русский", callback_data='set_lang_ru')],
+            [InlineKeyboardButton("🇺🇸 English", callback_data='set_lang_en'), InlineKeyboardButton("🇺🇿 O'zbekcha", callback_data='set_lang_uz')],
+            [InlineKeyboardButton("🇰🇿 Қазақша", callback_data='set_lang_kk'), InlineKeyboardButton("🇹🇯 Тоҷикӣ", callback_data='set_lang_tg')],
+            [InlineKeyboardButton("🇹🇷 Türkçe", callback_data='set_lang_tr')]
+        ])
+        await update.message.reply_text("Выберите язык / Тилди тандаңыз / Choose language:", reply_markup=kb)
+    except Exception as e:
+        log.error(f"Error in start command: {e}")
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query; await query.answer(); data = query.data; lang = context.user_data.get('lang', 'ru')
-    if data.startswith('set_lang_'):
-        lang = data.split('_')[2]; context.user_data['lang'] = lang; L = STRINGS[lang]
-        await query.message.edit_text(L["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
-        if context.user_data.get('just_registered'):
-            app_url = os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
-            sub_link = f"{app_url}/s/{context.user_data['uid']}"
-            await context.bot.send_message(chat_id=query.from_user.id, text=f"{L['trial_msg']}\n\n<code>{sub_link}</code>", parse_mode=ParseMode.HTML)
-            context.user_data['just_registered'] = False
-    elif data == 'pay_menu':
-        L = STRINGS[lang]; uid = context.user_data.get('uid')
-        kb = [[InlineKeyboardButton(f"{STRINGS[lang]['plan_'+p]} — {PLANS[p]['rub']} RUB", callback_data=f"plan:{p}:{uid}")] for p in PLANS]
-        await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(kb + [[InlineKeyboardButton(L["back"], callback_data='set_lang_'+lang)]]), parse_mode=ParseMode.HTML)
-    elif data.startswith('plan:'):
-        parts = data.split(':'); plan = PLANS.get(parts[1])
-        pay_url, err = create_platega_invoice(parts[2], parts[1], plan['rub'])
-        if pay_url: await query.message.edit_text(STRINGS[lang]["pay_info"].format(name=STRINGS[lang]["plan_"+parts[1]], rub=plan['rub']), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(STRINGS[lang]["pay_btn_link"], url=pay_url)], [InlineKeyboardButton(STRINGS[lang]["back"], callback_data='pay_menu')]]), parse_mode=ParseMode.HTML)
-    elif data == 'my_vpn':
-        uid = context.user_data.get('uid'); user = requests.get(f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}").json()
-        if user and user.get("isPremium"):
-            app_url = os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
-            sub_link = f"{app_url}/s/{uid}"
-            await query.message.edit_text(STRINGS[lang]["my_vpn_text"].format(status="Active 💎", expiry=user.get("premium_expiry","").split('T')[0], vpn_link=sub_link), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🌐 Open", url=sub_link)], [InlineKeyboardButton(STRINGS[lang]["back"], callback_data='set_lang_'+lang)]]), parse_mode=ParseMode.HTML)
-        else: await query.message.edit_text(STRINGS[lang]["no_premium"], reply_markup=get_main_keyboard(lang))
-    elif data == 'referral_menu':
-        uid = context.user_data.get('uid')
-        bot_info = await context.bot.get_me()
-        ref_link = f"https://t.me/{bot_info.username}?start=ref_{uid}"
-        await query.message.edit_text(STRINGS[lang]["ref_menu_text"].format(ref_link=ref_link), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(STRINGS[lang]["back"], callback_data='set_lang_'+lang)]]), parse_mode=ParseMode.HTML)
-    elif data == 'dl_platforms':
-        kb = [
-            [InlineKeyboardButton("📱 Android (APK)", url="https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk")],
-            [InlineKeyboardButton("🤖 Google Play", url="https://play.google.com/store/apps/details?id=com.happproxy"), InlineKeyboardButton("🍎 App Store", url="https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973")],
-            [InlineKeyboardButton(STRINGS[lang]["back"], callback_data='set_lang_'+lang)]
-        ]
-        await query.message.edit_text("🚀 Download / Жүктөө / Скачать:", reply_markup=InlineKeyboardMarkup(kb))
+    try:
+        if data.startswith('set_lang_'):
+            lang = data.split('_')[2]; context.user_data['lang'] = lang; L = STRINGS.get(lang, STRINGS['ru'])
+            await query.message.edit_text(L["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+            if context.user_data.get('just_registered'):
+                app_url = os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
+                sub_link = f"{app_url}/s/{context.user_data['uid']}"
+                await context.bot.send_message(chat_id=query.from_user.id, text=f"{L['trial_msg']}\n\n<code>{sub_link}</code>", parse_mode=ParseMode.HTML)
+                context.user_data['just_registered'] = False
+        elif data == 'pay_menu':
+            L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid')
+            kb = [[InlineKeyboardButton(f"{STRINGS[lang]['plan_'+p]} — {PLANS[p]['rub']} RUB", callback_data=f"plan:{p}:{uid}")] for p in PLANS]
+            await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(kb + [[InlineKeyboardButton(L["back"], callback_data='set_lang_'+lang)]]), parse_mode=ParseMode.HTML)
+        elif data.startswith('plan:'):
+            parts = data.split(':'); plan = PLANS.get(parts[1])
+            pay_url, err = create_platega_invoice(parts[2], parts[1], plan['rub'])
+            if pay_url: await query.message.edit_text(STRINGS[lang]["pay_info"].format(name=STRINGS[lang]["plan_"+parts[1]], rub=plan['rub']), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(STRINGS[lang]["pay_btn_link"], url=pay_url)], [InlineKeyboardButton(STRINGS[lang]["back"], callback_data='pay_menu')]]), parse_mode=ParseMode.HTML)
+        elif data == 'my_vpn':
+            uid = context.user_data.get('uid'); user = requests.get(f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}", timeout=10).json()
+            if user and user.get("isPremium"):
+                app_url = os.environ.get('RENDER_EXTERNAL_URL') or "https://mubvpn-bot-vy55.onrender.com"
+                sub_link = f"{app_url}/s/{uid}"
+                await query.message.edit_text(STRINGS[lang]["my_vpn_text"].format(status="Active 💎", expiry=user.get("premium_expiry","").split('T')[0], vpn_link=sub_link), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🌐 Open", url=sub_link)], [InlineKeyboardButton(STRINGS[lang]["back"], callback_data='set_lang_'+lang)]]), parse_mode=ParseMode.HTML)
+            else: await query.message.edit_text(STRINGS[lang]["no_premium"], reply_markup=get_main_keyboard(lang))
+        elif data == 'referral_menu':
+            uid = context.user_data.get('uid')
+            bot_info = await context.bot.get_me()
+            ref_link = f"https://t.me/{bot_info.username}?start=ref_{uid}"
+            await query.message.edit_text(STRINGS[lang]["ref_menu_text"].format(ref_link=ref_link), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(STRINGS[lang]["back"], callback_data='set_lang_'+lang)]]), parse_mode=ParseMode.HTML)
+        elif data == 'dl_platforms':
+            kb = [
+                [InlineKeyboardButton("📱 Android (APK)", url="https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.10/app-release.apk")],
+                [InlineKeyboardButton("🤖 Google Play", url="https://play.google.com/store/apps/details?id=com.happproxy"), InlineKeyboardButton("🍎 App Store", url="https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973")],
+                [InlineKeyboardButton(STRINGS[lang]["back"], callback_data='set_lang_'+lang)]
+            ]
+            await query.message.edit_text("🚀 Download / Жүктөө / Скачать:", reply_markup=InlineKeyboardMarkup(kb))
+    except Exception as e:
+        log.error(f"Error in handle_callback: {e}")
 
 class BotHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         if self.path == '/webhook/platega':
-            data = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
-            if str(data.get("status")).upper() == "CONFIRMED":
-                uid, pid = data.get("payload", ":").split(':')
-                new_uid = firebase_set_premium(uid, PLANS.get(pid, {}).get("months", 1))
-                if new_uid: requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={"chat_id": uid, "text": "💎 Premium Activated!", "parse_mode": "HTML"})
-            self.send_response(200); self.end_headers(); self.wfile.write(b"OK")
+            try:
+                data = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
+                if str(data.get("status")).upper() == "CONFIRMED":
+                    uid, pid = data.get("payload", ":").split(':')
+                    new_uid = firebase_set_premium(uid, PLANS.get(pid, {}).get("months", 1))
+                    if new_uid: requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", data={"chat_id": uid, "text": "💎 Premium Activated!", "parse_mode": "HTML"}, timeout=10)
+                self.send_response(200); self.end_headers(); self.wfile.write(b"OK")
+            except: self.send_response(400); self.end_headers()
     def do_GET(self):
         if self.path.startswith('/s/'):
-            uid = self.path.split('/')[2].split('?')[0]; user = requests.get(f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}").json()
-            if not user or not user.get("isPremium"): self.send_response(403); self.end_headers(); return
-            ua = self.headers.get('User-Agent', '').lower()
-            is_vpn = any(x in ua for x in ['clash', 'v2ray', 'shadowrocket', 'happ', 'dart', 'okhttp'])
-            if not is_vpn and 'mozilla' in ua:
-                sub = f"https://{self.headers.get('Host')}/s/{uid}"; qr = urllib.parse.quote(sub)
-                html = f"<html><body style='background:#000;color:white;font-family:sans-serif;text-align:center;padding:50px;'><h1>mubVPN Premium</h1><img src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={qr}'><br><br><code>{sub}</code><br><br><a href='v2rayng://install-config?url={sub}' style='display:block;padding:15px;background:#4facfe;color:black;text-decoration:none;border-radius:10px;font-weight:bold;'>Import to mubVPN</a></body></html>"
-                self.send_response(200); self.send_header('Content-Type', 'text/html'); self.end_headers(); self.wfile.write(html.encode()); return
-            configs = []
-            for srv in SERVERS:
-                uuid = srv.get("uuid", "2e922e6a-65db-4767-8216-a4b6b501b3b8")
-                pbk, sid, sni = srv.get("pbk", "0CIqFJJXUoImvhH9fBIBBsW0G798Q9WpwWDdhbdw93M"), srv.get("sid", "7682624ec01fe9"), srv.get("sni", "www.sony.com")
-                configs.append(f"vless://{uuid}@{srv['host']}:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni={sni}&fp=chrome&pbk={pbk}&sid={sid}#mubVPN_{srv['name']}")
-            self.send_response(200); self.send_header('Content-Type', 'text/plain'); self.end_headers(); self.wfile.write(base64.b64encode("\n".join(configs).encode()).decode().encode())
+            try:
+                uid = self.path.split('/')[2].split('?')[0]; user = requests.get(f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}", timeout=10).json()
+                if not user or not user.get("isPremium"): self.send_response(403); self.end_headers(); return
+                ua = self.headers.get('User-Agent', '').lower()
+                is_vpn = any(x in ua for x in ['clash', 'v2ray', 'shadowrocket', 'happ', 'dart', 'okhttp'])
+                if not is_vpn and 'mozilla' in ua:
+                    sub = f"https://{self.headers.get('Host')}/s/{uid}"; qr = urllib.parse.quote(sub)
+                    html = f"<html><body style='background:#000;color:white;font-family:sans-serif;text-align:center;padding:50px;'><h1>mubVPN Premium</h1><img src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={qr}'><br><br><code>{sub}</code><br><br><a href='v2rayng://install-config?url={sub}' style='display:block;padding:15px;background:#4facfe;color:black;text-decoration:none;border-radius:10px;font-weight:bold;'>Import to mubVPN</a></body></html>"
+                    self.send_response(200); self.send_header('Content-Type', 'text/html'); self.end_headers(); self.wfile.write(html.encode()); return
+                configs = []
+                for srv in SERVERS:
+                    uuid = srv.get("uuid", "2e922e6a-65db-4767-8216-a4b6b501b3b8")
+                    pbk, sid, sni = srv.get("pbk", "0CIqFJJXUoImvhH9fBIBBsW0G798Q9WpwWDdhbdw93M"), srv.get("sid", "7682624ec01fe9"), srv.get("sni", "www.sony.com")
+                    configs.append(f"vless://{uuid}@{srv['host']}:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni={sni}&fp=chrome&pbk={pbk}&sid={sid}#mubVPN_{srv['name']}")
+                self.send_response(200); self.send_header('Content-Type', 'text/plain'); self.end_headers(); self.wfile.write(base64.b64encode("\n".join(configs).encode()).decode().encode())
+            except: self.send_response(500); self.end_headers()
         else: self.send_response(200); self.end_headers(); self.wfile.write(b"Active")
 
 def run_server(): HTTPServer(('0.0.0.0', int(os.environ.get('PORT', 8080))), BotHandler).serve_forever()
@@ -310,3 +330,4 @@ def main():
     app.run_polling()
 
 if __name__ == "__main__": main()
+
