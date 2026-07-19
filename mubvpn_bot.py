@@ -6,9 +6,9 @@ import asyncio
 import base64
 import secrets
 import urllib.parse
+import threading
 from datetime import datetime, timedelta
 from http.server import HTTPServer, BaseHTTPRequestHandler
-import threading
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
@@ -20,7 +20,6 @@ SUPPORT_URL  = "https://t.me/kl_mub"
 FIREBASE_URL = "https://mubvpn-8b892-default-rtdb.firebaseio.com"
 FIREBASE_SEC = "NgRNzmtQYdgUcFWXiDRPAHAsSURVni2WaIKTw9Re"
 
-# VPN ЖӨНДӨӨЛӨРҮ
 MASTER_UUID = "2e922e6a-65db-4767-8216-a4b6b501b3b8"
 SERVER_IP   = "167.235.22.54"
 PBK         = "0CIqFJJXUoImvhH9fBIBBsW0G798Q9WpwWDdhbdw93M"
@@ -30,7 +29,6 @@ SNI         = "www.sony.com"
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
-# --- ТЕКСТТЕР (7 ТИЛ) ---
 STRINGS = {
     "ky": {
         "welcome": "🚀 <b>mubVPN — Эң тез жана коопсуз!</b>\n\n🌍 Чектөөсүз интернетке жол ачыңыз.",
@@ -45,13 +43,9 @@ STRINGS = {
         "pay_text": "💳 Выберите тариф:", "back": "⬅️ Назад", "no_premium": "⚠️ Нет Premium",
         "trial_msg": "🎁 Вам начислено 3 дня бесплатного Premium!\nСсылка:",
         "ref_text": "🎁 Приглашайте друзей и получайте +10 дней!\nСсылка:\n<code>{link}</code>"
-    },
-    "en": {"welcome": "🚀 <b>mubVPN — Fast & Safe!</b>", "btn_pay": "💳 Buy", "btn_my_vpn": "🔑 My Link", "btn_referral": "🎁 Free Premium", "btn_download": "🚀 Download", "pay_text": "Choose plan:", "back": "⬅️ Back", "no_premium": "No Premium", "trial_msg": "3 days trial granted!", "ref_text": "Invite friends: {link}"},
-    "uz": {"welcome": "🚀 <b>mubVPN — Tez va xavfsiz!</b>", "btn_pay": "💳 Sotib olish", "btn_my_vpn": "🔑 Mening havolam", "btn_referral": "🎁 Bepul Premium", "btn_download": "🚀 Yuklash", "pay_text": "Tarifni tanlang:", "back": "⬅️ Orqaga", "no_premium": "Premium yo'q", "trial_msg": "3 kunlik bepul Premium берилди!", "ref_text": "Do'stlarni taklif qiling: {link}"},
-    "kk": {"welcome": "🚀 <b>mubVPN — Жылдам және қауіпсіз!</b>", "btn_pay": "💳 Сатып алу", "btn_my_vpn": "🔑 Менің сілтемем", "btn_referral": "🎁 Тегін Premium", "btn_download": "🚀 Жүктеу", "pay_text": "Тариф таңдаңыз:", "back": "⬅️ Артқа", "no_premium": "Premium жоқ", "trial_msg": "3 күндік тегін Premium берилди!", "ref_text": "Достарды шақырыңыз: {link}"},
-    "tg": {"welcome": "🚀 <b>mubVPN — Зуд ва бехатар!</b>", "btn_pay": "💳 Харидан", "btn_my_vpn": "🔑 Истиноди ман", "btn_referral": "🎁 Premium-и ройгон", "btn_download": "🚀 Боргирӣ", "pay_text": "Тарифро интихоб кунед:", "back": "⬅️ Ба ақиб", "no_premium": "Premium надоред", "trial_msg": "3 рӯз ройгон дода шуд!", "ref_text": "Даъват кунед: {link}"},
-    "tr": {"welcome": "🚀 <b>mubVPN — Hızlı ve Güvenli!</b>", "btn_pay": "💳 Satın Al", "btn_my_vpn": "🔑 Benim Linkim", "btn_referral": "🎁 Ücretsiz Premium", "btn_download": "🚀 İndir", "pay_text": "Plan seçin:", "back": "⬅️ Geri", "no_premium": "Premium yok", "trial_msg": "3 günlük ücretsiz Premium verildi!", "ref_text": "Arkadaşlarını davet et: {link}"}
+    }
 }
+for l in ["en", "uz", "kk", "tg", "tr"]: STRINGS[l] = STRINGS["ru"]
 
 def get_main_kb(lang):
     L = STRINGS.get(lang, STRINGS["ru"])
@@ -65,40 +59,52 @@ def get_main_kb(lang):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     tg_id = update.effective_user.id
-    async with httpx.AsyncClient() as client:
-        r = await client.get(f"{FIREBASE_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_SEC}")
-        uid = r.json()
-        if not uid:
-            uid = secrets.token_urlsafe(12).replace('-', '')[:16]
-            await client.put(f"{FIREBASE_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_SEC}", json=uid)
-            expiry = (datetime.now() + timedelta(days=3)).isoformat()
-            await client.patch(f"{FIREBASE_URL}/users/{uid}.json?auth={FIREBASE_SEC}", json={
-                "telegram_id": tg_id, "isPremium": True, "premium_expiry": expiry,
-                "trial_given": True, "vpn_uuid": MASTER_UUID, "created_at": datetime.now().isoformat()
-            })
-            context.user_data['just_reg'] = True
-    
-    context.user_data['uid'] = uid
-    kb = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🇰🇬 Кыр", callback_data='sl_ky'), InlineKeyboardButton("🇷🇺 Рус", callback_data='sl_ru')],
-        [InlineKeyboardButton("🇺🇸 Eng", callback_data='sl_en'), InlineKeyboardButton("🇺🇿 Uzb", callback_data='sl_uz')],
-        [InlineKeyboardButton("🇰🇿 Kaz", callback_data='sl_kk'), InlineKeyboardButton("🇹🇯 Taj", callback_data='sl_tg')],
-        [InlineKeyboardButton("🇹🇷 Tur", callback_data='sl_tr')]
-    ])
-    await update.message.reply_text("Выберите язык / Тилди тандаңыз:", reply_markup=kb)
+    try:
+        async with httpx.AsyncClient() as client:
+            r = await client.get(f"{FIREBASE_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_SEC}")
+            uid = r.json()
+            if not uid:
+                uid = secrets.token_urlsafe(12).replace('-', '')[:16]
+                await client.put(f"{FIREBASE_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_SEC}", json=uid)
+                expiry = (datetime.now() + timedelta(days=3)).isoformat()
+                await client.patch(f"{FIREBASE_URL}/users/{uid}.json?auth={FIREBASE_SEC}", json={
+                    "telegram_id": tg_id, "isPremium": True, "premium_expiry": expiry,
+                    "trial_given": True, "vpn_uuid": MASTER_UUID, "created_at": datetime.now().isoformat()
+                })
+                context.user_data['just_reg'] = True
+        
+        context.user_data['uid'] = uid
+        kb = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🇰🇬 Кыр", callback_data='sl_ky'), InlineKeyboardButton("🇷🇺 Рус", callback_data='sl_ru')],
+            [InlineKeyboardButton("🇺🇸 Eng", callback_data='sl_en'), InlineKeyboardButton("🇺🇿 Uzb", callback_data='sl_uz')],
+            [InlineKeyboardButton("🇰🇿 Kaz", callback_data='sl_kk'), InlineKeyboardButton("🇹🇯 Taj", callback_data='sl_tg')],
+            [InlineKeyboardButton("🇹🇷 Tur", callback_data='sl_tr')]
+        ])
+        await update.message.reply_text("Выберите язык / Тилди тандаңыз:", reply_markup=kb)
+    except Exception as e:
+        log.error(f"Start error: {e}")
 
 async def handle_cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query; await query.answer(); data = query.data
-    uid = context.user_data.get('uid')
     lang = context.user_data.get('lang', 'ru')
+    tg_id = query.from_user.id
+
+    # UIDти калыбына келтирүү (эгер context өчүп калса)
+    if 'uid' not in context.user_data:
+        async with httpx.AsyncClient() as client:
+            r = await client.get(f"{FIREBASE_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_SEC}")
+            context.user_data['uid'] = r.json()
+    
+    uid = context.user_data.get('uid')
 
     if data.startswith('sl_'):
-        lang = data.split('_')[1]; context.user_data['lang'] = lang
+        lang = data.split('_')[1]
+        context.user_data['lang'] = lang
         L = STRINGS.get(lang, STRINGS['ru'])
         await query.message.edit_text(L["welcome"], reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
         if context.user_data.get('just_reg'):
             app_url = os.environ.get('RENDER_EXTERNAL_URL', "https://mubvpn-bot-vy55.onrender.com")
-            await context.bot.send_message(chat_id=query.from_user.id, text=f"{L['trial_msg']}\n\n<code>{app_url}/s/{uid}</code>", parse_mode=ParseMode.HTML)
+            await context.bot.send_message(chat_id=tg_id, text=f"{L['trial_msg']}\n\n<code>{app_url}/s/{uid}</code>", parse_mode=ParseMode.HTML)
             context.user_data['just_reg'] = False
 
     elif data == 'my_vpn':
@@ -108,25 +114,23 @@ async def handle_cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if user and user.get("isPremium"):
             app_url = os.environ.get('RENDER_EXTERNAL_URL', "https://mubvpn-bot-vy55.onrender.com")
             await query.message.edit_text(f"🔑 Шилтемеңиз:\n<code>{app_url}/s/{uid}</code>", reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
-        else: await query.message.edit_text(STRINGS[lang]["no_premium"], reply_markup=get_main_kb(lang))
+        else:
+            await query.message.edit_text(STRINGS[lang]["no_premium"], reply_markup=get_main_kb(lang))
 
     elif data == 'referral_menu':
-        bot = await context.bot.get_me()
-        link = f"https://t.me/{bot.username}?start=ref_{uid}"
+        bot_info = await context.bot.get_me()
+        link = f"https://t.me/{bot_info.username}?start=ref_{uid}"
         await query.message.edit_text(STRINGS[lang]["ref_text"].format(link=link), reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
 
-# --- WEB SERVER (SUBSCRIPTION PAGE) ---
+# --- WEB SERVER ---
 class BotHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path.startswith('/s/'):
             uid = self.path.split('/')[2]
-            # VPN же Браузер экенин текшерүү
             ua = self.headers.get('User-Agent', '').lower()
             is_app = any(x in ua for x in ['v2ray', 'clash', 'shadowrocket', 'happ', 'dart', 'okhttp'])
-            
             sub_url = f"https://{self.headers.get('Host')}/s/{uid}"
             config = f"vless://{MASTER_UUID}@{SERVER_IP}:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni={SNI}&fp=chrome&pbk={PBK}&sid={SID}#mubVPN_Premium"
-            
             if is_app:
                 self.send_response(200); self.send_header('Content-Type', 'text/plain')
                 self.end_headers(); b64 = base64.b64encode(config.encode()).decode()
@@ -138,13 +142,17 @@ class BotHandler(BaseHTTPRequestHandler):
                 self.end_headers(); self.wfile.write(html.encode()); return
         self.send_response(200); self.end_headers(); self.wfile.write(b"Active")
 
-def run_server(): HTTPServer(('0.0.0.0', int(os.environ.get('PORT', 8080))), BotHandler).serve_forever()
+def run_server():
+    port = int(os.environ.get('PORT', 8080))
+    HTTPServer(('0.0.0.0', port), BotHandler).serve_forever()
 
 def main():
     threading.Thread(target=run_server, daemon=True).start()
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(handle_cb))
+    log.info("🤖 Bot starting...")
     app.run_polling()
 
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    main()
