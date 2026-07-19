@@ -175,7 +175,7 @@ STRINGS = {
         "trial_msg": "🎁 Сізге 3 күндік тегін Premium берілді!\nСілтемеңиз:", "no_premium": "⚠️ Premium жоқ",
         "my_vpn_text": "👤 Мәртебесі: {status}\n⌛ Мерзімі: {expiry}\n\n🔗 Сілтеме:\n<code>{vpn_link}</code>",
         "ref_menu_text": "🎁 Достарды шақырып, +10 күн алыңыз!\nСілтемеңіз:\n<code>{ref_link}</code>",
-        "plan_1m": "1 ай", "plan_3m": "3 ай", "plan_6m": "6 ай", "plan_1y": "1 жыл", "pay_info": "💳 {name} — {rub} RUB", "pay_btn_link": "💳 Төлем сілтемесі", "share_msg": "🚀 mubVPN — Ең жылдам және қауіпсіз VPN!"
+        "plan_1m": "1 ай", "plan_3m": "3 ай", "plan_6m": "6 ай", "plan_1y": "1 жыл", "pay_info": "💳 {name} — {rub} RUB", "pay_btn_link": "💳 Төлем сілтемеси", "share_msg": "🚀 mubVPN — Ең жылдам және қауіпсіз VPN!"
     },
     "tg": {
         "welcome": "🚀 <b>mubVPN — Зудтарин ва бехатарин!</b>\n\n🌍 Ба интернети озод дастрасӣ пайдо кунед.\n⚡️ Суръати баланд.\n🛡 Махфият.",
@@ -193,7 +193,7 @@ STRINGS = {
         "trial_msg": "🎁 Size 3 günlük ücretsiz Premium verildi!\nLinkiniz:", "no_premium": "⚠️ Premium yok",
         "my_vpn_text": "👤 Durum: {status}\n⌛ Bitiş: {expiry}\n\n🔗 Link:\n<code>{vpn_link}</code>",
         "ref_menu_text": "🎁 Arkadaşlarınızı davet edin ve +10 gün kazanın!\nLinkiniz:\n<code>{ref_link}</code>",
-        "plan_1m": "1 ay", "plan_3m": "3 ay", "plan_6m": "6 ay", "plan_1y": "1 yıl", "pay_info": "💳 {name} — {rub} RUB", "pay_btn_link": "💳 Ödeme Linki", "share_msg": "🚀 mubVPN — En Hızlı ve Güvenli VPN!"
+        "plan_1m": "1 ay", "plan_3m": "3 ay", "plan_6m": "6 ay", "plan_1y": "1 year", "pay_info": "💳 {name} — {rub} RUB", "pay_btn_link": "💳 Ödeme Linki", "share_msg": "🚀 mubVPN — En Hızlı ve Güvenli VPN!"
     }
 }
 
@@ -330,4 +330,3 @@ def main():
     app.run_polling()
 
 if __name__ == "__main__": main()
-
