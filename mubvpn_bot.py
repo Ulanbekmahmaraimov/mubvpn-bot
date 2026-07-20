@@ -76,7 +76,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     "trial_given": True, "vpn_uuid": MASTER_UUID, "created_at": datetime.now().isoformat()
                 })
                 context.user_data['just_reg'] = True
-        
+
         context.user_data['uid'] = uid
         kb = InlineKeyboardMarkup([
             [InlineKeyboardButton("🇰🇬 Кыргызча", callback_data='sl_ky'), InlineKeyboardButton("🇷🇺 Русский", callback_data='sl_ru')],
@@ -97,7 +97,7 @@ async def handle_cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         async with httpx.AsyncClient() as client:
             r = await client.get(f"{FIREBASE_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_SEC}")
             context.user_data['uid'] = r.json()
-    
+
     uid = context.user_data.get('uid')
     lang = context.user_data.get('lang', 'ru')
 
