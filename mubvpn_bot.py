@@ -7,7 +7,6 @@ import base64
 import secrets
 import urllib.parse
 import threading
-import requests
 from datetime import datetime, timedelta
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
@@ -21,7 +20,9 @@ SUPPORT_URL  = "https://t.me/kl_mub"
 FIREBASE_URL = "https://mubvpn-8b892-default-rtdb.firebaseio.com"
 FIREBASE_SEC = "NgRNzmtQYdgUcFWXiDRPAHAsSURVni2WaIKTw9Re"
 
-# VPN СЕРВЕР
+PLATEGA_MERCHANT_ID = "7daa1458-3248-4106-bc81-bfe7f33b742f"
+PLATEGA_API_KEY     = "Ia6n9MgN172IKWWOGAzkfQveSZ4ZIq2ktTpkt5hiBNpCfbtrX4V4XLozuKarEB2OzkNEEfHDsaTZadGJhZUJ6He7AtQFGS0U6Lud"
+
 MASTER_UUID = "2e922e6a-65db-4767-8216-a4b6b501b3b8"
 SERVER_IP   = "167.235.22.54"
 PBK         = "0CIqFJJXUoImvhH9fBIBBsW0G798Q9WpwWDdhbdw93M"
@@ -32,10 +33,10 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 log = logging.getLogger(__name__)
 
 PLANS = {
-    "1m": {"ky": "1 ай", "ru": "1 месяц", "en": "1 month", "uz": "1 oy", "kk": "1 ай", "tg": "1 моҳ", "tr": "1 ay", "rub": 109.99},
-    "3m": {"ky": "3 ай", "ru": "3 месяца", "en": "3 months", "uz": "3 oy", "kk": "3 ай", "tg": "3 моҳ", "tr": "3 ay", "rub": 309.99},
-    "6m": {"ky": "6 ай", "ru": "6 месяцев", "en": "6 months", "uz": "6 oy", "kk": "6 ай", "tg": "6 моҳ", "tr": "6 ay", "rub": 599.99},
-    "1y": {"ky": "1 жыл", "ru": "1 год", "en": "1 year", "uz": "1 yil", "kk": "1 жыл", "tg": "1 сол", "tr": "1 йил", "rub": 1099.99},
+    "1m": {"ky": "1 ай", "ru": "1 месяц", "en": "1 month", "rub": 109.99},
+    "3m": {"ky": "3 ай", "ru": "3 месяца", "en": "3 months", "rub": 309.99},
+    "6m": {"ky": "6 ай", "ru": "6 месяцев", "en": "6 months", "rub": 599.99},
+    "1y": {"ky": "1 жыл", "ru": "1 год", "en": "1 year", "rub": 1099.99},
 }
 
 STRINGS = {
