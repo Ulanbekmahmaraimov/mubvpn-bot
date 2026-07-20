@@ -33,20 +33,22 @@ log = logging.getLogger(__name__)
 STRINGS = {
     "ky": {
         "welcome": "🚀 <b>mubVPN — Эң тез жана коопсуз!</b>\n\n🌍 Чектөөсүз интернетке жол ачыңыз.",
-        "btn_pay": "💳 Сатып алуу", "btn_my_vpn": "🔑 Менин шилтемем", "btn_referral": "🎁 Акысыз Premium", "btn_download": "🚀 Жүктөө",
+        "btn_pay": "💳 Сатып алуу", "btn_my_vpn": "🔑 Менин шилтемем", "btn_referral": "🎁 Акысыз Premium", "btn_download": "🚀 Жүктөө", "btn_support": "👨‍💻 Колдоо",
         "pay_text": "💳 Планды тандаңыз:", "back": "⬅️ Артка", "no_premium": "⚠️ Premium жок",
-        "trial_msg": "🎁 Акысыз 3 күн берилди!\nШилтемеңиз:",
-        "ref_text": "🎁 Досторду чакырып, +10 күн алыңыз!\nШилтемеңиз:\n<code>{link}</code>"
+        "trial_msg": "🎁 Сизге 3 күндүк акысыз Premium берилди!\nШилтемеңиз:",
+        "ref_text": "🎁 Досторду чакырып, +10 күн алыңыз!\nШилтемеңиз:\n<code>{link}</code>",
+        "dl_text": "🚀 <b>mubVPN колдонмосун жүктөп алыңыз:</b>\n\n🤖 Android (Google Play): <a href='https://play.google.com/store/apps/details?id=com.happproxy'>Happ Proxy</a>\n🍎 iOS (iPhone): <a href='https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973'>Happ Proxy</a>"
     },
     "ru": {
         "welcome": "🚀 <b>mubVPN — Самый быстрый и безопасный!</b>\n\n🌍 Свободный интернет.",
-        "btn_pay": "💳 Купить", "btn_my_vpn": "🔑 Моя ссылка", "btn_referral": "🎁 Бесплатный Premium", "btn_download": "🚀 Скачать",
+        "btn_pay": "💳 Купить", "btn_my_vpn": "🔑 Моя ссылка", "btn_referral": "🎁 Бесплатный Premium", "btn_download": "🚀 Скачать", "btn_support": "👨‍💻 Поддержка",
         "pay_text": "💳 Выберите тариф:", "back": "⬅️ Назад", "no_premium": "⚠️ Нет Premium",
         "trial_msg": "🎁 Вам начислено 3 дня бесплатно!\nСсылка:",
-        "ref_text": "🎁 Приглашайте друзей и получайте +10 дней!\nСсылка:\n<code>{link}</code>"
+        "ref_text": "🎁 Приглашайте друзей и получайте +10 дней!\nСсылка:\n<code>{link}</code>",
+        "dl_text": "🚀 <b>Скачать приложение mubVPN:</b>\n\n🤖 Android: <a href='https://play.google.com/store/apps/details?id=com.happproxy'>Happ Proxy</a>\n🍎 iOS (iPhone): <a href='https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973'>Happ Proxy</a>"
     }
 }
-# Fallback for others
+# Англисче жана башка тилдер үчүн
 for l in ["en", "uz", "kk", "tg", "tr"]: STRINGS[l] = STRINGS["ru"]
 
 def get_main_kb(lang):
@@ -63,7 +65,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     tg_id = update.effective_user.id
     try:
         async with httpx.AsyncClient() as client:
-            # Текшерүү
             r = await client.get(f"{FIREBASE_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_SEC}")
             uid = r.json()
             if not uid:
@@ -89,13 +90,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         log.error(f"Start error: {e}")
 
 async def handle_cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer() # Заматта жооп берүү
-    
-    data = query.data
-    tg_id = query.from_user.id
-    
-    # UID калыбына келтирүү
+    query = update.callback_query; await query.answer()
+    data = query.data; tg_id = query.from_user.id
+
     if 'uid' not in context.user_data:
         async with httpx.AsyncClient() as client:
             r = await client.get(f"{FIREBASE_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_SEC}")
@@ -105,11 +102,9 @@ async def handle_cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = context.user_data.get('lang', 'ru')
 
     if data.startswith('sl_'):
-        lang = data.split('_')[1]
-        context.user_data['lang'] = lang
+        lang = data.split('_')[1]; context.user_data['lang'] = lang
         L = STRINGS.get(lang, STRINGS['ru'])
         await query.message.edit_text(L["welcome"], reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
-        
         if context.user_data.get('just_reg'):
             app_url = os.environ.get('RENDER_EXTERNAL_URL', "https://mubvpn-bot-vy55.onrender.com")
             await context.bot.send_message(chat_id=tg_id, text=f"{L['trial_msg']}\n\n<code>{app_url}/s/{uid}</code>", parse_mode=ParseMode.HTML)
@@ -130,8 +125,15 @@ async def handle_cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         link = f"https://t.me/{bot_info.username}?start=ref_{uid}"
         await query.message.edit_text(STRINGS[lang]["ref_text"].format(link=link), reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
 
-# --- WEB SERVER (HEALTH CHECK & SUB) ---
+    elif data == 'dl_platforms':
+        await query.message.edit_text(STRINGS[lang]["dl_text"], reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
+
+    elif data == 'pay_menu':
+        await query.message.edit_text(STRINGS[lang]["pay_text"], reply_markup=get_main_kb(lang))
+
+# --- WEB SERVER ---
 class BotHandler(BaseHTTPRequestHandler):
+    def do_HEAD(self): self.send_response(200); self.end_headers()
     def do_GET(self):
         if self.path.startswith('/s/'):
             uid = self.path.split('/')[2]
@@ -139,7 +141,6 @@ class BotHandler(BaseHTTPRequestHandler):
             is_app = any(x in ua for x in ['v2ray', 'clash', 'shadowrocket', 'happ', 'dart', 'okhttp'])
             sub_url = f"https://{self.headers.get('Host')}/s/{uid}"
             config = f"vless://{MASTER_UUID}@{SERVER_IP}:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni={SNI}&fp=chrome&pbk={PBK}&sid={SID}#mubVPN_Premium"
-            
             if is_app:
                 self.send_response(200); self.send_header('Content-Type', 'text/plain')
                 self.end_headers(); b64 = base64.b64encode(config.encode()).decode()
@@ -149,7 +150,6 @@ class BotHandler(BaseHTTPRequestHandler):
                 html = f"<html><body style='background:#000;color:white;text-align:center;font-family:sans-serif;padding:50px;'><h1>mubVPN Premium</h1><img src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={qr}'><br><br><code>{sub_url}</code><br><br><a href='v2rayng://install-config?url={sub_url}' style='display:block;padding:15px;background:#4facfe;color:black;text-decoration:none;border-radius:10px;font-weight:bold;'>Import to mubVPN</a></body></html>"
                 self.send_response(200); self.send_header('Content-Type', 'text/html; charset=utf-8')
                 self.end_headers(); self.wfile.write(html.encode()); return
-        
         self.send_response(200); self.end_headers(); self.wfile.write(b"Active")
 
 def run_server():
@@ -161,9 +161,7 @@ def main():
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(handle_cb))
-    log.info("🤖 Bot is starting...")
+    log.info("🤖 Bot starting...")
     app.run_polling()
 
-if __name__ == "__main__":
-    main()
-    
+if __name__ == "__main__": main()
