@@ -7,6 +7,7 @@ import base64
 import secrets
 import urllib.parse
 import threading
+import requests
 from datetime import datetime, timedelta
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
@@ -19,10 +20,6 @@ BOT_TOKEN    = "8400265569:AAHQ21_zNVS3XPDlMoE9I8TW0JwaIaUuA1s"
 SUPPORT_URL  = "https://t.me/kl_mub"
 FIREBASE_URL = "https://mubvpn-8b892-default-rtdb.firebaseio.com"
 FIREBASE_SEC = "NgRNzmtQYdgUcFWXiDRPAHAsSURVni2WaIKTw9Re"
-
-# Platega (Payment)
-PLATEGA_MERCHANT_ID = "7daa1458-3248-4106-bc81-bfe7f33b742f"
-PLATEGA_API_KEY     = "Ia6n9MgN172IKWWOGAzkfQveSZ4ZIq2ktTpkt5hiBNpCfbtrX4V4XLozuKarEB2OzkNEEfHDsaTZadGJhZUJ6He7AtQFGS0U6Lud"
 
 # VPN СЕРВЕР
 MASTER_UUID = "2e922e6a-65db-4767-8216-a4b6b501b3b8"
@@ -61,16 +58,9 @@ STRINGS = {
         "pay_info": "💳 <b>{name} Premium</b>\n\nЦена: {rub} RUB\n\nНажмите кнопку ниже для оплаты. Premium активируется автоматически."
     }
 }
-# Fallback and other languages (simplified for this task)
+# Fallback and other languages
 for lang in ["en", "uz", "kk", "tg", "tr"]:
     STRINGS[lang] = STRINGS["ru"]
-    if lang == "en":
-        STRINGS[lang]["welcome"] = "🚀 <b>mubVPN — Fast & Safe!</b>"
-        STRINGS[lang]["btn_pay"] = "💳 Buy"
-        STRINGS[lang]["btn_my_vpn"] = "🔑 My Link"
-        STRINGS[lang]["btn_referral"] = "🎁 Free Premium"
-        STRINGS[lang]["btn_download"] = "🚀 Download"
-        STRINGS[lang]["btn_support"] = "👨‍💻 Support"
 
 def get_main_kb(lang):
     L = STRINGS.get(lang, STRINGS["ky"])
@@ -131,81 +121,82 @@ async def handle_cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query; await query.answer()
     data = query.data; tg_id = query.from_user.id
 
-    if 'uid' not in context.user_data:
-        async with httpx.AsyncClient() as client:
-            r = await client.get(f"{FIREBASE_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_SEC}")
-            context.user_data['uid'] = r.json()
-
-    uid = context.user_data.get('uid')
-    lang = context.user_data.get('lang', 'ky')
-
-    if data.startswith('sl_'):
-        lang = data.split('_')[1]; context.user_data['lang'] = lang
-        L = STRINGS.get(lang, STRINGS['ky'])
-        await query.message.edit_text(L["welcome"], reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
-        if context.user_data.get('just_reg'):
-            app_url = os.environ.get('RENDER_EXTERNAL_URL', "https://mubvpn-bot-vy55.onrender.com")
-            msg = L["trial_msg"]
-            await context.bot.send_message(chat_id=tg_id, text=f"{msg}\n\n<code>{app_url}/s/{uid}</code>", parse_mode=ParseMode.HTML)
-            context.user_data['just_reg'] = False
-
-    elif data == 'my_vpn':
-        async with httpx.AsyncClient() as client:
-            r = await client.get(f"{FIREBASE_URL}/users/{uid}.json?auth={FIREBASE_SEC}")
-            user = r.json()
-        L = STRINGS.get(lang, STRINGS['ky'])
-        if user and user.get("isPremium"):
-            app_url = os.environ.get('RENDER_EXTERNAL_URL', "https://mubvpn-bot-vy55.onrender.com")
-            await query.message.edit_text(f"🔑 Шилтемеңиз / Ваша ссылка:\n<code>{app_url}/s/{uid}</code>", reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
-        else: await query.message.edit_text(L["no_premium"], reply_markup=get_main_kb(lang))
-
-    elif data == 'pay_menu':
-        L = STRINGS.get(lang, STRINGS['ky'])
-        kb = []
-        for k, p in PLANS.items():
-            name = p.get(lang, p['ky'])
-            kb.append([InlineKeyboardButton(f"{name} — {p['rub']} RUB", callback_data=f'buy_{k}')])
-        kb.append([InlineKeyboardButton(L["back"], callback_data='main_menu')])
-        await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(kb))
-
-    elif data.startswith('buy_'):
-        plan_id = data.split('_')[1]
-        plan = PLANS.get(plan_id)
-        L = STRINGS.get(lang, STRINGS['ky'])
-        # Create Platega Invoice
-        try:
+    try:
+        if 'uid' not in context.user_data:
             async with httpx.AsyncClient() as client:
-                p_url = "https://app.platega.io/v2/transaction/process"
-                headers = {"X-MerchantId": PLATEGA_MERCHANT_ID, "X-Secret": PLATEGA_API_KEY, "Content-Type": "application/json"}
-                payload = {
-                    "paymentMethod": 2, # SBP
-                    "paymentDetails": {"amount": float(plan['rub']), "currency": "RUB"},
-                    "description": f"mubVPN {plan_id} Premium",
-                    "payload": f"{uid}:{plan_id}"
-                }
-                resp = await client.post(p_url, json=payload, headers=headers)
-                pay_link = resp.json().get("url")
-                if pay_link:
-                    name = plan.get(lang, plan['ky'])
-                    txt = L["pay_info"].format(name=name, rub=plan['rub'])
-                    kb = [[InlineKeyboardButton("💳 Төлөө / Оплатить", url=pay_link)], [InlineKeyboardButton(L["back"], callback_data='pay_menu')]]
-                    await query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
-                else: await query.message.edit_text("Error creating payment link.", reply_markup=get_main_kb(lang))
-        except: await query.message.edit_text("Payment service error.", reply_markup=get_main_kb(lang))
+                r = await client.get(f"{FIREBASE_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_SEC}")
+                context.user_data['uid'] = r.json()
 
-    elif data == 'main_menu':
-        L = STRINGS.get(lang, STRINGS['ky'])
-        await query.message.edit_text(L["welcome"], reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
+        uid = context.user_data.get('uid')
+        lang = context.user_data.get('lang', 'ky')
 
-    elif data == 'referral_menu':
-        bot_info = await context.bot.get_me()
-        link = f"https://t.me/{bot_info.username}?start=ref_{uid}"
-        L = STRINGS.get(lang, STRINGS['ky'])
-        await query.message.edit_text(L["ref_text"].format(link=link), reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
+        if data.startswith('sl_'):
+            lang = data.split('_')[1]; context.user_data['lang'] = lang
+            L = STRINGS.get(lang, STRINGS['ky'])
+            await query.message.edit_text(L["welcome"], reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
+            if context.user_data.get('just_reg'):
+                app_url = os.environ.get('RENDER_EXTERNAL_URL', "https://mubvpn-bot-vy55.onrender.com")
+                msg = L["trial_msg"]
+                await context.bot.send_message(chat_id=tg_id, text=f"{msg}\n\n<code>{app_url}/s/{uid}</code>", parse_mode=ParseMode.HTML)
+                context.user_data['just_reg'] = False
 
-    elif data == 'dl_platforms':
-        L = STRINGS.get(lang, STRINGS['ky'])
-        await query.message.edit_text(L["dl_text"], reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
+        elif data == 'my_vpn':
+            async with httpx.AsyncClient() as client:
+                r = await client.get(f"{FIREBASE_URL}/users/{uid}.json?auth={FIREBASE_SEC}")
+                user = r.json()
+            L = STRINGS.get(lang, STRINGS['ky'])
+            if user and user.get("isPremium"):
+                app_url = os.environ.get('RENDER_EXTERNAL_URL', "https://mubvpn-bot-vy55.onrender.com")
+                await query.message.edit_text(f"🔑 Шилтемеңиз / Ваша ссылка:\n<code>{app_url}/s/{uid}</code>", reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
+            else: await query.message.edit_text(L["no_premium"], reply_markup=get_main_kb(lang))
+
+        elif data == 'pay_menu':
+            L = STRINGS.get(lang, STRINGS['ky'])
+            kb = []
+            for k, p in PLANS.items():
+                name = p.get(lang, p['ky'])
+                kb.append([InlineKeyboardButton(f"{name} — {p['rub']} RUB", callback_data=f'buy_{k}')])
+            kb.append([InlineKeyboardButton(L["back"], callback_data='main_menu')])
+            await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(kb))
+
+        elif data.startswith('buy_'):
+            plan_id = data.split('_')[1]
+            plan = PLANS.get(plan_id)
+            L = STRINGS.get(lang, STRINGS['ky'])
+            try:
+                async with httpx.AsyncClient() as client:
+                    p_url = "https://app.platega.io/v2/transaction/process"
+                    headers = {"X-MerchantId": PLATEGA_MERCHANT_ID, "X-Secret": PLATEGA_API_KEY, "Content-Type": "application/json"}
+                    payload = {
+                        "paymentMethod": 2, # SBP
+                        "paymentDetails": {"amount": float(plan['rub']), "currency": "RUB"},
+                        "description": f"mubVPN {plan_id} Premium",
+                        "payload": f"{uid}:{plan_id}"
+                    }
+                    resp = await client.post(p_url, json=payload, headers=headers)
+                    pay_link = resp.json().get("url")
+                    if pay_link:
+                        name = plan.get(lang, plan['ky'])
+                        txt = L["pay_info"].format(name=name, rub=plan['rub'])
+                        kb = [[InlineKeyboardButton("💳 Төлөө / Оплатить", url=pay_link)], [InlineKeyboardButton(L["back"], callback_data='pay_menu')]]
+                        await query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+                    else: await query.message.edit_text("Error creating payment link.", reply_markup=get_main_kb(lang))
+            except: await query.message.edit_text("Payment service error.", reply_markup=get_main_kb(lang))
+
+        elif data == 'main_menu':
+            L = STRINGS.get(lang, STRINGS['ky'])
+            await query.message.edit_text(L["welcome"], reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
+
+        elif data == 'referral_menu':
+            bot_info = await context.bot.get_me()
+            link = f"https://t.me/{bot_info.username}?start=ref_{uid}"
+            L = STRINGS.get(lang, STRINGS['ky'])
+            await query.message.edit_text(L["ref_text"].format(link=link), reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
+
+        elif data == 'dl_platforms':
+            L = STRINGS.get(lang, STRINGS['ky'])
+            await query.message.edit_text(L["dl_text"], reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
+    except Exception as e: log.error(f"CB Error: {e}")
 
 # --- WEB SERVER ---
 class BotHandler(BaseHTTPRequestHandler):
@@ -223,37 +214,7 @@ class BotHandler(BaseHTTPRequestHandler):
                 self.wfile.write(b64.encode()); return
             else:
                 qr = urllib.parse.quote(sub_url)
-                sr_link = base64.b64encode(sub_url.encode()).decode()
-                html = f"""
-                <html>
-                <head>
-                    <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-                    <title>mubVPN Subscription</title>
-                    <style>
-                        body {{ background:#0b0e14; color:white; font-family:sans-serif; text-align:center; padding:20px; }}
-                        .container {{ max-width:400px; margin:auto; background:#161b22; padding:30px; border-radius:20px; border:1px solid #30363d; }}
-                        h1 {{ background:linear-gradient(45deg,#00f2fe,#4facfe); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }}
-                        .btn {{ display:block; padding:15px; margin:10px 0; border-radius:12px; font-weight:bold; text-decoration:none; transition:0.3s; }}
-                        .btn-blue {{ background:#4facfe; color:black; }}
-                        .btn-outline {{ border:1px solid #4facfe; color:#4facfe; }}
-                        code {{ display:block; background:#0d1117; padding:10px; border-radius:10px; font-size:12px; word-break:break-all; color:#8b949e; }}
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <h1>mubVPN Premium</h1>
-                        <div style="background:white;padding:10px;border-radius:15px;display:inline-block;margin:20px 0;">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={qr}">
-                        </div>
-                        <code>{sub_url}</code>
-                        <div style="margin-top:30px;">
-                            <a href="v2rayng://install-config?url={sub_url}" class="btn btn-blue">Import to mubVPN / v2rayNG</a>
-                            <a href="shadowrocket://add/sub://{sr_link}" class="btn btn-outline">Import to Shadowrocket</a>
-                        </div>
-                    </div>
-                </body>
-                </html>
-                """
+                html = f"<html><body style='background:#000;color:white;text-align:center;font-family:sans-serif;padding:50px;'><h1>mubVPN Premium</h1><img src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={qr}'><br><br><code>{sub_url}</code><br><br><a href='v2rayng://install-config?url={sub_url}' style='display:block;padding:15px;background:#4facfe;color:black;text-decoration:none;border-radius:10px;font-weight:bold;'>Import to mubVPN</a></body></html>"
                 self.send_response(200); self.send_header('Content-Type', 'text/html; charset=utf-8')
                 self.end_headers(); self.wfile.write(html.encode()); return
         self.send_response(200); self.end_headers(); self.wfile.write(b"mubVPN Bot Active")
@@ -266,7 +227,7 @@ def keep_alive():
     app_url = os.environ.get('RENDER_EXTERNAL_URL')
     if not app_url: return
     while True:
-        try: httpx.get(app_url, timeout=10)
+        try: requests.get(app_url, timeout=10)
         except: pass
         threading.Event().wait(600)
 
