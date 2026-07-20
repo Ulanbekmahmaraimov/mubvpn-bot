@@ -51,7 +51,7 @@ STRINGS = {
     "uz": {"welcome": "🚀 <b>mubVPN — Tez va xavfsiz!</b>", "btn_pay": "💳 Sotib olish", "btn_my_vpn": "🔑 Mening havolam", "btn_referral": "🎁 Bepul Premium", "btn_download": "🚀 Yuklash", "btn_support": "👨‍💻 Yordam", "pay_text": "Tarifni tanlang:", "back": "⬅️ Orqaga", "no_premium": "Premium yo'q", "trial_msg": "3 kunlik trial berildi!", "ref_text": "Havola: {link}", "dl_text": "Ilovani yuklang: Happ Proxy"},
     "kk": {"welcome": "🚀 <b>mubVPN — Жылдам және қауіпсіз!</b>", "btn_pay": "💳 Сатып алу", "btn_my_vpn": "🔑 Менің сілтемем", "btn_referral": "🎁 Тегін Premium", "btn_download": "🚀 Жүктеу", "btn_support": "👨‍💻 Қолдау", "pay_text": "Тариф таңдаңыз:", "back": "⬅️ Артқа", "no_premium": "Premium жоқ", "trial_msg": "3 күндік тегін Premium берилди!", "ref_text": "Сілтеме: {link}", "dl_text": "Жүктеу: Happ Proxy"},
     "tg": {"welcome": "🚀 <b>mubVPN — Зуд ва бехатар!</b>", "btn_pay": "💳 Харидан", "btn_my_vpn": "🔑 Истиноди ман", "btn_referral": "🎁 Premium-и ройгон", "btn_download": "🚀 Боргирӣ", "btn_support": "👨‍💻 Дастгирӣ", "pay_text": "Тарифро интихоб кунед:", "back": "⬅️ Ба ақиб", "no_premium": "Premium надоред", "trial_msg": "3 рӯз ройгон дода шуд!", "ref_text": "Истинод: {link}", "dl_text": "Боргирӣ: Happ Proxy"},
-    "tr": {"welcome": "🚀 <b>mubVPN — Hızlı ve Güvenli!</b>", "btn_pay": "💳 Satın Al", "btn_my_vpn": "🔑 Benim Linkim", "btn_referral": "🎁 Ücretsiz Premium", "btn_download": "🚀 İndir", "btn_support": "👨‍💻 Destek", "pay_text": "Plan seçin:", "back": "⬅️ Geri", "no_premium": "Premium yok", "trial_msg": "3 günlük ücretsiz Premium verildi!", "ref_text": "Link: {link}", "dl_text": "İndir: Happ Proxy"}
+    "tr": {"welcome": "🚀 <b>mubVPN — Hızlı ve Güvenli!</b>", "btn_pay": "💳 Satın Al", "btn_my_vpn": "🔑 Benim Linkim", "btn_referral": "🎁 Ücretsiz Premium", "btn_download": "🚀 Иndir", "btn_support": "👨‍💻 Destek", "pay_text": "Plan seçin:", "back": "⬅️ Geri", "no_premium": "Premium yok", "trial_msg": "3 günlük ücretsiz Premium verildi!", "ref_text": "Link: {link}", "dl_text": "İndir: Happ Proxy"}
 }
 
 def get_main_kb(lang):
@@ -79,7 +79,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     "trial_given": True, "vpn_uuid": MASTER_UUID, "created_at": datetime.now().isoformat()
                 })
                 context.user_data['just_reg'] = True
-        
+
         context.user_data['uid'] = uid
         kb = InlineKeyboardMarkup([
             [InlineKeyboardButton("🇰🇬 Кыргызча", callback_data='sl_ky'), InlineKeyboardButton("🇷🇺 Русский", callback_data='sl_ru')],
@@ -101,7 +101,7 @@ async def handle_cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         async with httpx.AsyncClient() as client:
             r = await client.get(f"{FIREBASE_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_SEC}")
             context.user_data['uid'] = r.json()
-    
+
     uid = context.user_data.get('uid')
     lang = context.user_data.get('lang', 'ru')
 
