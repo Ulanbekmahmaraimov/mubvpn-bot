@@ -37,7 +37,7 @@ STRINGS = {
         "pay_text": "💳 Планды тандаңыз:", "back": "⬅️ Артка", "no_premium": "⚠️ Premium жок",
         "trial_msg": "🎁 Сизге 3 күндүк акысыз Premium берилди!\nШилтемеңиз:",
         "ref_text": "🎁 Досторду чакырып, +10 күн алыңыз!\nШилтемеңиз:\n<code>{link}</code>",
-        "dl_text": "🚀 <b>mubVPN колдонмосун жүктөп алыңыз:</b>\n\n🤖 Android (Google Play): <a href='https://play.google.com/store/apps/details?id=com.happproxy'>Happ Proxy</a>\n🍎 iOS (iPhone): <a href='https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973'>Happ Proxy</a>"
+        "dl_text": "🚀 <b>mubVPN колдонмосун жүктөп алыңыз:</b>\n\n🤖 Android: <a href='https://play.google.com/store/apps/details?id=com.happproxy'>Happ Proxy</a>\n🍎 iOS: <a href='https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973'>Happ Proxy</a>"
     },
     "ru": {
         "welcome": "🚀 <b>mubVPN — Самый быстрый и безопасный!</b>\n\n🌍 Свободный интернет.",
@@ -45,11 +45,14 @@ STRINGS = {
         "pay_text": "💳 Выберите тариф:", "back": "⬅️ Назад", "no_premium": "⚠️ Нет Premium",
         "trial_msg": "🎁 Вам начислено 3 дня бесплатно!\nСсылка:",
         "ref_text": "🎁 Приглашайте друзей и получайте +10 дней!\nСсылка:\n<code>{link}</code>",
-        "dl_text": "🚀 <b>Скачать приложение mubVPN:</b>\n\n🤖 Android: <a href='https://play.google.com/store/apps/details?id=com.happproxy'>Happ Proxy</a>\n🍎 iOS (iPhone): <a href='https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973'>Happ Proxy</a>"
-    }
+        "dl_text": "🚀 <b>Скачать приложение mubVPN:</b>\n\n🤖 Android: <a href='https://play.google.com/store/apps/details?id=com.happproxy'>Happ Proxy</a>\n🍎 iOS: <a href='https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973'>Happ Proxy</a>"
+    },
+    "en": {"welcome": "🚀 <b>mubVPN — Fast & Safe!</b>", "btn_pay": "💳 Buy", "btn_my_vpn": "🔑 My Link", "btn_referral": "🎁 Free Premium", "btn_download": "🚀 Download", "btn_support": "👨‍💻 Support", "pay_text": "Choose plan:", "back": "⬅️ Back", "no_premium": "No Premium", "trial_msg": "3 days trial granted!", "ref_text": "Link: {link}", "dl_text": "Download App: Happ Proxy"},
+    "uz": {"welcome": "🚀 <b>mubVPN — Tez va xavfsiz!</b>", "btn_pay": "💳 Sotib olish", "btn_my_vpn": "🔑 Mening havolam", "btn_referral": "🎁 Bepul Premium", "btn_download": "🚀 Yuklash", "btn_support": "👨‍💻 Yordam", "pay_text": "Tarifni tanlang:", "back": "⬅️ Orqaga", "no_premium": "Premium yo'q", "trial_msg": "3 kunlik trial berildi!", "ref_text": "Havola: {link}", "dl_text": "Ilovani yuklang: Happ Proxy"},
+    "kk": {"welcome": "🚀 <b>mubVPN — Жылдам және қауіпсіз!</b>", "btn_pay": "💳 Сатып алу", "btn_my_vpn": "🔑 Менің сілтемем", "btn_referral": "🎁 Тегін Premium", "btn_download": "🚀 Жүктеу", "btn_support": "👨‍💻 Қолдау", "pay_text": "Тариф таңдаңыз:", "back": "⬅️ Артқа", "no_premium": "Premium жоқ", "trial_msg": "3 күндік тегін Premium берилди!", "ref_text": "Сілтеме: {link}", "dl_text": "Жүктеу: Happ Proxy"},
+    "tg": {"welcome": "🚀 <b>mubVPN — Зуд ва бехатар!</b>", "btn_pay": "💳 Харидан", "btn_my_vpn": "🔑 Истиноди ман", "btn_referral": "🎁 Premium-и ройгон", "btn_download": "🚀 Боргирӣ", "btn_support": "👨‍💻 Дастгирӣ", "pay_text": "Тарифро интихоб кунед:", "back": "⬅️ Ба ақиб", "no_premium": "Premium надоред", "trial_msg": "3 рӯз ройгон дода шуд!", "ref_text": "Истинод: {link}", "dl_text": "Боргирӣ: Happ Proxy"},
+    "tr": {"welcome": "🚀 <b>mubVPN — Hızlı ve Güvenli!</b>", "btn_pay": "💳 Satın Al", "btn_my_vpn": "🔑 Benim Linkim", "btn_referral": "🎁 Ücretsiz Premium", "btn_download": "🚀 İndir", "btn_support": "👨‍💻 Destek", "pay_text": "Plan seçin:", "back": "⬅️ Geri", "no_premium": "Premium yok", "trial_msg": "3 günlük ücretsiz Premium verildi!", "ref_text": "Link: {link}", "dl_text": "İndir: Happ Proxy"}
 }
-# Англисче жана башка тилдер үчүн
-for l in ["en", "uz", "kk", "tg", "tr"]: STRINGS[l] = STRINGS["ru"]
 
 def get_main_kb(lang):
     L = STRINGS.get(lang, STRINGS["ru"])
@@ -76,7 +79,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     "trial_given": True, "vpn_uuid": MASTER_UUID, "created_at": datetime.now().isoformat()
                 })
                 context.user_data['just_reg'] = True
-
+        
         context.user_data['uid'] = uid
         kb = InlineKeyboardMarkup([
             [InlineKeyboardButton("🇰🇬 Кыргызча", callback_data='sl_ky'), InlineKeyboardButton("🇷🇺 Русский", callback_data='sl_ru')],
@@ -93,11 +96,12 @@ async def handle_cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query; await query.answer()
     data = query.data; tg_id = query.from_user.id
 
+    # UIDти базадан кайра текшерүү (коопсуздук үчүн)
     if 'uid' not in context.user_data:
         async with httpx.AsyncClient() as client:
             r = await client.get(f"{FIREBASE_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_SEC}")
             context.user_data['uid'] = r.json()
-
+    
     uid = context.user_data.get('uid')
     lang = context.user_data.get('lang', 'ru')
 
@@ -128,9 +132,6 @@ async def handle_cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == 'dl_platforms':
         await query.message.edit_text(STRINGS[lang]["dl_text"], reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
 
-    elif data == 'pay_menu':
-        await query.message.edit_text(STRINGS[lang]["pay_text"], reply_markup=get_main_kb(lang))
-
 # --- WEB SERVER ---
 class BotHandler(BaseHTTPRequestHandler):
     def do_HEAD(self): self.send_response(200); self.end_headers()
@@ -141,6 +142,7 @@ class BotHandler(BaseHTTPRequestHandler):
             is_app = any(x in ua for x in ['v2ray', 'clash', 'shadowrocket', 'happ', 'dart', 'okhttp'])
             sub_url = f"https://{self.headers.get('Host')}/s/{uid}"
             config = f"vless://{MASTER_UUID}@{SERVER_IP}:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni={SNI}&fp=chrome&pbk={PBK}&sid={SID}#mubVPN_Premium"
+            
             if is_app:
                 self.send_response(200); self.send_header('Content-Type', 'text/plain')
                 self.end_headers(); b64 = base64.b64encode(config.encode()).decode()
@@ -162,6 +164,7 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(handle_cb))
     log.info("🤖 Bot starting...")
-    app.run_polling()
+    app.run_polling(drop_pending_updates=True)
 
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    main()
