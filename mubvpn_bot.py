@@ -20,6 +20,7 @@ SUPPORT_URL  = "https://t.me/kl_mub"
 FIREBASE_URL = "https://mubvpn-8b892-default-rtdb.firebaseio.com"
 FIREBASE_SEC = "NgRNzmtQYdgUcFWXiDRPAHAsSURVni2WaIKTw9Re"
 
+# VPN СЕРВЕР (Reality VLESS)
 MASTER_UUID = "2e922e6a-65db-4767-8216-a4b6b501b3b8"
 SERVER_IP   = "167.235.22.54"
 PBK         = "0CIqFJJXUoImvhH9fBIBBsW0G798Q9WpwWDdhbdw93M"
@@ -32,23 +33,23 @@ log = logging.getLogger(__name__)
 # --- ТЕКСТТЕР (7 ТИЛ) ---
 STRINGS = {
     "ky": {
-        "welcome": "🚀 <b>mubVPN — Эң тез жана коопсуз!</b>\n\n🌍 Чектөөсүз интернетке жол ачыңыз.",
+        "welcome": "🚀 <b>mubVPN — Эң тез жана коопсуз!</b>\n\n🌍 Чектөөсүз интернетке жол ачыңыз.\n⚡️ Жогорку ылдамдык: 1 Гбит/с.\n🛡 Коопсуздук жана купуялык.",
         "btn_pay": "💳 Сатып алуу", "btn_my_vpn": "🔑 Менин шилтемем", "btn_referral": "🎁 Акысыз Premium", "btn_download": "🚀 Жүктөө", "btn_support": "👨‍💻 Колдоо",
-        "pay_text": "💳 Планды тандаңыз:", "back": "⬅️ Артка", "no_premium": "⚠️ Premium жок",
+        "pay_text": "💳 Планды тандаңыз:", "back": "⬅️ Артка", "no_premium": "⚠️ Сизде Premium жок",
         "trial_msg": "🎁 Сизге 3 күндүк акысыз Premium берилди!\nШилтемеңиз:",
         "ref_text": "🎁 Досторду чакырып, +10 күн алыңыз!\nШилтемеңиз:\n<code>{link}</code>",
         "dl_text": "🚀 <b>mubVPN колдонмосун жүктөп алыңыз:</b>\n\n🤖 Android: <a href='https://play.google.com/store/apps/details?id=com.happproxy'>Happ Proxy</a>\n🍎 iOS: <a href='https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973'>Happ Proxy</a>"
     },
     "ru": {
-        "welcome": "🚀 <b>mubVPN — Самый быстрый и безопасный!</b>\n\n🌍 Свободный интернет.",
+        "welcome": "🚀 <b>mubVPN — Самый быстрый и безопасный!</b>\n\n🌍 Откройте доступ к свободному интернету.\n⚡️ Скорость: до 1 Гбит/с.\n🛡 Полная приватность.",
         "btn_pay": "💳 Купить", "btn_my_vpn": "🔑 Моя ссылка", "btn_referral": "🎁 Бесплатный Premium", "btn_download": "🚀 Скачать", "btn_support": "👨‍💻 Поддержка",
-        "pay_text": "💳 Выберите тариф:", "back": "⬅️ Назад", "no_premium": "⚠️ Нет Premium",
-        "trial_msg": "🎁 Вам начислено 3 дня бесплатно!\nСсылка:",
+        "pay_text": "💳 Выберите тариф:", "back": "⬅️ Назад", "no_premium": "⚠️ У вас нет Premium",
+        "trial_msg": "🎁 Вам начислено 3 дня бесплатно!\nВаша ссылка:",
         "ref_text": "🎁 Приглашайте друзей и получайте +10 дней!\nСсылка:\n<code>{link}</code>",
         "dl_text": "🚀 <b>Скачать приложение mubVPN:</b>\n\n🤖 Android: <a href='https://play.google.com/store/apps/details?id=com.happproxy'>Happ Proxy</a>\n🍎 iOS: <a href='https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973'>Happ Proxy</a>"
     },
     "en": {"welcome": "🚀 <b>mubVPN — Fast & Safe!</b>", "btn_pay": "💳 Buy", "btn_my_vpn": "🔑 My Link", "btn_referral": "🎁 Free Premium", "btn_download": "🚀 Download", "btn_support": "👨‍💻 Support", "pay_text": "Choose plan:", "back": "⬅️ Back", "no_premium": "No Premium", "trial_msg": "3 days trial granted!", "ref_text": "Link: {link}", "dl_text": "Download App: Happ Proxy"},
-    "uz": {"welcome": "🚀 <b>mubVPN — Tez va xavfsiz!</b>", "btn_pay": "💳 Sotib olish", "btn_my_vpn": "🔑 Mening havolam", "btn_referral": "🎁 Bepul Premium", "btn_download": "🚀 Yuklash", "btn_support": "👨‍💻 Yordam", "pay_text": "Tarifni tanlang:", "back": "⬅️ Orqaga", "no_premium": "Premium yo'q", "trial_msg": "3 kunlik trial berildi!", "ref_text": "Havola: {link}", "dl_text": "Ilovani yuklang: Happ Proxy"},
+    "uz": {"welcome": "🚀 <b>mubVPN — Tez va xavfsiz!</b>", "btn_pay": "💳 Sotib olish", "btn_my_vpn": "🔑 Mening havolam", "btn_referral": "🎁 Bepul Premium", "btn_download": "🚀 Yuklash", "btn_support": "👨‍💻 Yordam", "pay_text": "Tarifni tanlang:", "back": "⬅️ Orqaga", "no_premium": "Premium yo'q", "trial_msg": "3 kunlik bepul Premium берилди!", "ref_text": "Havola: {link}", "dl_text": "Ilovani yuklang: Happ Proxy"},
     "kk": {"welcome": "🚀 <b>mubVPN — Жылдам және қауіпсіз!</b>", "btn_pay": "💳 Сатып алу", "btn_my_vpn": "🔑 Менің сілтемем", "btn_referral": "🎁 Тегін Premium", "btn_download": "🚀 Жүктеу", "btn_support": "👨‍💻 Қолдау", "pay_text": "Тариф таңдаңыз:", "back": "⬅️ Артқа", "no_premium": "Premium жоқ", "trial_msg": "3 күндік тегін Premium берилди!", "ref_text": "Сілтеме: {link}", "dl_text": "Жүктеу: Happ Proxy"},
     "tg": {"welcome": "🚀 <b>mubVPN — Зуд ва бехатар!</b>", "btn_pay": "💳 Харидан", "btn_my_vpn": "🔑 Истиноди ман", "btn_referral": "🎁 Premium-и ройгон", "btn_download": "🚀 Боргирӣ", "btn_support": "👨‍💻 Дастгирӣ", "pay_text": "Тарифро интихоб кунед:", "back": "⬅️ Ба ақиб", "no_premium": "Premium надоред", "trial_msg": "3 рӯз ройгон дода шуд!", "ref_text": "Истинод: {link}", "dl_text": "Боргирӣ: Happ Proxy"},
     "tr": {"welcome": "🚀 <b>mubVPN — Hızlı ve Güvenli!</b>", "btn_pay": "💳 Satın Al", "btn_my_vpn": "🔑 Benim Linkim", "btn_referral": "🎁 Ücretsiz Premium", "btn_download": "🚀 Иndir", "btn_support": "👨‍💻 Destek", "pay_text": "Plan seçin:", "back": "⬅️ Geri", "no_premium": "Premium yok", "trial_msg": "3 günlük ücretsiz Premium verildi!", "ref_text": "Link: {link}", "dl_text": "İndir: Happ Proxy"}
@@ -79,7 +80,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     "trial_given": True, "vpn_uuid": MASTER_UUID, "created_at": datetime.now().isoformat()
                 })
                 context.user_data['just_reg'] = True
-
+        
         context.user_data['uid'] = uid
         kb = InlineKeyboardMarkup([
             [InlineKeyboardButton("🇰🇬 Кыргызча", callback_data='sl_ky'), InlineKeyboardButton("🇷🇺 Русский", callback_data='sl_ru')],
@@ -87,8 +88,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("🇰🇿 Қазақша", callback_data='sl_kk'), InlineKeyboardButton("🇹🇯 Тоҷикӣ", callback_data='sl_tg')],
             [InlineKeyboardButton("🇹🇷 Türkçe", callback_data='sl_tr')]
         ])
-        if update.message:
-            await update.message.reply_text("Выберите язык / Тилди тандаңыз:", reply_markup=kb)
+        await update.message.reply_text("Выберите язык / Тилди тандаңыз:", reply_markup=kb)
     except Exception as e:
         log.error(f"Start error: {e}")
 
@@ -96,12 +96,11 @@ async def handle_cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query; await query.answer()
     data = query.data; tg_id = query.from_user.id
 
-    # UIDти базадан кайра текшерүү (коопсуздук үчүн)
     if 'uid' not in context.user_data:
         async with httpx.AsyncClient() as client:
             r = await client.get(f"{FIREBASE_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_SEC}")
             context.user_data['uid'] = r.json()
-
+    
     uid = context.user_data.get('uid')
     lang = context.user_data.get('lang', 'ru')
 
