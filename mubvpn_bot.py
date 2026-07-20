@@ -30,6 +30,14 @@ SNI         = "www.sony.com"
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
+# ПЛАНДАР
+PLANS = {
+    "1m": {"ky": "1 ай", "ru": "1 месяц", "en": "1 month", "rub": 109.99},
+    "3m": {"ky": "3 ай", "ru": "3 месяца", "en": "3 months", "rub": 309.99},
+    "6m": {"ky": "6 ай", "ru": "6 месяцев", "en": "6 months", "rub": 599.99},
+    "1y": {"ky": "1 жыл", "ru": "1 год", "en": "1 year", "rub": 1099.99},
+}
+
 # --- ТЕКСТТЕР (7 ТИЛ) ---
 STRINGS = {
     "ky": {
@@ -48,7 +56,7 @@ STRINGS = {
         "ref_text": "🎁 Приглашайте друзей и получайте +10 дней!\nСсылка:\n<code>{link}</code>",
         "dl_text": "🚀 <b>Скачать приложение mubVPN:</b>\n\n🤖 Android: <a href='https://play.google.com/store/apps/details?id=com.happproxy'>Happ Proxy</a>\n🍎 iOS: <a href='https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973'>Happ Proxy</a>"
     },
-    "en": {"welcome": "🚀 <b>mubVPN — Fast & Safe!</b>", "btn_pay": "💳 Buy", "btn_my_vpn": "🔑 My Link", "btn_referral": "🎁 Free Premium", "btn_download": "🚀 Download", "btn_support": "👨‍💻 Support", "pay_text": "Choose plan:", "back": "⬅️ Back", "no_premium": "No Premium", "trial_msg": "3 days trial granted!", "ref_text": "Link: {link}", "dl_text": "Download App: Happ Proxy"},
+    "en": {"welcome": "🚀 <b>mubVPN — Fast & Safe!</b>", "btn_pay": "💳 Buy", "btn_my_vpn": "🔑 My Link", "btn_referral": "🎁 Free Premium", "btn_download": "🚀 Download", "btn_support": "👨‍💻 Support", "pay_text": "Choose plan:", "back": "⬅️ Back", "no_premium": "No Premium", "trial_msg": "3 days trial granted!", "ref_text": "Link: {link}", "dl_text": "Download: Happ Proxy"},
     "uz": {"welcome": "🚀 <b>mubVPN — Tez va xavfsiz!</b>", "btn_pay": "💳 Sotib olish", "btn_my_vpn": "🔑 Mening havolam", "btn_referral": "🎁 Bepul Premium", "btn_download": "🚀 Yuklash", "btn_support": "👨‍💻 Yordam", "pay_text": "Tarifni tanlang:", "back": "⬅️ Orqaga", "no_premium": "Premium yo'q", "trial_msg": "3 kunlik bepul Premium берилди!", "ref_text": "Havola: {link}", "dl_text": "Ilovani yuklang: Happ Proxy"},
     "kk": {"welcome": "🚀 <b>mubVPN — Жылдам және қауіпсіз!</b>", "btn_pay": "💳 Сатып алу", "btn_my_vpn": "🔑 Менің сілтемем", "btn_referral": "🎁 Тегін Premium", "btn_download": "🚀 Жүктеу", "btn_support": "👨‍💻 Қолдау", "pay_text": "Тариф таңдаңыз:", "back": "⬅️ Артқа", "no_premium": "Premium жоқ", "trial_msg": "3 күндік тегін Premium берилди!", "ref_text": "Сілтеме: {link}", "dl_text": "Жүктеу: Happ Proxy"},
     "tg": {"welcome": "🚀 <b>mubVPN — Зуд ва бехатар!</b>", "btn_pay": "💳 Харидан", "btn_my_vpn": "🔑 Истиноди ман", "btn_referral": "🎁 Premium-и ройгон", "btn_download": "🚀 Боргирӣ", "btn_support": "👨‍💻 Дастгирӣ", "pay_text": "Тарифро интихоб кунед:", "back": "⬅️ Ба ақиб", "no_premium": "Premium надоред", "trial_msg": "3 рӯз ройгон дода шуд!", "ref_text": "Истинод: {link}", "dl_text": "Боргирӣ: Happ Proxy"},
@@ -56,13 +64,13 @@ STRINGS = {
 }
 
 def get_main_kb(lang):
-    L = STRINGS.get(lang, STRINGS["ru"])
+    L = STRINGS.get(lang, STRINGS["ky"])
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton(L["btn_download"], callback_data='dl_platforms')],
-        [InlineKeyboardButton(L["btn_my_vpn"], callback_data='my_vpn')],
-        [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')],
-        [InlineKeyboardButton(L["btn_referral"], callback_data='referral_menu')],
-        [InlineKeyboardButton(L["btn_support"], url=SUPPORT_URL)]
+        [InlineKeyboardButton(L.get("btn_download", STRINGS["ky"]["btn_download"]), callback_data='dl_platforms')],
+        [InlineKeyboardButton(L.get("btn_my_vpn", STRINGS["ky"]["btn_my_vpn"]), callback_data='my_vpn')],
+        [InlineKeyboardButton(L.get("btn_pay", STRINGS["ky"]["btn_pay"]), callback_data='pay_menu')],
+        [InlineKeyboardButton(L.get("btn_referral", STRINGS["ky"]["btn_referral"]), callback_data='referral_menu')],
+        [InlineKeyboardButton(L.get("btn_support", STRINGS["ky"]["btn_support"]), url=SUPPORT_URL)]
     ])
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -80,7 +88,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     "trial_given": True, "vpn_uuid": MASTER_UUID, "created_at": datetime.now().isoformat()
                 })
                 context.user_data['just_reg'] = True
-        
+
         context.user_data['uid'] = uid
         kb = InlineKeyboardMarkup([
             [InlineKeyboardButton("🇰🇬 Кыргызча", callback_data='sl_ky'), InlineKeyboardButton("🇷🇺 Русский", callback_data='sl_ru')],
@@ -88,7 +96,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("🇰🇿 Қазақша", callback_data='sl_kk'), InlineKeyboardButton("🇹🇯 Тоҷикӣ", callback_data='sl_tg')],
             [InlineKeyboardButton("🇹🇷 Türkçe", callback_data='sl_tr')]
         ])
-        await update.message.reply_text("Выберите язык / Тилди тандаңыз:", reply_markup=kb)
+        await update.message.reply_text("Тилди тандаңыз / Выберите язык / Choose language:", reply_markup=kb)
     except Exception as e:
         log.error(f"Start error: {e}")
 
@@ -100,36 +108,54 @@ async def handle_cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         async with httpx.AsyncClient() as client:
             r = await client.get(f"{FIREBASE_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_SEC}")
             context.user_data['uid'] = r.json()
-    
+
     uid = context.user_data.get('uid')
-    lang = context.user_data.get('lang', 'ru')
+    lang = context.user_data.get('lang', 'ky')
 
     if data.startswith('sl_'):
         lang = data.split('_')[1]; context.user_data['lang'] = lang
-        L = STRINGS.get(lang, STRINGS['ru'])
-        await query.message.edit_text(L["welcome"], reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
+        L = STRINGS.get(lang, STRINGS['ky'])
+        await query.message.edit_text(L.get("welcome", STRINGS["ky"]["welcome"]), reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
         if context.user_data.get('just_reg'):
             app_url = os.environ.get('RENDER_EXTERNAL_URL', "https://mubvpn-bot-vy55.onrender.com")
-            await context.bot.send_message(chat_id=tg_id, text=f"{L['trial_msg']}\n\n<code>{app_url}/s/{uid}</code>", parse_mode=ParseMode.HTML)
+            msg = L.get("trial_msg", STRINGS["ky"]["trial_msg"])
+            await context.bot.send_message(chat_id=tg_id, text=f"{msg}\n\n<code>{app_url}/s/{uid}</code>", parse_mode=ParseMode.HTML)
             context.user_data['just_reg'] = False
 
     elif data == 'my_vpn':
         async with httpx.AsyncClient() as client:
             r = await client.get(f"{FIREBASE_URL}/users/{uid}.json?auth={FIREBASE_SEC}")
             user = r.json()
+        L = STRINGS.get(lang, STRINGS['ky'])
         if user and user.get("isPremium"):
             app_url = os.environ.get('RENDER_EXTERNAL_URL', "https://mubvpn-bot-vy55.onrender.com")
-            await query.message.edit_text(f"🔑 Шилтемеңиз:\n<code>{app_url}/s/{uid}</code>", reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
+            await query.message.edit_text(f"🔑 Шилтемеңиз / Ваша ссылка:\n<code>{app_url}/s/{uid}</code>", reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
         else:
-            await query.message.edit_text(STRINGS[lang]["no_premium"], reply_markup=get_main_kb(lang))
+            await query.message.edit_text(L.get("no_premium", STRINGS["ky"]["no_premium"]), reply_markup=get_main_kb(lang))
+
+    elif data == 'pay_menu':
+        L = STRINGS.get(lang, STRINGS['ky'])
+        kb_list = []
+        for k, p in PLANS.items():
+            name = p.get(lang, p.get('ky'))
+            kb_list.append([InlineKeyboardButton(f"{name} — {p['rub']} RUB", callback_data=f'buy_{k}')])
+        kb_list.append([InlineKeyboardButton(L.get("back", STRINGS["ky"]["back"]), callback_data='main_menu')])
+        await query.message.edit_text(L.get("pay_text", STRINGS["ky"]["pay_text"]), reply_markup=InlineKeyboardMarkup(kb_list))
+
+    elif data == 'main_menu':
+        L = STRINGS.get(lang, STRINGS['ky'])
+        await query.message.edit_text(L.get("welcome", STRINGS["ky"]["welcome"]), reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
 
     elif data == 'referral_menu':
         bot_info = await context.bot.get_me()
         link = f"https://t.me/{bot_info.username}?start=ref_{uid}"
-        await query.message.edit_text(STRINGS[lang]["ref_text"].format(link=link), reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
+        L = STRINGS.get(lang, STRINGS['ky'])
+        txt = L.get("ref_text", STRINGS["ky"]["ref_text"])
+        await query.message.edit_text(txt.format(link=link), reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
 
     elif data == 'dl_platforms':
-        await query.message.edit_text(STRINGS[lang]["dl_text"], reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
+        L = STRINGS.get(lang, STRINGS['ky'])
+        await query.message.edit_text(L.get("dl_text", STRINGS["ky"]["dl_text"]), reply_markup=get_main_kb(lang), parse_mode=ParseMode.HTML)
 
 # --- WEB SERVER ---
 class BotHandler(BaseHTTPRequestHandler):
@@ -141,7 +167,7 @@ class BotHandler(BaseHTTPRequestHandler):
             is_app = any(x in ua for x in ['v2ray', 'clash', 'shadowrocket', 'happ', 'dart', 'okhttp'])
             sub_url = f"https://{self.headers.get('Host')}/s/{uid}"
             config = f"vless://{MASTER_UUID}@{SERVER_IP}:8443?encryption=none&flow=xtls-rprx-vision&type=tcp&security=reality&sni={SNI}&fp=chrome&pbk={PBK}&sid={SID}#mubVPN_Premium"
-            
+
             if is_app:
                 self.send_response(200); self.send_header('Content-Type', 'text/plain')
                 self.end_headers(); b64 = base64.b64encode(config.encode()).decode()
@@ -157,8 +183,19 @@ def run_server():
     port = int(os.environ.get('PORT', 8080))
     HTTPServer(('0.0.0.0', port), BotHandler).serve_forever()
 
+def keep_alive():
+    app_url = os.environ.get('RENDER_EXTERNAL_URL')
+    if not app_url: return
+    while True:
+        try:
+            with httpx.Client() as client:
+                client.get(app_url, timeout=10)
+        except: pass
+        threading.Event().wait(600)
+
 def main():
     threading.Thread(target=run_server, daemon=True).start()
+    threading.Thread(target=keep_alive, daemon=True).start()
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(handle_cb))
