@@ -405,8 +405,6 @@ def get_main_keyboard(lang):
 
         [InlineKeyboardButton(L["btn_pay"], callback_data='pay_menu')], 
 
-        [InlineKeyboardButton(L.get("btn_servers", "📡 Серверлер"), callback_data='servers_status')],
-
         [InlineKeyboardButton(L["btn_referral"], callback_data='referral_menu')], 
 
         [InlineKeyboardButton(L["btn_how"], callback_data='how_1')], 
@@ -566,24 +564,6 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         kb = [[InlineKeyboardButton(L["btn_share_now"], url=share_url)], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
 
         await query.message.edit_text(L["share_title"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
-
-    elif data == 'servers_status':
-        L = STRINGS[lang]
-        servers_text = (
-            "📡 <b>mubVPN Серверлеринин абалы (7 жигердүү сервер):</b>\n\n"
-            "🇩🇪 <b>Германия (Франкфурт - Main)</b> — 🟢 Active · Ping ~18ms\n"
-            "🇵🇱 <b>Польша (Варшава)</b> — 🟢 Active · Ping ~24ms\n"
-            "🇳🇱 <b>Нидерланды (Амстердам)</b> — 🟢 Active · Torrent ✅ · Ping ~20ms\n"
-            "🇱🇻 <b>Латвия (Рига)</b> — 🟢 Active · Ping ~28ms\n"
-            "🇺🇸 <b>АКШ / США (Денвер)</b> — 🟢 Active · Ping ~45ms\n"
-            "🇮🇹 <b>Италия (Милан)</b> — 🟢 Active · Ping ~30ms\n"
-            "🇳🇴 <b>Норвегия (Осло)</b> — 🟢 Active · Ping ~35ms\n\n"
-            "🔒 <b>Протоколдор:</b> VLESS-Reality (1 Gbps)\n"
-            "♾ <b>Трафик:</b> Чексиз (Unlimited)\n\n"
-            "💡 <i>Бардык серверлер mubVPN тиркемесинде автоматтуу түрдө жүктөлөт!</i>"
-        )
-        kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
-        await query.message.edit_text(servers_text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
 
 
