@@ -212,132 +212,46 @@ def register_referral(new_user_tg_id: int, inviter_id: str) -> tuple[bool, str]:
 
 STRINGS = {
     "ky": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nЭң тез жана коопсуз интернетке жол ачыңыз. Төлөм жүргүзүү же тиркемени жүктөө үчүн төмөнкү баскычтарды колдонуңуз:",
-        "btn_pay": "💳 Сатып алуу", "btn_how": "📖 Кантип төлөйм?",
-        "btn_download": "🚀 Тиркемени жүктөө",
-        "btn_support": "👨‍💻 Колдоо", "btn_share": "🤝 Бөлүшүү",
-        "pay_text": "💳 <b>Төлөөгө өтүү</b>\n\nТөлөм Telegram ичинде коопсуз өтөт:",
-        "pay_btn_link": "💳 Telegram", "back": "⬅️ Артка", "next": "Кийинки ➡️",
+        "welcome": "🚀 <b>mubVPN — Эң тез жана коопсуз VPN!</b>\n\n🌍 Чектөөсүз интернетке жол ачыңыз.\n⚡️ Жогорку ылдамдык (1 Гбит/с чейин).\n🛡 Коопсуздук жана толук купуялык.\n\nТөмөндөгү менюдан керектүү бөлүмдү тандаңыз:",
+        "btn_profile": "👤 Мой профиль / Счёт",
+        "btn_my_vpn": "🔑 Моя ссылка (VLESS)",
+        "btn_pay": "💳 Купить / Продлить",
+        "btn_referral": "🎁 Бесплатный Premium (+10...)",
+        "btn_servers": "📡 Статус серверов",
+        "btn_download": "🚀 Скачать приложение",
+        "btn_guide": "📖 Инструкция",
+        "btn_promo": "🎟 Ввести промокод",
+        "btn_support": "👨‍💻 Служба поддержки",
+        "pay_text": "💳 <b>Планды тандаңыз:</b>\n\nБардык пландар чексиз трафик жана 100% VLESS-Reality коопсуздук камтыйт.",
+        "back": "⬅️ Назад",
+        "main_menu": "🏠 Башкы меню",
+        "pay_btn_link": "💳 Төлөө (Lava / Telegram)",
         "check_btn": "✅ Төлөдүм (Текшерүү)",
         "checking": "⏳ Төлөм текшерилүүдө...",
         "success": "🎉 <b>Premium активдешти!</b>\n\nТиркемени ачып, VPN'ди колдоно бериңиз!",
         "not_found": "⚠️ Төлөм табылган жок. Төлөп бүтсөңүз, 1-2 мүнөт күтүп кайра басыңыз.",
-        "how_step_1": "🚀 <b>1-КАДАМ: План тандоо</b>\n\n'Сатып алуу' баскычын басып, мөөнөттү тандаңыз. 1 жылдык план эң пайдалуу! ✅",
-        "how_step_2": "📧 <b>2-КАДАМ: Почтаны жазуу</b>\n\nТөлөм барагында Email-ди жазыңыз. 📩",
-        "how_step_3": "💵 <b>3-КАДАМ: Валюта тандоо</b>\n\nКомиссия аз болушу үчүн <b>RUB</b> же <b>KGS</b> тандаңыз. 💰",
-        "how_step_4": "📱 <b>4-КАДАМ: Карта маалыматы</b>\n\nКарта номерин жана CVC-кодун жазыңыз. 💳",
-        "how_step_5": "✅ <b>5-КАДАМ: Төлөмдү бүтүрүү</b>\n\n'Оплатить' баскычын басып, SMS кодду киргизиңиз. 🎉",
-        "how_step_6": "🛠 <b>6-КАДАМ: Текшерүү</b>\n\nЭгер Premium иштебесе, боттогу 'Текшерүү' баскычын басыңыз. @kl_mub дайыма жардамга даяр! 👨‍💻",
-        "menu_back": "Башкы меню:",
-        "share_msg": "🚀 mubVPN — Android үчүн эң тез жана коопсуз VPN!\n\n✅ Блоктоолорду айланып өтөт\n✅ Маалыматтарды ишенимдүү шифрлейт\n✅ Бир таптоо менен туташуу\n✅ Жогорку жана туруктуу ылдамдык\n\nАзыр жүктөп ал! 👇",
-        "share_title": "🤝 <b>Бөлүшүү:</b>", "btn_share_now": "📲 Бөлүшүү",
-        "btn_referral": "🎁 Акысыз Premium (Рефералы)",
         "ref_menu_text": "🎁 <b>Рефераалдык программа!</b>\n\nДосторуңузду чакырып, <b>бекер Premium</b> алыңыз!\n\n• Ар бир чакырылган дос үчүн: <b>+10 күн акысыз Premium</b>.\n• Максималдуу бекер мөөнөт: <b>365 күнгө чейин (1 жыл)</b>.\n\n🔗 <b>Сиздин шилтемеңиз:</b>\n<code>{ref_link}</code>\n\n👥 Чакырылган достор: <b>{referral_count}</b> адам\n📅 Алынган бекер күндөр: <b>{referral_days_granted}</b> күн"
     },
     "ru": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nОткройте доступ к самому быстрому и безопасному интернету. Используйте кнопки ниже для оплаты или загрузки приложения:",
-        "btn_pay": "💳 Купить", "btn_how": "📖 Как оплатить?",
+        "welcome": "🚀 <b>mubVPN — Самый быстрый и безопасный VPN!</b>\n\n🌍 Откройте доступ к свободному интернету.\n⚡️ Высокая скорость (до 1 Гбит/с).\n🛡 Полная приватность и защита.\n\nВыберите нужный раздел из меню ниже:",
+        "btn_profile": "👤 Мой профиль / Счёт",
+        "btn_my_vpn": "🔑 Моя ссылка (VLESS)",
+        "btn_pay": "💳 Купить / Продлить",
+        "btn_referral": "🎁 Бесплатный Premium (+10...)",
+        "btn_servers": "📡 Статус серверов",
         "btn_download": "🚀 Скачать приложение",
-        "btn_support": "👨‍💻 Поддержка", "btn_share": "🤝 Поделиться",
-        "pay_text": "💳 <b>Переход к оплате</b>\n\nОплата проходит безопасно внутри Telegram:",
-        "pay_btn_link": "💳 Telegram", "back": "⬅️ Назад", "next": "Далее ➡️",
-        "check_btn": "✅ Я оплатил (Проверять)",
+        "btn_guide": "📖 Инструкция",
+        "btn_promo": "🎟 Ввести промокод",
+        "btn_support": "👨‍💻 Служба поддержки",
+        "pay_text": "💳 <b>Выберите тарифный план:</b>\n\nВсе тарифы включают безлимитный трафик и максимальную защиту VLESS-Reality.",
+        "back": "⬅️ Назад",
+        "main_menu": "🏠 Главное меню",
+        "pay_btn_link": "💳 Оплатить (Lava / Telegram)",
+        "check_btn": "✅ Я оплатил (Проверить)",
         "checking": "⏳ Проверка платежа...",
         "success": "🎉 <b>Premium активирован!</b>\n\nОткройте приложение и наслаждайтесь VPN!",
         "not_found": "⚠️ Платеж не найден. Если вы оплатили, подождите 1-2 минуты и нажмите снова.",
-        "how_step_1": "🚀 <b>ШАГ 1: Выбор тарифа</b>\n\nНажмите 'Купить' и выберите период. Годовой план самый выгодный! ✅",
-        "how_step_2": "📧 <b>ШАГ 2: Ввод почты</b>\n\nУкажите Email для получения чека. 📩",
-        "how_step_3": "💵 <b>ШАГ 3: Выбор валюты</b>\n\nВыбирайте <b>RUB</b> или <b>KGS</b> для минимальной комиссии. 💰",
-        "how_step_4": "📱 <b>ШАГ 4: Данные карты</b>\n\nВведите номер карты и CVC-код. 💳",
-        "how_step_5": "✅ <b>ШАГ 5: Завершение</b>\n\nНажмите 'Оплатить' и введите код из СМС. 🎉",
-        "how_step_6": "🛠 <b>ШАГ 6: Проверка</b>\n\nЕсли Premium не активен, нажмите 'Проверить' в боте. @kl_mub на связи! 👨‍💻",
-        "menu_back": "Главное меню:",
-        "share_msg": "🚀 mubVPN — Самый быстрый и безопасный VPN для Android!\n\n✅ Обходит любые блокировки\n✅ Надежно защищает ваши данные\n✅ Подключение в один тап\n✅ Высокая и стабильная скорость\n\nСкачай сейчас! 👇",
-        "share_title": "🤝 <b>Поделиться:</b>", "btn_share_now": "📲 Поделиться",
-        "btn_referral": "🎁 Бесплатный Premium (Рефералы)",
-        "ref_menu_text": "🎁 <b>Реферальная программа!</b>\n\nПриглашайте друзей и получайте <b>бесплатный Premium</b>!\n\n• За каждого приглашенного друга: <b>+10 дней бесплатного Premium</b>.\n• Максимальный лимит: <b>до 365 дней (1 год)</b>.\n\n🔗 <b>Ваша ссылка:</b>\n<code>{ref_link}</code>\n\n👥 Приглашено друзей: <b>{referral_count}</b>\n📅 Получено дней: <b>{referral_days_granted}</b>"
-    },
-    "uz": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nEng tezkor va xavfsiz internetga ega bo'ling. To'lov qilish yoki ilovani yuklab olish uchun quyidagi tugmalardan foydalaning:",
-        "btn_pay": "💳 Sotib olish", "btn_how": "📖 Qanday to'lash kerak?",
-        "btn_download": "🚀 Ilovani yuklab olish",
-        "btn_support": "👨‍💻 Qo'llab-quvvatlash", "btn_share": "🤝 Ulashish",
-        "pay_text": "💳 <b>To'lovga o'tish</b>\n\nTo'lov Telegram ichida xavfsiz amalga oshiriladi:",
-        "pay_btn_link": "💳 Telegram", "back": "⬅️ Orqaga", "next": "Keyingi ➡️",
-        "check_btn": "✅ To'ladim (Tekshirish)",
-        "checking": "⏳ To'lov tekshirilmoqda...",
-        "success": "🎉 <b>Premium faollashdi!</b>\n\nIlovani oching va VPN-dan foydalaning!",
-        "not_found": "⚠️ To'lov topilmadi. Agar to'lagan bo'lsangiz, 1-2 daqiqa kutib qayta bosing.",
-        "how_step_1": "🚀 <b>1-QADAM: Tarifni tanlash</b>\n\n'Sotib olish' tugmasini bosing va muddatni tanlang. 1 yillik plan eng foydali! ✅",
-        "how_step_2": "📧 <b>2-QADAM: Pochta kiritish</b>\n\nTo'lov sahifasida Email-ingizni yozing. 📩",
-        "how_step_3": "💵 <b>3-QADAM: Valyuta tanlash</b>\n\nKomissiya kam bo'lishi uchun <b>RUB</b> yoki <b>KGS</b> tanlang. 💰",
-        "how_step_4": "📱 <b>4-QADAM: Karta ma'lumotlari</b>\n\nKarta raqami va CVC-kodni yozing. 💳",
-        "how_step_5": "✅ <b>5-QADAM: Yakunlash</b>\n\n'To'lash' tugmasini bosing va SMS kodni kiriting. 🎉",
-        "how_step_6": "🛠 <b>6-QADAM: Tekshirish</b>\n\nAgar Premium ishlamasa, ботdagi 'Tekshirish' tugmasini bosing. @kl_mub yordamga tayyor! 👨‍💻",
-        "menu_back": "Asosiy menyu:",
-        "share_msg": "🚀 mubVPN — Android uchun eng tezkor va xavfsiz VPN!\n\n✅ To'siqlarni aylanib o'tadi\n✅ Ma'lumotlarni xavfsiz himoya qiladi\n✅ Bir marta bosish bilan ulanish\n✅ Yuqori va barqaror tezlik\n\nHozir yuklab ol! 👇",
-        "share_title": "🤝 <b>Ulashish:</b>", "btn_share_now": "📲 Ulashish",
-        "btn_referral": "🎁 Bepul Premium (Referal)",
-        "ref_menu_text": "🎁 <b>Referal dasturi!</b>\n\nDo'tslaringizni taklif qiling va <b>bepul Premium</b> oling!\n\n• Har bir taklif qilingan do'st uchun: <b>+10 kun bepul Premium</b>.\n• Maksimal bepul muddat: <b>365 kungacha (1 yil)</b>.\n\n🔗 <b>Sizning havolangiz:</b>\n<code>{ref_link}</code>\n\n👥 Taklif qilingan do'stlar: <b>{referral_count}</b> ta\n📅 Olingan bepul kunlar: <b>{referral_days_granted}</b> kun"
-    },
-    "tg": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nБа интернети зудтарин ва бехатар дастрасӣ пайдо кунед. Барои пардохт ё боргирии барнома аз тугмаҳои зерин истифода баред:",
-        "btn_pay": "💳 Харидан", "btn_how": "📖 Чӣ тавр бояд пардохт кард?",
-        "btn_download": "🚀 Боргирии барнома",
-        "btn_support": "👨‍💻 Дастгирӣ", "btn_share": "🤝 Ирсол",
-        "pay_text": "💳 <b>Гузаштан ба пардохт</b>\n\nПардохт дар дохили Telegram бехатар мегузарад:",
-        "pay_btn_link": "💳 Telegram", "back": "⬅️ Ба ақиб", "next": "Оянда ➡️",
-        "check_btn": "✅ Ман пардохт кардам (Санҷиш)",
-        "checking": "⏳ Санҷиши пардохт...",
-        "success": "🎉 <b>Premium фаъол шуд!</b>\n\nБарномаро кушоед ва аз VPN лаззат баред!",
-        "not_found": "⚠️ Пардохт ёфт нашуд. Агар пардохт карда бошед, 1-2 дақиқа интизор шавед.",
-        "how_step_1": "🚀 <b>ҚАДАМИ 1: Интихоби тариф</b>\n\n'Харидан'-ро пахш кунед. Нақшаи солона беҳтарин аст! ✅",
-        "how_step_2": "📧 <b>ҚАДАМИ 2: Ворид кардани почта</b>\n\nEmail-и худро ворид кунед. 📩",
-        "how_step_3": "💵 <b>ҚАДАМИ 3: Интихоби асъор</b>\n\n<b>RUB</b> ё <b>KGS</b>-ро интихоб кунед. 💰",
-        "how_step_4": "📱 <b>ҚАДАМИ 4: Маълумоти корт</b>\n\nРақами корт ва рамзи CVC-ро ворид кунед. 💳",
-        "how_step_5": "✅ <b>ҚАДАМИ 5: Анҷоми пардохт</b>\n\n'Пардохт кардан'-ро пахш кунед ва рамзи СМС-ро ворид кунед. 🎉",
-        "how_step_6": "🛠 <b>ҚАДАМИ 6: Санҷиш</b>\n\nАгар Premium фаъол нашуда бошад, тугмаи 'Санҷиш'-ро пахш кунед. @kl_mub ҳамеша тайёр аст! 👨‍💻",
-        "menu_back": "Менюи асосӣ:",
-        "share_msg": "🚀 mubVPN — VPN-и зудтарин ва бехатар барои Android!\n\n✅ Маҳдудиятҳоро давр мезанад\n✅ Маълумоти шуморо боэътимод ҳифз мекунад\n✅ Пайвастшавӣ бо як клик\n✅ Суръати баланд ва устувор\n\nHоло боргирӣ кун! 👇",
-        "share_title": "🤝 <b>Ирсол:</b>", "btn_share_now": "📲 Ирсол",
-        "btn_referral": "🎁 Premium-и ройгон (Реферал)",
-        "ref_menu_text": "🎁 <b>Барномаи рефералӣ!</b>\n\nДӯстони худро даъват кунед ва <b>Premium-и ройгон</b> гиред!\n\n• Барои ҳар як дӯсти даъватшуда: <b>+10 рӯз Premium-и ройгон</b>.\n• Лимити максималӣ: <b>то 365 рӯз (1 сол)</b>.\n\n🔗 <b>Истиноди шумо:</b>\n<code>{ref_link}</code>\n\n👥 Дӯстони даъватшуда: <b>{referral_count}</b> нафар\n📅 Рӯзҳои ройгони гирифташуда: <b>{referral_days_granted}</b> рӯз"
-    },
-    "kk": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nЕң жылдам және қауіпсіз интернетке жол ашыңыз. Төлөм жасау немесе қосымшаны жүктеу үчүн төмендегі батырмаларды қолданыңыз:",
-        "btn_pay": "💳 Сатып алу", "btn_how": "📖 Қалай төлеу керек?",
-        "btn_download": "🚀 Қосымшаны жүктеу",
-        "btn_support": "👨‍💻 Қолдау", "btn_share": "🤝 Бөлісу",
-        "pay_text": "💳 <b>Төлемге өту</b>\n\nТөлем Telegram ішінде қауіпсіз өтеді:",
-        "pay_btn_link": "💳 Telegram", "back": "⬅️ Артқа", "next": "Келесі ➡️",
-        "check_btn": "✅ Төледім (Тексеру)",
-        "checking": "⏳ Төлем тексерілуде...",
-        "success": "🎉 <b>Premium белсендірілді!</b>\n\nҚосымшаны ашып, VPN-ді қолдана беріңиз!",
-        "not_found": "⚠️ Төлем табылмады. Егер төлеген болсаңыз, 1-2 минут күтіңіз.",
-        "how_step_1": "🚀 <b>1-ҚАДАМ: Тариф таңдау</b>\n\n'Сатып алу' батырмасын басыңыз. 1 жылдық жоспар ең тиімді! ✅",
-        "how_step_2": "📧 <b>2-ҚАДАМ: Поштаны енгізу</b>\n\nEmail-іңізді жазыңыз. 📩",
-        "how_step_3": "💵 <b>3-ҚАДАМ: Валютаны таңдау</b>\n\nКомиссия аз болуы үчүн <b>RUB</b> немесе <b>KGS</b> таңдаңыз. 💰",
-        "how_step_4": "📱 <b>4-ҚАДАМ: Карта мәліметтері</b>\n\nКарта нөмірін жана CVC-кодты енгізіңіз. 💳",
-        "how_step_5": "✅ <b>5-ҚАДАМ: Аяқтау</b>\n\n'Төлеу' батырмасын басып, СМС кодты енгізіңіз. 🎉",
-        "how_step_6": "🛠 <b>6-ҚАДАМ: Тексеру</b>\n\nЕгер жұмыс істемесе, боттағы 'Тексеру' батырмасын басыңыз. @kl_mub көмектеседі! 👨‍💻",
-        "menu_back": "Басты мәзір:",
-        "share_msg": "🚀 mubVPN — Android үшін ең жылдам және қауіпсіз VPN!\n\n✅ Блоктауларды айналып өтеді\n✅ Деректерді қорғайды\n✅ Подключение в один тап\n✅ Жоғары және тұрақты жылдамдық\n\nҚазір жүктеп ал! 👇",
-        "share_title": "🤝 <b>Бөлісу:</b>", "btn_share_now": "📲 Бөлісу",
-        "btn_referral": "🎁 Тегін Premium (Реферал)",
-        "ref_menu_text": "🎁 <b>Рефералды бағдарлама!</b>\n\nДостарыңызды шақырып, <b>тегін Premium</b> алыңыз!\n\n• Әрбір шақырылған дос үшін: <b>+10 күн тегін Premium</b>.\n• Максималды тегін мерзім: <b>365 күнге дейін (1 жыл)</b>.\n\n🔗 <b>Сіздің сілтемеңіз:</b>\n<code>{ref_link}</code>\n\n👥 Шақырылған достар: <b>{referral_count}</b> адам\n📅 Алынған тегін күндер: <b>{referral_days_granted}</b> күн"
-    },
-    "tr": {
-        "welcome": "💎 <b>mubVPN Premium Core</b>\n\nEn hızlı ve en güvenli internetin keyfini çıkarın. Ödeme yapmak veya uygulamayı indirmek için aşağıdaki butonları kullanın:",
-        "btn_pay": "💳 Satın Al", "btn_how": "📖 Nasıl ödenir?",
-        "btn_download": "🚀 Uygulamayı İndir",
-        "btn_support": "👨‍💻 Destek", "btn_share": "🤝 Paylaş",
-        "pay_text": "💳 <b>Ödemeye Geç</b>\n\nÖdeme Telegram içinde güvenli bir şekilde yapılır:",
-        "pay_btn_link": "💳 Telegram", "back": "⬅️ Geri", "next": "İleri ➡️",
-        "check_btn": "✅ Ödedim (Kontrol Et)",
-        "checking": "⏳ Ödeme kontrol ediliyor...",
-        "success": "🎉 <b>Premium Aktif Edildi!</b>\n\nUygulamayı açın ve VPN'in tadını çıkarın!",
-        "not_found": "⚠️ Ödeme bulunamadı. Ödeme yaptıysanız 1-2 dakika bekleyin.",
-        "how_step_1": "🚀 <b>ADIM 1: Plan seçimi</b>\n\n'Satın Al'а tıklayın. Yıllık plan en karlı olanıdır! ✅",
+        "ref_menu_text": "🎁 <b>Реферальная программа!</b>\n\nПриглашайте друзей и получайте <b>бесплатный Premium</b>!\n\n• За каждого приглашенного друга: <b>+10 дней бесплатного Premium</b>.\n• Максимальный лимит: <b>до 365 дней (1 год)</b>.\n\n🔗 <b>Ваша ссылка:</b>\n<code>{ref_link}</code>\n\n👥 Приглашено друзей: <b>{referral_count}</b>\n📅 Получено дней: <b>{referral_days_granted}</b>",
         "how_step_2": "📧 <b>ADIM 2: E-posta girin</b>\n\nÖdeme sayfasında Email adresinizi girin. 📩",
         "how_step_3": "💵 <b>ADIM 3: Para birimi seçin</b>\n\n<b>RUB</b> veya <b>KGS</b> seçin. 💰",
         "how_step_4": "📱 <b>ADIM 4: Kart bilgileri</b>\n\nKart numaranızı ve CVC kodunuzu girin. 💳",
@@ -553,17 +467,122 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 
+    elif data == 'my_vpn':
+        L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
+        app_url = os.environ.get('RENDER_EXTERNAL_URL', "https://mubvpn-bot-vy55.onrender.com")
+        vless_link = f"vless://2e922e6a-65db-4767-8216-a4b6b501b3b8@167.235.22.54:443?encryption=none&flow=xtls-rprx-vision&type=tcp&headerType=none&security=reality&sni=www.sony.com&fp=chrome&pbk=0CIqFJJXUoImvhH9fBIBBsW0G798Q9WpwWDdhbdw93M&sid=7682624ec01fe9#mubVPN-{uid}"
+        txt = (
+            f"🔑 <b>Сиздин жеке VLESS туташуу шилтемеңиз:</b>\n\n"
+            f"<code>{vless_link}</code>\n\n"
+            f"🌐 <b>Подписка шилтемеси (Auto-Sync):</b>\n"
+            f"<code>{app_url}/s/{uid}</code>\n\n"
+            f"💡 <i>Бул шилтемени көчүрүп, Happ Proxy же v2rayNG тиркемесине салыңыз.</i>"
+        )
+        kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+        await query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
+    elif data == 'profile':
+        L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
+        url = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
+        user_data = {}
+        try:
+            resp = requests.get(url, timeout=5)
+            if resp.status_code == 200 and resp.json():
+                user_data = resp.json()
+        except: pass
+
+        is_prem = user_data.get("is_paid", False)
+        exp_str = user_data.get("premium_expiry")
+        ref_count = user_data.get("referral_count", 0)
+
+        now = datetime.now()
+        days_left = 0
+        formatted_date = "Жок / Нет"
+
+        if exp_str:
+            try:
+                exp_dt = datetime.fromisoformat(exp_str)
+                if exp_dt > now:
+                    is_prem = True
+                    days_left = (exp_dt - now).days + 1
+                    formatted_date = exp_dt.strftime("%Y-%m-%d %H:%M")
+                else:
+                    is_prem = False
+                    formatted_date = "Мөөнөтү бүткөн"
+            except: pass
+
+        status_icon = "🟢 ACTIVE PREMIUM" if is_prem else "🔴 МӨӨНӨТҮ БҮТТҮ"
+
+        txt = (
+            f"👤 <b>mubVPN Жеке Эсеп / Профиль:</b>\n\n"
+            f"🔹 <b>Статус:</b> {status_icon}\n"
+            f"📅 <b>Премиум мөөнөтү:</b> {formatted_date}\n"
+            f"⏳ <b>Калган убакыт:</b> {days_left} күн\n"
+            f"🎁 <b>Чакырылган достор:</b> {ref_count} адам\n"
+            f"🆔 <b>ID:</b> <code>{uid}</code>\n\n"
+            f"🔒 <b>Протокол:</b> VLESS-Reality (1 Gbps)"
+        )
+        kb = [
+            [InlineKeyboardButton("💳 Планды узартуу", callback_data='pay_menu')],
+            [InlineKeyboardButton("🔑 Менин шилтемем", callback_data='my_vpn')],
+            [InlineKeyboardButton(L["back"], callback_data='main_menu')]
+        ]
+        await query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
+    elif data == 'servers_status':
+        L = STRINGS[lang]
+        servers_text = (
+            "📡 <b>Статус серверов mubVPN:</b>\n\n"
+            "🇩🇪 <b>Германия (Frankfurt)</b> — 🟢 Active (1 Gbps) · Ping ~35ms\n"
+            "🇳🇱 <b>Нидерланды (Amsterdam)</b> — 🟢 Active (1 Gbps) · Ping ~40ms\n"
+            "🇫🇮 <b>Финляндия (Helsinki)</b> — 🟢 Active (1 Gbps) · Ping ~45ms\n"
+            "🇹🇷 <b>Турция (Istanbul)</b> — 🟢 Active (1 Gbps) · Ping ~50ms"
+        )
+        kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+        await query.message.edit_text(servers_text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
+    elif data == 'dl_platforms':
+        L = STRINGS[lang]
+        apk_direct_url = "https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.5/mubvpn.apk"
+        dl_text = (
+            "🚀 <b>mubVPN тиркемелерин жүктөп алыңыз:</b>\n\n"
+            "📱 <b>mubVPN Android APK:</b> <a href='" + apk_direct_url + "'>mubVPN Direct Download</a>\n"
+            "🤖 <b>Happ Proxy (Play Store):</b> <a href='https://play.google.com/store/apps/details?id=com.happproxy'>Happ Proxy App</a>\n"
+            "🍎 <b>Happ Proxy (iOS / App Store):</b> <a href='https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973'>Happ Proxy iOS</a>\n"
+            "💻 <b>Windows / PC Client:</b> <a href='https://github.com/2dust/v2rayN/releases'>v2rayN Client</a>"
+        )
+        kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+        await query.message.edit_text(dl_text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
+    elif data == 'guide':
+        L = STRINGS[lang]
+        guide_text = (
+            "📖 <b>mubVPN туташуу нускамасы (3 жөнөкөй кадам):</b>\n\n"
+            "1️⃣ **mubVPN** же **Happ Proxy** колдонмосун телефонуңузга жүктөп алыңыз.\n"
+            "2️⃣ Боттон <b>'🔑 Менин шилтемем'</b> кнопкасын басып, VLESS шилтемени көчүрүп алыңыз.\n"
+            "3️⃣ Колдонмону ачып, **+** баскычын басып **Import from Clipboard** тандаңыз.\n\n"
+            "🎉 Даяр! Эми туташуу баскычын басып, чексиз интернеттен ырахат алыңыз!"
+        )
+        kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+        await query.message.edit_text(guide_text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
+    elif data == 'promo_info':
+        L = STRINGS[lang]
+        promo_text = "🎟 <b>Промокодуңузду жазыңыз:</b>\n\nМисалы: <code>/promo MUB2026</code> буйругун жазып жөнөтүңүз."
+        kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+        await query.message.edit_text(promo_text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+
     elif data == 'share_app':
 
         L = STRINGS[lang]
 
         # Боттун шилтемесин эмес, Render сайтынын шилтемесин бөлүшөбүз (ал сүрөтү менен чыгат)
 
-        share_url = f"https://t.me/share/url?url=https://mubvpn-bot.onrender.com/?lang={lang}&text={html.escape(L['share_msg'])}"
+        share_url = f"https://t.me/share/url?url=https://mubvpn-bot.onrender.com/?lang={lang}&text={html.escape(L.get('share_msg', 'mubVPN'))}"
 
-        kb = [[InlineKeyboardButton(L["btn_share_now"], url=share_url)], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
+        kb = [[InlineKeyboardButton(L.get("btn_share_now", "📲 Бөлүшүү"), url=share_url)], [InlineKeyboardButton(L["back"], callback_data='main_menu')]]
 
-        await query.message.edit_text(L["share_title"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+        await query.message.edit_text(L.get("share_title", "🤝 Бөлүшүү"), reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
 
 
