@@ -1,0 +1,20 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Shield Outline -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,2L4,5v6.09c0,5.05 3.41,9.76 8,10.91 4.59,-1.15 8,-5.86 8,-10.91V5L12,2zM18.5,11.09c0,3.9 -2.55,7.53 -6.5,8.59 -3.95,-1.06 -6.5,-4.69 -6.5,-8.59V6.3l6.5,-2.25 6.5,2.25V11.09z"/>
+
+    <!-- 'mubVPN' Text Simplified -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M7,7.5h1v0.5h0.5v-0.5h1v1.5h-0.5v-1h-0.5v1h-1z M10,7.5h1v1.5h-1z M12,7.5h1v1h0.5v0.5h-1.5z M14,7.5l0.5,1.5l0.5,-1.5h0.5l-0.8,2h-0.4l-0.8,-2z M17,7.5h1v0.5h-0.5v1h-0.5z"/>
+
+    <!-- Stylized 'M' - Larger -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,17l-4,-6h1.5l2.5,4l2.5,-4h1.5z"/>
+</vector>

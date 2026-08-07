@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1017537924696",
+    "firebase_url": "https://mubvpn-8b892-default-rtdb.firebaseio.com",
+    "project_id": "mubvpn-8b892",
+    "storage_bucket": "mubvpn-8b892.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017537924696:android:57d82977d635067641c42d",
+        "android_client_info": {
+          "package_name": "com.klmub.mubvpn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1017537924696-iqlm3g7m1t7ctlelnvtbdipr6n06mbn6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.klmub.mubvpn",
+            "certificate_hash": "2b1638549dc4574913f361dc564a5f7b63cbd15a"
+          }
+        },
+        {
+          "client_id": "1017537924696-911k62ira2am1tohg1fsf1trcd7kgqcu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0vh26XTvzO-BZ1bBuRUU_ZcKr5mC7nsk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1017537924696-911k62ira2am1tohg1fsf1trcd7kgqcu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

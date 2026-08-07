@@ -1,0 +1,24 @@
+# Flutter & Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+
+# Android
+android/app/build/
+android/.gradle/
+android/captures/
+android/gradle.properties
+
+# Python
+__pycache__/
+*.pyc
+
+# IDE & OS
+.idea/
+.vscode/
+*.swp
+*.DS_Store

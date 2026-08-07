@@ -1,0 +1,86 @@
+  Future<bool> purchasePackage(Package package) async {
+    try {
+      CustomerInfo customerInfo = await Purchases.purchasePackage(package);
+      _updatePremiumFromCustomerInfo(customerInfo);
+      return isPremium;
+    } catch (e) {
+      debugPrint("Purchase Error: $e");
+      return false;
+    }
+  }
+
+  /// Lava.top төлөмүн текшерүү
+  Future<bool> checkLavaPaymentStatus() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return false;
+
+    // 1. Биринчи Firebase'ден акыркы маалыматты текшеребиз (Webhook иштеген болушу мүмкүн)
+    await syncWithFirebase(user.uid);
+    if (isPaid) return true;
+
+    const String apiKey = "cUPUZBNvxATjd5ou8oodPIozLGb7dqzZx5eDYdYbkctCV9eRJBaDWpJKAkp8Bp8m";
+    const String url = "https://gate.lava.top/api/v2/invoices";
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $apiKey',
+          'Accept': 'application/json',
+        },
+      );
+
+      debugPrint("Lava Check: status=${response.statusCode}");
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List invoices = data['items'] ?? data['data'] ?? [];
+
+        final String userUid = user.uid;
+
+        for (var invoice in invoices) {
+          final String status = invoice['status']?.toString().toLowerCase() ?? "";
+
+          // Төлөнгөн төлөмдөрдү гана карайбыз
+          if (status == 'success' || status == 'paid') {
+            final String info = (invoice['additional_info'] ?? "").toString();
+            final String fields = (invoice['additionalFields'] ?? "").toString();
+            final String comment = (invoice['comment'] ?? "").toString();
+            
+            // UID дал келишин текшерүү
+            if (info.contains(userUid) || fields.contains(userUid) || comment.contains(userUid)) {
+              double amount = double.tryParse(invoice['amount']?.toString() ?? "0") ?? 0;
+              String currency = invoice['currency']?.toString().toUpperCase() ?? 'USD';
+              int months = 1;
+
+              // Суммасына жараша айларды аныктоо
+              if (currency == 'KGS') {
+                if (amount >= 1100) months = 12;
+                else if (amount >= 650) months = 6;
+                else if (amount >= 290) months = 3;
+                else if (amount >= 110) months = 1;
+              } else if (currency == 'RUB') {
+                if (amount >= 980) months = 12;
+                else if (amount >= 580) months = 6;
+                else if (amount >= 290) months = 3;
+                else if (amount >= 105) months = 1;
+              } else {
+                if (amount >= 11) months = 12;
+                else if (amount >= 6) months = 6;
+                else if (amount >= 3.5) months = 3;
+                else if (amount >= 1.2) months = 1;
+              }
+
+              await setPremium(DateTime.now().add(Duration(days: months * 30)), isPaid: true);
+              return true;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("Lava Check Error: $e");
+    }
+
+    // Акырында дагы бир жолу синхрондоо
+    await syncWithFirebase(user.uid);
+    return isPaid;
+  }

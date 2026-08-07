@@ -1,0 +1,45 @@
+# --- ВЕБХУК БӨЛҮГҮН УШУЛ МЕНЕН АЛМАШТЫРЫҢЫЗ ---
+
+    def do_POST(self):
+        if self.path == '/webhook':
+            try:
+                cl = int(self.headers['Content-Length'])
+                body = self.rfile.read(cl).decode()
+                data = json.loads(body)
+                log.info(f"📥 Webhook received: {data}")
+
+                # 1. Маалыматтарды алуу
+                status = data.get('status') or data.get('payment', {}).get('status', '')
+                email = data.get('customer', {}).get('email') or data.get('payer_email', '')
+                
+                # UID алууга аракет
+                uid = data.get('additional_info') or data.get('comment')
+                
+                # 2. Эгер UID жок болсо, Email аркылуу Firebase'ден UID табабыз
+                if not uid and email:
+                    log.info(f"🔍 UID missing, searching by email: {email}")
+                    # Firebase'ден бардык колдонуучуларды карап чыгабыз
+                    users_url = f"{FIREBASE_DB_URL}/users.json?auth={FIREBASE_DB_SECRET}"
+                    users_resp = requests.get(users_url)
+                    if users_resp.status_code == 200:
+                        all_users = users_resp.json()
+                        for user_id, user_data in all_users.items():
+                            if user_data.get('email') == email:
+                                uid = user_id
+                                log.info(f"✅ UID found by email: {uid}")
+                                break
+
+                amount = float(data.get('amount') or 0)
+                
+                # Төлөм ийгиликтүү болсо
+                if status in ('success', 'paid', 'completed') and uid:
+                    # Автоматтык төлөмдөр үчүн 1 ай (30 күн) кошуу
+                    if firebase_set_premium(str(uid), 1):
+                        log.info(f"✅ Premium RENEWED for UID: {uid}")
+                    else:
+                        log.error(f"❌ Firebase update failed for UID: {uid}")
+
+                self.send_response(200); self.end_headers(); self.wfile.write(b"OK")
+            except Exception as e:
+                log.error(f"⚠️ Webhook error: {e}")
+                self.send_response(500); self.end_headers()

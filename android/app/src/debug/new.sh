@@ -1,0 +1,1 @@
+bash <(curl -Ls https://raw.githubusercontent.com/mzyy202/x-ui/master/install.sh)
