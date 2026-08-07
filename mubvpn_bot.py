@@ -405,8 +405,63 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if update.message: await update.message.reply_text(text, reply_markup=get_lang_keyboard())
 
-    else: await update.callback_query.message.edit_text(text, reply_markup=get_lang_keyboard())
+async def promo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    tg_id = update.effective_user.id
+    if not context.args:
+        await update.message.reply_text("🎟 <b>Промокод киргизиңиз / Введите промокод:</b>\n\nМисалы / Пример: <code>/promo MUB2026</code>", parse_mode=ParseMode.HTML)
+        return
 
+    code = context.args[0].upper().strip()
+    valid_codes = {
+        "MUB2026": 7,
+        "PREMIUM2026": 14,
+        "VIP2026": 30
+    }
+
+    if code not in valid_codes:
+        await update.message.reply_text("❌ <b>Ката промокод! / Неверный промокод!</b>\n\nКодду туура жазып кайра аракет кылыңыз.", parse_mode=ParseMode.HTML)
+        return
+
+    days = valid_codes[code]
+    uid = context.user_data.get('uid', str(tg_id))
+    try:
+        url_map = f"{FIREBASE_DB_URL}/telegram_to_uid/{tg_id}.json?auth={FIREBASE_DB_SECRET}"
+        r = requests.get(url_map, timeout=5)
+        if r.status_code == 200 and r.json():
+            uid = r.json()
+    except: pass
+
+    # Promo check
+    promo_check_url = f"{FIREBASE_DB_URL}/used_promos/{tg_id}_{code}.json?auth={FIREBASE_DB_SECRET}"
+    try:
+        resp_check = requests.get(promo_check_url, timeout=5)
+        if resp_check.status_code == 200 and resp_check.json() is not None:
+            await update.message.reply_text("⚠️ <b>Сиз бул промокодду мурда колдонгонсуз!</b>\n\nВы уже использовали этот промокод!", parse_mode=ParseMode.HTML)
+            return
+    except: pass
+
+    user_url = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
+    start_date = datetime.now()
+    try:
+        resp_u = requests.get(user_url, timeout=5)
+        if resp_u.status_code == 200 and resp_u.json():
+            cur_exp = resp_u.json().get("premium_expiry")
+            if cur_exp:
+                try:
+                    exp_dt = datetime.fromisoformat(cur_exp)
+                    if exp_dt > start_date:
+                        start_date = exp_dt
+                except: pass
+    except: pass
+
+    new_exp = (start_date + timedelta(days=days)).isoformat()
+    try:
+        requests.patch(user_url, json={"premium_expiry": new_exp, "is_paid": True})
+        requests.put(promo_check_url, json={"timestamp": datetime.now().isoformat(), "days": days})
+        await update.message.reply_text(f"🎉 <b>Промокод активдешти! / Промокод активирован!</b>\n\nСизге <b>+{days} күн</b> акысыз Premium берилди! ✨", parse_mode=ParseMode.HTML)
+    except Exception as ex:
+        log.error(f"Promo error: {ex}")
+        await update.message.reply_text("⚠️ Ката пайда болду. Кайра аракет кылыңыз.", parse_mode=ParseMode.HTML)
 
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -532,11 +587,17 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == 'servers_status':
         L = STRINGS[lang]
         servers_text = (
-            "📡 <b>Статус серверов mubVPN:</b>\n\n"
-            "🇩🇪 <b>Германия (Frankfurt)</b> — 🟢 Active (1 Gbps) · Ping ~35ms\n"
-            "🇳🇱 <b>Нидерланды (Amsterdam)</b> — 🟢 Active (1 Gbps) · Ping ~40ms\n"
-            "🇫🇮 <b>Финляндия (Helsinki)</b> — 🟢 Active (1 Gbps) · Ping ~45ms\n"
-            "🇹🇷 <b>Турция (Istanbul)</b> — 🟢 Active (1 Gbps) · Ping ~50ms"
+            "📡 <b>mubVPN Серверлеринин абалы (7 жигердүү сервер):</b>\n\n"
+            "🇩🇪 <b>Германия (Frankfurt - Main)</b> — 🟢 Active (1 Gbps) · Ping ~18ms\n"
+            "🇵🇱 <b>Польша (Варшава)</b> — 🟢 Active (1 Gbps) · Ping ~24ms\n"
+            "🇳🇱 <b>Нидерланды (Амстердам)</b> — 🟢 Active (1 Gbps) · Torrent ✅ · Ping ~20ms\n"
+            "🇱🇻 <b>Латвия (Рига)</b> — 🟢 Active (1 Gbps) · Ping ~28ms\n"
+            "🇺🇸 <b>АКШ / США (Денвер)</b> — 🟢 Active (1 Gbps) · Ping ~45ms\n"
+            "🇮🇹 <b>Италия (Милан)</b> — 🟢 Active (1 Gbps) · Ping ~30ms\n"
+            "🇳🇴 <b>Норвегия (Осло)</b> — 🟢 Active (1 Gbps) · Ping ~35ms\n\n"
+            "🔒 <b>Протоколдор:</b> VLESS-Reality (1 Gbps)\n"
+            "♾ <b>Трафик:</b> Чексиз (Unlimited)\n\n"
+            "💡 <i>Бардык серверлер mubVPN тиркемесинде автоматтуу түрдө жүктөлөт!</i>"
         )
         kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
         await query.message.edit_text(servers_text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
@@ -1681,6 +1742,8 @@ def main():
     app = Application.builder().token(BOT_TOKEN).request(request).build()
 
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("promo", promo))
+    app.add_handler(CommandHandler("code", promo))
 
     app.add_handler(CallbackQueryHandler(handle_callback))
 
