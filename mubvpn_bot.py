@@ -604,7 +604,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data == 'dl_platforms':
         L = STRINGS[lang]
-        apk_direct_url = "https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.5/mubvpn.apk"
+        apk_direct_url = "https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.6/mubvpn.apk"
         dl_text = (
             "🚀 <b>mubVPN тиркемелерин жүктөп алыңыз:</b>\n\n"
             "📱 <b>mubVPN Android APK:</b> <a href='" + apk_direct_url + "'>mubVPN Direct Download</a>\n"
@@ -1589,7 +1589,7 @@ class BotHandler(BaseHTTPRequestHandler):
 
         if path == '/download':
 
-            apk_url = 'https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.5/mubvpn.apk'
+            apk_url = 'https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.6/mubvpn.apk'
 
             self.send_response(302)
 
