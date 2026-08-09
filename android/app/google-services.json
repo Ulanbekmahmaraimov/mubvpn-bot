@@ -38,6 +38,13 @@
             {
               "client_id": "1017537924696-911k62ira2am1tohg1fsf1trcd7kgqcu.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1017537924696-93iaf0kb7dksna953injcsc0qv87b2a4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "kl.mubai.kg"
+              }
             }
           ]
         }
