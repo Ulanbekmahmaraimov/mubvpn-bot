@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AIService {
-  // Anthropic API Key (from environment or configuration)
-  static const String _apiKey = String.fromEnvironment("ANTHROPIC_API_KEY");
-  static const String _baseUrl = "https://api.anthropic.com/v1/messages";
+  // Groq API Key for MubVPN AI Copilot
+  static const String _apiKey = String.fromEnvironment("GROQ_API_KEY");
+  static const String _baseUrl = "https://api.groq.com/openai/v1/chat/completions";
   
   static const String _systemPrompt = """You are the MubVPN Deep Diagnostic Engine & Intelligent Admin Copilot.
 Your tasks are:
@@ -39,42 +39,42 @@ Rules for Terminal Commands:
 
   AIService();
 
-  Future<String> _callClaude(String system, String userPrompt) async {
+  Future<String> _callAI(String system, String userPrompt) async {
     try {
       final response = await http.post(
         Uri.parse(_baseUrl),
         headers: {
-          'x-api-key': _apiKey,
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
+          'Authorization': 'Bearer $_apiKey',
+          'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          'model': 'claude-3-5-sonnet-20241022',
-          'max_tokens': 1024,
-          'system': system,
+          'model': 'llama-3.3-70b-versatile',
           'messages': [
+            {'role': 'system', 'content': system},
             {'role': 'user', 'content': userPrompt}
           ],
+          'temperature': 0.7,
+          'max_tokens': 1024,
         }),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return data['content'][0]['text'];
+        return data['choices'][0]['message']['content'];
       } else {
-        return "🚨 Claude API Катасы: ${response.statusCode} - ${response.body}";
+        return "🚨 Groq AI API Катасы: ${response.statusCode} - ${response.body}";
       }
     } catch (e) {
-      return "🚨 Claude байланыш катасы: $e";
+      return "🚨 Groq AI байланыш катасы: $e";
     }
   }
 
   Future<String> processTerminalCommand(String prompt) async {
-    return _callClaude(_systemPrompt, prompt);
+    return _callAI(_systemPrompt, prompt);
   }
 
   Future<String> analyzeLogs(List<String> logs) async {
     final logText = logs.join('\n');
-    return _callClaude(_systemPrompt, "Analyze these V2Ray/VPN logs and tell me what the problem is and how to fix it in simple terms: \n$logText");
+    return _callAI(_systemPrompt, "Analyze these V2Ray/VPN logs and tell me what the problem is and how to fix it in simple terms: \n$logText");
   }
 }
