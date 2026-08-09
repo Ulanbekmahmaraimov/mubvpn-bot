@@ -216,20 +216,31 @@ STRINGS = {
         "btn_profile": "👤 Мой профиль / Счёт",
         "btn_my_vpn": "🔑 Моя ссылка (VLESS)",
         "btn_pay": "💳 Купить / Продлить",
+        "btn_how": "📖 Кантип төлөйм?",
         "btn_referral": "🎁 Бесплатный Premium (+10...)",
         "btn_servers": "📡 Статус серверов",
         "btn_download": "🚀 Скачать приложение",
+        "btn_share": "🤝 Бөлүшүү",
         "btn_guide": "📖 Инструкция",
         "btn_promo": "🎟 Ввести промокод",
         "btn_support": "👨‍💻 Служба поддержки",
         "pay_text": "💳 <b>Планды тандаңыз:</b>\n\nБардык пландар чексиз трафик жана 100% VLESS-Reality коопсуздук камтыйт.",
         "back": "⬅️ Назад",
+        "next": "Кийинки ➡️",
         "main_menu": "🏠 Башкы меню",
         "pay_btn_link": "💳 Төлөө (Lava / Telegram)",
         "check_btn": "✅ Төлөдүм (Текшерүү)",
         "checking": "⏳ Төлөм текшерилүүдө...",
         "success": "🎉 <b>Premium активдешти!</b>\n\nТиркемени ачып, VPN'ди колдоно бериңиз!",
         "not_found": "⚠️ Төлөм табылган жок. Төлөп бүтсөңүз, 1-2 мүнөт күтүп кайра басыңыз.",
+        "how_step_1": "🚀 <b>1-КАДАМ: Планды тандаңыз</b>\n\n'Купить' баскычын басыңыз. ✅",
+        "how_step_2": "📧 <b>2-КАДАМ: Электрондук почтаңызды жазыңыз</b>\n\nТөлөм бетинде Email адресиңизди киргизиңиз. 📩",
+        "how_step_3": "💵 <b>3-КАДАМ: Валютаны тандаңыз</b>\n\n<b>RUB</b> же <b>KGS</b> тандаңыз. 💰",
+        "how_step_4": "📱 <b>4-КАДАМ: Карта маалыматтары</b>\n\nКарта номерин жана CVC кодун жазыңыз. 💳",
+        "how_step_5": "✅ <b>5-КАДАМ: Аяктоо</b>\n\n'Төлөө' баскычын басып, SMS кодун киргизиңиз. 🎉",
+        "how_step_6": "🛠 <b>6-КАДАМ: Текшерүү</b>\n\nБоттон 'Текшерүү' баскычын басыңыз. 👨‍💻",
+        "share_msg": "🚀 mubVPN — Android үчүн эң тез жана коопсуз VPN!\n\n✅ Блоктоолорду айланып өтөт\n✅ Маалыматтарды коргойт\n✅ Чектөөсүз интернет\n\nАзыр жүктөп ал! 👇",
+        "share_title": "🤝 <b>Бөлүшүү:</b>", "btn_share_now": "📲 Бөлүшүү",
         "ref_menu_text": "🎁 <b>Рефераалдык программа!</b>\n\nДосторуңузду чакырып, <b>бекер Premium</b> алыңыз!\n\n• Ар бир чакырылган дос үчүн: <b>+10 күн акысыз Premium</b>.\n• Максималдуу бекер мөөнөт: <b>365 күнгө чейин (1 жыл)</b>.\n\n🔗 <b>Сиздин шилтемеңиз:</b>\n<code>{ref_link}</code>\n\n👥 Чакырылган достор: <b>{referral_count}</b> адам\n📅 Алынган бекер күндөр: <b>{referral_days_granted}</b> күн"
     },
     "ru": {
@@ -237,31 +248,33 @@ STRINGS = {
         "btn_profile": "👤 Мой профиль / Счёт",
         "btn_my_vpn": "🔑 Моя ссылка (VLESS)",
         "btn_pay": "💳 Купить / Продлить",
+        "btn_how": "📖 Как оплатить?",
         "btn_referral": "🎁 Бесплатный Premium (+10...)",
         "btn_servers": "📡 Статус серверов",
         "btn_download": "🚀 Скачать приложение",
+        "btn_share": "🤝 Поделиться",
         "btn_guide": "📖 Инструкция",
         "btn_promo": "🎟 Ввести промокод",
         "btn_support": "👨‍💻 Служба поддержки",
         "pay_text": "💳 <b>Выберите тарифный план:</b>\n\nВсе тарифы включают безлимитный трафик и максимальную защиту VLESS-Reality.",
         "back": "⬅️ Назад",
+        "next": "Вперед ➡️",
         "main_menu": "🏠 Главное меню",
         "pay_btn_link": "💳 Оплатить (Lava / Telegram)",
         "check_btn": "✅ Я оплатил (Проверить)",
         "checking": "⏳ Проверка платежа...",
         "success": "🎉 <b>Premium активирован!</b>\n\nОткройте приложение и наслаждайтесь VPN!",
         "not_found": "⚠️ Платеж не найден. Если вы оплатили, подождите 1-2 минуты и нажмите снова.",
+        "how_step_1": "🚀 <b>ШАГ 1: Выберите план</b>\n\nНажмите 'Купить'. ✅",
+        "how_step_2": "📧 <b>ШАГ 2: Введите Email</b>\n\nВведите ваш Email на странице оплаты. 📩",
+        "how_step_3": "💵 <b>ШАГ 3: Выберите валюту</b>\n\nВыберите <b>RUB</b> или <b>KGS</b>. 💰",
+        "how_step_4": "📱 <b>ШАГ 4: Данные карты</b>\n\nВведите номер карты и CVC код. 💳",
+        "how_step_5": "✅ <b>ШАГ 5: Завершение</b>\n\nНажмите 'Оплатить' и введите SMS код. 🎉",
+        "how_step_6": "🛠 <b>ШАГ 6: Проверка</b>\n\nНажмите 'Проверить' в боте. 👨‍💻",
         "ref_menu_text": "🎁 <b>Реферальная программа!</b>\n\nПриглашайте друзей и получайте <b>бесплатный Premium</b>!\n\n• За каждого приглашенного друга: <b>+10 дней бесплатного Premium</b>.\n• Максимальный лимит: <b>до 365 дней (1 год)</b>.\n\n🔗 <b>Ваша ссылка:</b>\n<code>{ref_link}</code>\n\n👥 Приглашено друзей: <b>{referral_count}</b>\n📅 Получено дней: <b>{referral_days_granted}</b>",
-        "how_step_2": "📧 <b>ADIM 2: E-posta girin</b>\n\nÖdeme sayfasında Email adresinizi girin. 📩",
-        "how_step_3": "💵 <b>ADIM 3: Para birimi seçin</b>\n\n<b>RUB</b> veya <b>KGS</b> seçin. 💰",
-        "how_step_4": "📱 <b>ADIM 4: Kart bilgileri</b>\n\nKart numaranızı ve CVC kodunuzu girin. 💳",
-        "how_step_5": "✅ <b>ADIM 5: Ödemeyi tamamla</b>\n\n'Öde'ye tıklayın ve SMS kodunu girin. 🎉",
-        "how_step_6": "🛠 <b>ADIM 6: Doğrulama</b>\n\nAktif değilse ботта 'Kontrol Et'e tıklayın. @kl_mub yardıma hazır! 👨‍💻",
         "menu_back": "Ana Menü:",
-        "share_msg": "🚀 mubVPN — Android için en hızlı ve güvenli VPN!\n\n✅ Tüm engelleri aşar\n✅ Verileri güvenle şifreler\n✅ Tek dokunuşla bağlantı\n✅ Yüksek ve kararlı hız\n\nHemen indir! 👇",
-        "share_title": "🤝 <b>Paylaş:</b>", "btn_share_now": "📲 Paylaş",
-        "btn_referral": "🎁 Ücretsiz Premium (Referans)",
-        "ref_menu_text": "🎁 <b>Referans Programı!</b>\n\nArkadaşlarınızı davet edin ve <b>ücretsiz Premium</b> kazanın!\n\n• Her davet edilen arkadaş için: <b>+10 gün ücretsiz Premium</b>.\n• Maksimum ücretsiz limit: <b>365 güne kadar (1 yıl)</b>.\n\n🔗 <b>Referans linkiniz:</b>\n<code>{ref_link}</code>\n\n👥 Davet edilen arkadaşlar: <b>{referral_count}</b> kişi\n📅 Kazanılan ücretsiz günler: <b>{referral_days_granted}</b> gün"
+        "share_msg": "🚀 mubVPN — Самый быстрый и безопасный VPN для Android!\n\n✅ Обходит любые блокировки\n✅ Надежно защищает данные\n✅ Интернет без границ\n\nСкачай сейчас! 👇",
+        "share_title": "🤝 <b>Поделиться:</b>", "btn_share_now": "📲 Поделиться",
     },
     "en": {
         "welcome": "💎 <b>mubVPN Premium Core</b>\n\nUnlock the fastest and most secure internet access. Use the buttons below to pay or download the application:",
@@ -287,6 +300,10 @@ STRINGS = {
         "ref_menu_text": "🎁 <b>Referral Program!</b>\n\nInvite friends and get <b>free Premium</b>!\n\n• For each invited friend: <b>+10 days of free Premium</b>.\n• Maximum free limit: <b>up to 365 days (1 year)</b>.\n\n🔗 <b>Your referral link:</b>\n<code>{ref_link}</code>\n\n👥 Invited friends: <b>{referral_count}</b>\n📅 Free days granted: <b>{referral_days_granted}</b>"
     }
 }
+STRINGS["uz"] = STRINGS["ru"]
+STRINGS["tg"] = STRINGS["ru"]
+STRINGS["kk"] = STRINGS["ru"]
+STRINGS["tr"] = STRINGS["ru"]
 
 # --- КЛАВИАТУРАЛАР ---
 
@@ -1721,7 +1738,7 @@ def keep_awake():
 
     while True:
 
-        try: requests.get("https://mubvpn-bot.onrender.com", timeout=10)
+        try: requests.get("https://mubvpn-bot-vy55.onrender.com", timeout=10)
 
         except: pass
 
