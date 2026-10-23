@@ -1820,7 +1820,7 @@ async def async_main():
 
         log.info(f"🌐 Setting Telegram Webhook to: {webhook_url}")
 
-        await global_app.bot.set_webhook(url=webhook_url, drop_pending_updates=True)
+        await global_app.bot.set_webhook(url=webhook_url, allowed_updates=["message", "callback_query"], drop_pending_updates=True)
 
         log.info("🚀 Bot is running in WEBHOOK mode on Render...")
 
