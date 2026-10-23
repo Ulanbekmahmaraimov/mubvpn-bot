@@ -325,7 +325,7 @@ def get_lang_keyboard():
 
 def get_main_keyboard(lang):
 
-    L = STRINGS[lang]
+    L = STRINGS.get(lang, STRINGS['ru'])
 
     # Түз жүктөө шилтемесин колдонобуз, колдонуучуга оңой болушу үчүн
     apk_direct_url = "https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.5/mubvpn.apk"
@@ -483,7 +483,11 @@ async def promo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    query = update.callback_query; await query.answer()
+    query = update.callback_query
+    try:
+        await query.answer()
+    except Exception:
+        pass
 
     data = query.data; lang = context.user_data.get('lang', 'ru')
 
@@ -492,13 +496,14 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if data.startswith('set_lang_'):
 
         lang = data.split('_')[2]; context.user_data['lang'] = lang
+        L = STRINGS.get(lang, STRINGS['ru'])
 
-        await query.message.edit_text(STRINGS[lang]["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+        await query.message.edit_text(L["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
 
 
 
     elif data == 'pay_menu':
-        L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
+        L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
         # Шилтемеге UID кошуу (эгер '?' бар болсо '&' колдонобуз)
         separator = '&' if '?' in LAVA_MAIN_URL else '?'
         link = f"{LAVA_MAIN_URL}{separator}additional_info={uid}"
@@ -510,7 +515,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.edit_text(L["pay_text"], reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
     elif data == 'check_payment':
-        L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
+        L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
         await query.message.edit_text(L["checking"], parse_mode=ParseMode.HTML)
 
         # 3 секунд күтөбүз (эффект үчүн)
@@ -540,7 +545,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
     elif data == 'my_vpn':
-        L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
+        L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
         app_url = os.environ.get('RENDER_EXTERNAL_URL', "https://mubvpn-bot-vy55.onrender.com")
         vless_link = f"vless://2e922e6a-65db-4767-8216-a4b6b501b3b8@167.235.22.54:443?encryption=none&flow=xtls-rprx-vision&type=tcp&headerType=none&security=reality&sni=www.sony.com&fp=chrome&pbk=0CIqFJJXUoImvhH9fBIBBsW0G798Q9WpwWDdhbdw93M&sid=7682624ec01fe9#mubVPN-{uid}"
         txt = (
@@ -554,7 +559,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
     elif data == 'profile':
-        L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
+        L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
         url = f"{FIREBASE_DB_URL}/users/{uid}.json?auth={FIREBASE_DB_SECRET}"
         user_data = {}
         try:
@@ -602,7 +607,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
     elif data == 'servers_status':
-        L = STRINGS[lang]
+        L = STRINGS.get(lang, STRINGS['ru'])
         servers_text = (
             "📡 <b>mubVPN Серверлеринин абалы (7 жигердүү сервер):</b>\n\n"
             "🇩🇪 <b>Германия (Frankfurt - Main)</b> — 🟢 Active (1 Gbps) · Ping ~18ms\n"
@@ -620,7 +625,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.edit_text(servers_text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
     elif data == 'dl_platforms':
-        L = STRINGS[lang]
+        L = STRINGS.get(lang, STRINGS['ru'])
         apk_direct_url = "https://github.com/Ulanbekmahmaraimov/mubvpn-bot/releases/download/v1.0.6/mubvpn.apk"
         dl_text = (
             "🚀 <b>mubVPN тиркемелерин жүктөп алыңыз:</b>\n\n"
@@ -633,7 +638,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.edit_text(dl_text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
     elif data == 'guide':
-        L = STRINGS[lang]
+        L = STRINGS.get(lang, STRINGS['ru'])
         guide_text = (
             "📖 <b>mubVPN туташуу нускамасы (3 жөнөкөй кадам):</b>\n\n"
             "1️⃣ **mubVPN** же **Happ Proxy** колдонмосун телефонуңузга жүктөп алыңыз.\n"
@@ -645,14 +650,14 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.edit_text(guide_text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
     elif data == 'promo_info':
-        L = STRINGS[lang]
+        L = STRINGS.get(lang, STRINGS['ru'])
         promo_text = "🎟 <b>Промокодуңузду жазыңыз:</b>\n\nМисалы: <code>/promo MUB2026</code> буйругун жазып жөнөтүңүз."
         kb = [[InlineKeyboardButton(L["back"], callback_data='main_menu')]]
         await query.message.edit_text(promo_text, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
     elif data == 'share_app':
 
-        L = STRINGS[lang]
+        L = STRINGS.get(lang, STRINGS['ru'])
 
         # Боттун шилтемесин эмес, Render сайтынын шилтемесин бөлүшөбүз (ал сүрөтү менен чыгат)
 
@@ -666,7 +671,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data.startswith('how_'):
 
-        step = data.split('_')[1]; L = STRINGS[lang]
+        step = data.split('_')[1]; L = STRINGS.get(lang, STRINGS['ru'])
 
         texts = {"1": L["how_step_1"], "2": L["how_step_2"], "3": L["how_step_3"], "4": L["how_step_4"], "5": L["how_step_5"], "6": L["how_step_6"]}
 
@@ -690,13 +695,15 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if query.message.photo: await query.message.delete()
 
-        await query.message.edit_text(STRINGS[lang]["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
+        L = STRINGS.get(lang, STRINGS['ru'])
+
+        await query.message.edit_text(L["welcome"], reply_markup=get_main_keyboard(lang), parse_mode=ParseMode.HTML)
 
 
 
     elif data == 'referral_menu':
 
-        L = STRINGS[lang]; uid = context.user_data.get('uid', query.from_user.id)
+        L = STRINGS.get(lang, STRINGS['ru']); uid = context.user_data.get('uid', query.from_user.id)
 
         bot_info = await context.bot.get_me()
 
@@ -1656,6 +1663,10 @@ class BotHandler(BaseHTTPRequestHandler):
                 cl = int(self.headers['Content-Length'])
                 body = self.rfile.read(cl).decode()
                 data = json.loads(body)
+                for _ in range(50):
+                    if global_app and main_loop:
+                        break
+                    time.sleep(0.1)
                 if global_app and main_loop:
                     update = Update.de_json(data, global_app.bot)
                     asyncio.run_coroutine_threadsafe(global_app.process_update(update), main_loop)
