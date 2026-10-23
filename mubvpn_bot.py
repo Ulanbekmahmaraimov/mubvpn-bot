@@ -1586,6 +1586,9 @@ import urllib.parse
 
 
 
+global_app = None
+main_loop = None
+
 class BotHandler(BaseHTTPRequestHandler):
 
     def do_HEAD(self):
@@ -1647,6 +1650,20 @@ class BotHandler(BaseHTTPRequestHandler):
 
 
     def do_POST(self):
+
+        if self.path == '/telegram_webhook':
+            try:
+                cl = int(self.headers['Content-Length'])
+                body = self.rfile.read(cl).decode()
+                data = json.loads(body)
+                if global_app and main_loop:
+                    update = Update.de_json(data, global_app.bot)
+                    asyncio.run_coroutine_threadsafe(global_app.process_update(update), main_loop)
+                self.send_response(200); self.end_headers(); self.wfile.write(b"OK")
+            except Exception as e:
+                log.error(f"⚠️ Telegram Webhook error: {e}")
+                self.send_response(500); self.end_headers()
+            return
 
         if self.path == '/webhook':
 
@@ -1746,27 +1763,103 @@ def keep_awake():
 
 
 
+async def async_main():
+
+    global global_app, main_loop
+
+    main_loop = asyncio.get_running_loop()
+
+
+
+    from telegram.request import HTTPXRequest
+
+    request = HTTPXRequest(connect_timeout=20, read_timeout=20)
+
+
+
+    global_app = Application.builder().token(BOT_TOKEN).request(request).build()
+
+
+
+    global_app.add_handler(CommandHandler("start", start))
+
+    global_app.add_handler(CommandHandler("promo", promo))
+
+    global_app.add_handler(CommandHandler("code", promo))
+
+    global_app.add_handler(CallbackQueryHandler(handle_callback))
+
+
+
+    await global_app.initialize()
+
+    await global_app.start()
+
+
+
+    render_url = os.environ.get('RENDER_EXTERNAL_URL', 'https://mubvpn-bot-vy55.onrender.com')
+
+    is_on_render = os.environ.get('RENDER') or os.environ.get('PORT')
+
+
+
+    if is_on_render:
+
+        webhook_url = f"{render_url}/telegram_webhook"
+
+        log.info(f"🌐 Setting Telegram Webhook to: {webhook_url}")
+
+        await global_app.bot.set_webhook(url=webhook_url, drop_pending_updates=True)
+
+        log.info("🚀 Bot is running in WEBHOOK mode on Render...")
+
+        try:
+
+            while True:
+
+                await asyncio.sleep(3600)
+
+        except (KeyboardInterrupt, SystemExit):
+
+            pass
+
+    else:
+
+        log.info("💻 Running locally: deleting webhook and starting Polling...")
+
+        await global_app.bot.delete_webhook(drop_pending_updates=True)
+
+        if global_app.updater:
+
+            await global_app.updater.start_polling(drop_pending_updates=True)
+
+            log.info("🤖 Bot is running in POLLING mode locally...")
+
+            try:
+
+                while True:
+
+                    await asyncio.sleep(3600)
+
+            except (KeyboardInterrupt, SystemExit):
+
+                await global_app.updater.stop()
+
+
+
+    await global_app.stop()
+
+    await global_app.shutdown()
+
+
+
 def main():
 
     threading.Thread(target=run_server, daemon=True).start()
 
     threading.Thread(target=keep_awake, daemon=True).start()
 
-    # Туташуу убактысын (Timeout) узартабыз
-    from telegram.request import HTTPXRequest
-    request = HTTPXRequest(connect_timeout=20, read_timeout=20)
-
-    app = Application.builder().token(BOT_TOKEN).request(request).build()
-
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("promo", promo))
-    app.add_handler(CommandHandler("code", promo))
-
-    app.add_handler(CallbackQueryHandler(handle_callback))
-
-    log.info("🤖 Bot is running...")
-
-    app.run_polling(drop_pending_updates=True)
+    asyncio.run(async_main())
 
 
 
